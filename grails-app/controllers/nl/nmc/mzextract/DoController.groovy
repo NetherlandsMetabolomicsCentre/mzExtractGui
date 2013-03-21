@@ -116,7 +116,7 @@ class DoController {
     			}                               
 
                 // set encodedRunDir
-                def encodedRunDir = runDir.canonicalPath.bytes.encodeBase64().toString()
+                def encodedRunDir = runDir.canonicalPath.encodeBase64().toString()
 
                 //queue run
                 new Queue(run:encodedRunDir, status:0 as int).save()

@@ -92,5 +92,13 @@ log4j = {
 
 // mzExtract config
 mzextract.matlab.home = '/usr/local/MATLAB/MATLAB_Compiler_Runtime/v80/'
+//mzextract.matlab.home = 'C:/Program Files/MATLAB/MATLAB Compiler Runtime/v80'
+
 mzextract.path.commandline = '/home/miv/Documents/workspace-preprocess/linux'
+//mzextract.path.commandline = 'C:/Users/MichaelBox/Documents/mzextract'
+
+mzextract.path.command.extract = 'extract.sh' // 'extract.exe'
+mzextract.path.command.combine = 'combine.sh' // 'combine.exe'
+
 mzextract.path.project = '/home/miv/Documents/workspace-preprocess/data/project'
+//mzextract.path.project = 'C:/Users/MichaelBox/Documents/mzextract/project'

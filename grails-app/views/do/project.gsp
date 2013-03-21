@@ -5,7 +5,7 @@
 	</head>
 	<body>
 		<h2>${project.name}	<small>project </small></h2>
-		<g:link action="settings" id="${project.canonicalPath.bytes.encodeBase64().toString()}">run</g:link> <i class="icon-indent-left"></i>
+		<g:link action="settings" id="${project.canonicalPath.encodeAsBase64().toString()}">run</g:link> <i class="icon-indent-left"></i>
 		<hr />
 		<h3>files</h3>
 		<g:if test="${files}">	
@@ -23,7 +23,7 @@
 			<h3>runs</h3>
 			<ul>
 				<g:each in="${runs}" var="${run}">
-					<li><i class="icon-tasks"></i> <g:link action="run" id="${run.canonicalPath.bytes.encodeBase64().toString()}">${run.name}</g:link> ${new Date(run.lastModified())}</li>
+					<li><i class="icon-tasks"></i> <g:link action="run" id="${run.canonicalPath.encodeAsBase64().toString()}">${run.name}</g:link> ${new Date(run.lastModified())}</li>
 				</g:each>		
 			</ul>
 		</g:if>

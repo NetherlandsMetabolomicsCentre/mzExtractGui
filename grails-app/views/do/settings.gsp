@@ -6,7 +6,7 @@
 	<body>
 		<h2>${project.name}	<small>project </small></h2>
 		<h3>settings</h3>
-		<g:form name="runProject" action="settings" id="${project.canonicalPath.bytes.encodeBase64().toString()}">
+		<g:form name="runProject" action="settings" id="${project.canonicalPath.encodeAsBase64().toString()}">
 			<table>
 				<g:each in="${settings.keySet()}" var="setting">
 					<tr><td nowrap align="right" valign="top">${setting} : </td><td><g:field type="number" name="${setting}" required="" value="${settings[setting]}"/></td></tr>

@@ -31,8 +31,9 @@ class QueueJob {
 				def outputDir = new File(queue.runPath() + '/out')				
 				inputDir.eachFile { file ->
 					if (file.name.tokenize('.')[-1].toLowerCase() == 'settings'){
-						def commandExtract = "${config.path.commandline}/run_extract.sh ${config.matlab.home} ${file.canonicalPath}"
-						def procExtract = commandExtract.execute()
+						//def commandExtract = "${config.path.commandline}/${config.path.command.extract} ${file.canonicalPath}"
+						def commandExtract = "${config.path.commandline}/${config.path.command.extract} ${config.matlab.home} ${file.canonicalPath}"
+                                                def procExtract = commandExtract.execute()
 						procExtract.waitFor()
 
 						if (procExtract.exitValue() != 0){
@@ -67,7 +68,8 @@ class QueueJob {
                 def combineXMLFile = new File(outputDir.canonicalPath + '/combine.xml') << combineXML
 
                 // execute combine
-				def commandCombine = "${config.path.commandline}/run_combine.sh ${config.matlab.home} ${combineXMLFile.canonicalPath}"
+                                //def commandCombine = "${config.path.commandline}/${config.path.command.combine} ${combineXMLFile.canonicalPath}"
+                                def commandCombine = "${config.path.commandline}/${config.path.command.combine} ${config.matlab.home} ${combineXMLFile.canonicalPath}"
 				def procCombine = commandCombine.execute()
 				procCombine.waitFor()
 
