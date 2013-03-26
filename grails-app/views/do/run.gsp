@@ -21,7 +21,7 @@
 		<h3>outputFiles</h3>
 		<ul>
 			<g:each in="${outputFiles.sort()}" var="${outputFile}">
-				<li><i class="icon-download"></i> <g:link action="download" id="${(outputFile.canonicalPath).replaceAll('\\','/').encodeAsBase64().toString()}">${outputFile.name}</g:link> (${new Date(outputFile.lastModified())})</li>
+				<li><i class="icon-download"></i> <g:link action="download" id="${(outputFile.canonicalPath).encodeAsBase64().toString()}">${outputFile.name}</g:link> (${new Date(outputFile.lastModified())})</li>
 			</g:each>		
 		</ul>
 	</body>
