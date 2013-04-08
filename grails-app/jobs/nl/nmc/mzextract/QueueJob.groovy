@@ -32,57 +32,48 @@ class QueueJob {
                 // and run it
                 def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(queue.project)
                 def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(queue.project, queue.run)
-                def outputFiles = ProjectService.runFolderFilesFromRunFolder(run)
                 def inputFiles = ProjectService.mzxmlFilesFromProjectFolder(projectFolder)  
                 def configFile = ProjectService.configFileFromRunFolder(run)
             
                 inputFiles.each { file ->
                     def commandExtract = "${config.path.commandline}/${config.path.command.extract} ${config.matlab.home} ${file.canonicalPath}"
-                    def procExtract = commandExtract.execute()
-                    procExtract.waitFor()
-
-                    if (procExtract.exitValue() != 0){
-                        println " = = = ERROR = = = "
-                        println "command: ${commandExtract}"
-                        println "stdout: ${procExtract.in.text}"							
-                        println "stderr: ${procExtract.err.text}"
-                        println " = = = = = = = = = "
-                    }
-
-                    //mv .mat file to outputDir
-                    def ant = new AntBuilder()
-                    def tempFileName = file.name.replace('.settings','')
-                    tempFileName = tempFileName.replace(".${tempFileName.tokenize('.')[-1]}",'')
-                    tempFileName = tempFileName + '.mat'
-                    def tempFile = new File(applicationLoc + tempFileName)
-                    def outputFile = new File(outputDir.canonicalPath + '/' + tempFile.name)
-                    ant.copy(file:tempFile, tofile:outputFile, overwrite:true)
-                    ant.delete(file:tempFile)
+                    println commandExtract
+//                    def procExtract = commandExtract.execute()
+//                    procExtract.waitFor()
+//
+//                    if (procExtract.exitValue() != 0){
+//                        println " = = = ERROR = = = "
+//                        println "command: ${commandExtract}"
+//                        println "stdout: ${procExtract.in.text}"							
+//                        println "stderr: ${procExtract.err.text}"
+//                        println " = = = = = = = = = "
+//                    }
                 }
 
                 def matFiles = []
-                outputDir.eachFile { file ->
+                run.eachFile { file ->
                     if (file.name.tokenize('.')[-1].toLowerCase() == 'mat'){
                         matFiles << file.canonicalPath
                     }
                 }
 
                 // prepare the combine file						
-                def combineXML = "<config>\n\t<exportfile>"+ outputDir.canonicalPath + "/results.txt</exportfile>\n" + matFiles.collect { matFile -> "\t<filename>" + matFile + "</filename>"}.join("\n") + "\n</config>"				
-                def combineXMLFile = new File(outputDir.canonicalPath + '/combine.xml') << combineXML
+                def combineXML = "<config>\n\t<exportfile>"+ run.canonicalPath + "/results.txt</exportfile>\n" + matFiles.collect { matFile -> "\t<filename>" + matFile + "</filename>"}.join("\n") + "\n</config>"				
+                def combineXMLFile = new File(run.canonicalPath + '/combine.xml') << combineXML
 
                 // execute combine
                 def commandCombine = "${config.path.commandline}/${config.path.command.combine} ${config.matlab.home} ${combineXMLFile.canonicalPath}"
-                def procCombine = commandCombine.execute()
-                procCombine.waitFor()
-
-                if (procCombine.exitValue() != 0){
-                    println " = = = ERROR = = = "
-                    println "command: ${commandCombine}"
-                    println "stdout: ${procCombine.in.text}"							
-                    println "stderr: ${procCombine.err.text}"
-                    println " = = = = = = = = = "
-                }
+                println commandCombine
+//                def procCombine = commandCombine.execute()
+//                procCombine.waitFor()
+//
+//                if (procCombine.exitValue() != 0){
+//                    println " = = = ERROR = = = "
+//                    println "command: ${commandCombine}"
+//                    println "stdout: ${procCombine.in.text}"							
+//                    println "stderr: ${procCombine.err.text}"
+//                    println " = = = = = = = = = "
+//                }
 
                 // mark it as done
                 queue.status = 2 as int

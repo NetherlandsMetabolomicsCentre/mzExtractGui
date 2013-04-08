@@ -35,8 +35,10 @@ class DoController {
             settings['noisethresholdfactor'] 	= params.noisethresholdfactor ?: 10
             settings['ppmresolution'] 		= params.ppmresolution ?: 4000
             settings['centroidthreshold'] 	= params.centroidthreshold ?: 1000
-            settings['splitfeatures'] 		= params.splitfeatures ?: 1
+            //settings['splitfeatures'] 		= params.splitfeatures ?: 1
             settings['splitratio'] 		= params.splitratio ?: 0.001
+            settings['mode']                    = params.mode ?: 'positive'
+            settings['sgfilt']                  = params.sgfilt ?: 1
             
             if (params.do){
                 redirect(action: "schedule", params: params)
