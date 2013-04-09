@@ -18,7 +18,8 @@ class DoController {
     	[   
             projectFolder: projectFolder,
             projectMzxmlFiles: ProjectService.mzxmlFilesFromProjectFolder(projectFolder),
-            projectRunFolders: ProjectService.runFoldersFromProjectFolder(projectFolder)
+            projectRunFolders: ProjectService.runFoldersFromProjectFolder(projectFolder),
+            projectMzFile: ProjectService.mzFileFromProjectFolder(projectFolder)
         ]
     }
 
@@ -35,10 +36,16 @@ class DoController {
             settings['noisethresholdfactor'] 	= params.noisethresholdfactor ?: 10
             settings['ppmresolution'] 		= params.ppmresolution ?: 4000
             settings['centroidthreshold'] 	= params.centroidthreshold ?: 1000
-            //settings['splitfeatures'] 		= params.splitfeatures ?: 1
             settings['splitratio'] 		= params.splitratio ?: 0.001
-            settings['mode']                    = params.mode ?: 'positive'
+            settings['mode']                    = params.mode == 'negative' ? params.mode : 'positive'
             settings['sgfilt']                  = params.sgfilt ?: 1
+            
+            // users can add a file with mz values, 
+            // if this is present you can set this to 1 to use this filter
+            def mzFile = ProjectService.mzFileFromProjectFolder(projectFolder)
+            if (mzFile.exists()){            
+                settings['usemz'] = params.usemz == '0' ? '0' : '1'
+            }
             
             if (params.do){
                 redirect(action: "schedule", params: params)
@@ -56,11 +63,23 @@ class DoController {
         if (projectFolder.isDirectory()){
 
             //prepare a run directory
-            def runFolder = new File(projectFolder.canonicalPath + '/runs/' + new Date().format('yyy-MM-dd_hh-mm-ss'))
+            def runFolder = new File(projectFolder.canonicalPath + '/runs/' + new Date().format('yyyy-MM-dd_hh-mm-ss'))
             runFolder.mkdirs()				
             
             //prepare the settings file
-            ProjectService.configFileFromRunFolder(runFolder) << "<config>\n\t<outputpath>" + runFolder.canonicalPath + "</outputpath>\n\t" + settings.collect { setting -> "\t<" + setting.key + ">" + setting.value + "</" + setting.key + '>'}.join("\n") + "\n</config>"
+            def configXML = ""
+                configXML += "<config>\n"
+                configXML += "\t<outputpath>" + runFolder.canonicalPath + "</outputpath>\n"
+                configXML += settings.collect { setting -> "\t<" + setting.key + ">" + setting.value + "</" + setting.key + '>'}.join("\n")
+                if (settings['usemz'] == '1'){
+                    def mzFile = ProjectService.mzFileFromProjectFolder(projectFolder)
+                    if (mzFile.exists()){
+                        configXML += "\n\t<mzfile>" + mzFile.canonicalPath + "</mzfile>"
+                    }
+                }
+                configXML += "\n</config>"
+                
+            ProjectService.configFileFromRunFolder(runFolder) << configXML
 
             def encodedRunFolder = runFolder.name.encodeAsSHA1()
             def encodedProjectFolder = projectFolder.name.encodeAsSHA1()

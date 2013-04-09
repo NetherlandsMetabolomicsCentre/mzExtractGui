@@ -27,11 +27,16 @@ class ProjectService {
     def projectFolderFromSHA1EncodedProjectName(String sha1EncodedProjectName){
         return projectFolders().find { it.name.encodeAsSHA1() == sha1EncodedProjectName }
     }
-    
+            
     // translates an encoded project name and encoded run name to a File object of the run
     def runFolderFromSHA1EncodedProjectNameAndRunName(String sha1EncodedProjectName, String sha1EncodedRunName){
         return runFoldersFromProjectFolder(projectFolderFromSHA1EncodedProjectName(sha1EncodedProjectName)).find { it.name.encodeAsSHA1() == sha1EncodedRunName }
     }    
+    
+    // returns a mzFile object
+    def mzFileFromProjectFolder(File projectFolder){    
+        return new File(projectFolder.canonicalPath + '/mzs.txt')
+    }
     
     // returns a list of File objects, each representing a run done on the project data
     def runFoldersFromProjectFolder(File projectFolder){

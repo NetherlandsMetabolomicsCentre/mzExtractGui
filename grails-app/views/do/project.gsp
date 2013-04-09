@@ -13,7 +13,7 @@
       <g:each in="${projectMzxmlFiles}" var="${file}">
         <li>
           <i class="icon-signal"></i> ${file.name} 
-          <small>(${new Date(file.lastModified()).format('dd-MM-yyyy')})</small>
+          <small>(${new Date(file.lastModified()).format('yyyy-MM-dd')})</small>
         </li>
       </g:each>
     </ul>
@@ -21,6 +21,13 @@
   <g:else>
     no files found!
   </g:else>
+  
+  <g:if test="${projectMzFile.exists()}">
+    <h3>mzFile</h3>
+    <ul>
+      <li><i class="icon-download"></i> <g:link action="download" id="${(projectMzFile.canonicalPath).encodeAsBase64().toString()}">${projectMzFile.name}</g:link> <small>(${new Date(projectMzFile.lastModified()).format('yyyy-MM-dd')})</small></li>
+    </ul>
+  </g:if>  
 
   <g:if test="${projectRunFolders}">
     <h3>runs</h3>
@@ -28,7 +35,8 @@
       <g:each in="${projectRunFolders}" var="${runFolder}">
         <li>
           <i class="icon-tasks"></i> 
-          <g:link action="run" params="[project: projectFolder.name.encodeAsSHA1(), run: runFolder.name.encodeAsSHA1()]">${runFolder.name}</g:link> 
+          <g:link action="run" params="[project: projectFolder.name.encodeAsSHA1(), run: runFolder.name.encodeAsSHA1()]">run</g:link> 
+          ${runFolder.name.replace('_',' ')}
         </li>
       </g:each>		
     </ul>

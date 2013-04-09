@@ -42,15 +42,17 @@ class QueueJob {
                         commandExtract += "\"${file.canonicalPath}\" " // add mzXML file
                         commandExtract += "\"${configFile.canonicalPath}\" " // add config file
                     println commandExtract
-                    def procExtract = commandExtract.execute()
-                    procExtract.waitFor()
+                    if (config.os != 'osx'){
+                        def procExtract = commandExtract.execute()
+                        procExtract.waitFor()
 
-                    if (procExtract.exitValue() != 0){
-                        println " = = = ERROR = = = "
-                        println "command: ${commandExtract}"
-                        println "stdout: ${procExtract.in.text}"							
-                        println "stderr: ${procExtract.err.text}"
-                        println " = = = = = = = = = "
+                        if (procExtract.exitValue() != 0){
+                            println " = = = ERROR = = = "
+                            println "command: ${commandExtract}"
+                            println "stdout: ${procExtract.in.text}"							
+                            println "stderr: ${procExtract.err.text}"
+                            println " = = = = = = = = = "
+                        }
                     }
                 }
 
@@ -71,15 +73,17 @@ class QueueJob {
                     if (config.os == 'lin') { commandCombine += "\"${config.matlab.home}\" " }
                     commandCombine += "\"${combineXMLFile.canonicalPath}\" "
                 println commandCombine
-                def procCombine = commandCombine.execute()
-                procCombine.waitFor()
+                if (config.os != 'osx'){
+                    def procCombine = commandCombine.execute()
+                    procCombine.waitFor()
 
-                if (procCombine.exitValue() != 0){
-                    println " = = = ERROR = = = "
-                    println "command: ${commandCombine}"
-                    println "stdout: ${procCombine.in.text}"							
-                    println "stderr: ${procCombine.err.text}"
-                    println " = = = = = = = = = "
+                    if (procCombine.exitValue() != 0){
+                        println " = = = ERROR = = = "
+                        println "command: ${commandCombine}"
+                        println "stdout: ${procCombine.in.text}"							
+                        println "stderr: ${procCombine.err.text}"
+                        println " = = = = = = = = = "
+                    }
                 }
 
                 // mark it as done

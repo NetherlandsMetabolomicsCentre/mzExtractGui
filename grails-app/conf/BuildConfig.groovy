@@ -49,6 +49,7 @@ grails.project.dependency.resolution = {
         runtime ":hibernate:$grailsVersion"
         runtime ":jquery:1.8.3"
         runtime ":resources:1.1.6"
+        runtime ":war-exec:1.0.2"        
         
         compile ":quartz:1.0-RC5"
         
@@ -58,7 +59,6 @@ grails.project.dependency.resolution = {
             compile ":db-util:0.4"       
             //compile ":cloud-foundry:1.2.3"
             //compile ":webxml:1.4.1"
-            runtime ":war-exec:1.0.1"
         }
 
         // Uncomment these (or add new ones) to enable additional resources capabilities

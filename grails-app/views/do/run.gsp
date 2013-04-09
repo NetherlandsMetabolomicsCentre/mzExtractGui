@@ -5,7 +5,7 @@
   </head>
   <body>
     <h2>Run</h2>
-    <g:link action="project" params="[project: projectFolder.name.encodeAsSHA1()]">${projectFolder.name}</g:link>
+    project: <g:link action="project" params="[project: projectFolder.name.encodeAsSHA1()]">${projectFolder.name}</g:link>
   <h3>inputFiles</h3>
   <ul>
     <g:each in="${inputFiles.sort()}" var="${inputFile}">
