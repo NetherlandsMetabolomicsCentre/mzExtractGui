@@ -36,18 +36,22 @@ class QueueJob {
                 def configFile = ProjectService.configFileFromRunFolder(run)
             
                 inputFiles.each { file ->
-                    def commandExtract = "${config.path.commandline}/${config.path.command.extract} ${config.matlab.home} ${file.canonicalPath}"
+                    def commandExtract = ""
+                        commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
+                        if (config.os == 'lin') { commandExtract += "\"${config.matlab.home}\" "} // add path to MatLab for linux
+                        commandExtract += "\"${file.canonicalPath}\" " // add mzXML file
+                        commandExtract += "\"${configFile.canonicalPath}\" " // add config file
                     println commandExtract
-//                    def procExtract = commandExtract.execute()
-//                    procExtract.waitFor()
-//
-//                    if (procExtract.exitValue() != 0){
-//                        println " = = = ERROR = = = "
-//                        println "command: ${commandExtract}"
-//                        println "stdout: ${procExtract.in.text}"							
-//                        println "stderr: ${procExtract.err.text}"
-//                        println " = = = = = = = = = "
-//                    }
+                    def procExtract = commandExtract.execute()
+                    procExtract.waitFor()
+
+                    if (procExtract.exitValue() != 0){
+                        println " = = = ERROR = = = "
+                        println "command: ${commandExtract}"
+                        println "stdout: ${procExtract.in.text}"							
+                        println "stderr: ${procExtract.err.text}"
+                        println " = = = = = = = = = "
+                    }
                 }
 
                 def matFiles = []
@@ -62,18 +66,21 @@ class QueueJob {
                 def combineXMLFile = new File(run.canonicalPath + '/combine.xml') << combineXML
 
                 // execute combine
-                def commandCombine = "${config.path.commandline}/${config.path.command.combine} ${config.matlab.home} ${combineXMLFile.canonicalPath}"
+                def commandCombine = ""
+                    commandCombine += "${config.path.commandline}/${config.path.command.combine} "
+                    if (config.os == 'lin') { commandCombine += "\"${config.matlab.home}\" " }
+                    commandCombine += "\"${combineXMLFile.canonicalPath}\" "
                 println commandCombine
-//                def procCombine = commandCombine.execute()
-//                procCombine.waitFor()
-//
-//                if (procCombine.exitValue() != 0){
-//                    println " = = = ERROR = = = "
-//                    println "command: ${commandCombine}"
-//                    println "stdout: ${procCombine.in.text}"							
-//                    println "stderr: ${procCombine.err.text}"
-//                    println " = = = = = = = = = "
-//                }
+                def procCombine = commandCombine.execute()
+                procCombine.waitFor()
+
+                if (procCombine.exitValue() != 0){
+                    println " = = = ERROR = = = "
+                    println "command: ${commandCombine}"
+                    println "stdout: ${procCombine.in.text}"							
+                    println "stderr: ${procCombine.err.text}"
+                    println " = = = = = = = = = "
+                }
 
                 // mark it as done
                 queue.status = 2 as int

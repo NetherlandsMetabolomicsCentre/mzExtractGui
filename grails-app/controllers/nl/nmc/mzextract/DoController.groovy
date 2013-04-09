@@ -56,11 +56,11 @@ class DoController {
         if (projectFolder.isDirectory()){
 
             //prepare a run directory
-            def runFolder = new File(projectFolder.canonicalPath + '/runs/' + new Date().format('yyy-MM-dd hhmmss'))
+            def runFolder = new File(projectFolder.canonicalPath + '/runs/' + new Date().format('yyy-MM-dd_hh-mm-ss'))
             runFolder.mkdirs()				
-
+            
             //prepare the settings file
-            ProjectService.configFileFromRunFolder(runFolder) << "<config>\n" + settings.collect { setting -> "\t<" + setting.key + ">" + setting.value + "</" + setting.key + '>'}.join("\n") + "\n</config>"
+            ProjectService.configFileFromRunFolder(runFolder) << "<config>\n\t<outputpath>" + runFolder.canonicalPath + "</outputpath>\n\t" + settings.collect { setting -> "\t<" + setting.key + ">" + setting.value + "</" + setting.key + '>'}.join("\n") + "\n</config>"
 
             def encodedRunFolder = runFolder.name.encodeAsSHA1()
             def encodedProjectFolder = projectFolder.name.encodeAsSHA1()
