@@ -34,6 +34,7 @@
     <ul>
       <g:each in="${projectRunFolders}" var="${runFolder}">
         <li>
+          <g:link action="delrun" params="[project: projectFolder.name.encodeAsSHA1(), run: runFolder.name.encodeAsSHA1()]" onclick="return confirm('Are you sure you want to delete this run?')"><i class="icon-remove-sign"></i></g:link>
           <i class="icon-tasks"></i> 
           <g:link action="run" params="[project: projectFolder.name.encodeAsSHA1(), run: runFolder.name.encodeAsSHA1()]">run</g:link> 
           ${runFolder.name.replace('_',' ')}

@@ -3,6 +3,7 @@ package nl.nmc.mzextract
 class DoController {
     
     def ProjectService
+    def RunService
 
     def home(){}
     def help(){}
@@ -26,27 +27,9 @@ class DoController {
     def settings(){
 
     	def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(params.project)
-    	def settings = [:]
+    	def settings = RunService.settings().sort { a,b -> a.name <=> b.name }
         
-        if (projectFolder.isDirectory()){
-            
-            // read settings from params or use the default value
-            settings['mstype']                  = params.mstype ?: 5
-            settings['calibrationmass'] 	= params.calibrationmass ?: 1000
-            settings['noisethresholdfactor'] 	= params.noisethresholdfactor ?: 10
-            settings['ppmresolution'] 		= params.ppmresolution ?: 4000
-            settings['centroidthreshold'] 	= params.centroidthreshold ?: 1000
-            settings['splitratio'] 		= params.splitratio ?: 0.001
-            settings['mode']                    = params.mode == 'negative' ? params.mode : 'positive'
-            settings['sgfilt']                  = params.sgfilt ?: 1
-            
-            // users can add a file with mz values, 
-            // if this is present you can set this to 1 to use this filter
-            def mzFile = ProjectService.mzFileFromProjectFolder(projectFolder)
-            if (mzFile.exists()){            
-                settings['usemz'] = params.usemz == '0' ? '0' : '1'
-            }
-            
+        if (projectFolder?.isDirectory()){
             if (params.do){
                 redirect(action: "schedule", params: params)
             }
@@ -58,20 +41,20 @@ class DoController {
     def schedule(){
 
     	def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(params.project)
-    	def settings = params
+    	def settings = RunService.settings().sort { a,b -> a.name <=> b.name }
 
-        if (projectFolder.isDirectory()){
+        if (projectFolder?.isDirectory()){
 
             //prepare a run directory
             def runFolder = new File(projectFolder.canonicalPath + '/runs/' + new Date().format('yyyy-MM-dd_hh-mm-ss'))
-            runFolder.mkdirs()				
-            
+            runFolder.mkdirs()		
+                        
             //prepare the settings file
             def configXML = ""
                 configXML += "<config>\n"
                 configXML += "\t<outputpath>" + runFolder.canonicalPath + "</outputpath>\n"
-                configXML += settings.collect { setting -> "\t<" + setting.key + ">" + setting.value + "</" + setting.key + '>'}.join("\n")
-                if (settings['usemz'] == '1'){
+                configXML += settings.collect { setting -> "\t<" + setting.name + ">" + (params[setting.name] ?: setting.default) + "</" + setting.name + '>'}.join("\n")
+                if (params['usemz'].split(',')[0] == 'yes'){
                     def mzFile = ProjectService.mzFileFromProjectFolder(projectFolder)
                     if (mzFile.exists()){
                         configXML += "\n\t<mzfile>" + mzFile.canonicalPath + "</mzfile>"
@@ -102,6 +85,17 @@ class DoController {
         
         [projectFolder: projectFolder, run: run, outputFiles: outputFiles, inputFiles: inputFiles]
     } 
+    
+    def delrun(){
+        
+        def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.project, params.run)
+
+        // delete the run directory. This can cause problems when you delete a run which is still running!!!
+        run.deleteDir()
+        
+        // redirect to project page
+        redirect(action: "project", params: [project: params.project])                        
+    }
 
     def download(){
 
