@@ -1,5 +1,7 @@
 package nl.nmc.mzextract
 
+import groovyx.gpars.GParsPool
+
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class QueueJob {
