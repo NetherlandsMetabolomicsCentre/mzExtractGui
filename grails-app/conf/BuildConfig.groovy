@@ -43,6 +43,7 @@ grails.project.dependency.resolution = {
         compile 'org.apache.ant:ant-launcher:1.7.1'
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
         // runtime 'mysql:mysql-connector-java:5.1.20'
+        runtime "org.codehaus.gpars:gpars:1.0.0"
     }
 
     plugins {
