@@ -1,7 +1,5 @@
 package nl.nmc.mzextract
 
-import org.springframework.context.ApplicationContext
-import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class QueueJob {
@@ -15,7 +13,6 @@ class QueueJob {
     def execute() {
 
     	def config = ConfigurationHolder.config.mzextract
-    	def applicationLoc = ApplicationHolder.getApplication().getMainContext().getResource("/").getFile().getAbsolutePath().replace('web-app','')
 
     	// retrieve all runs that have status 0 (waiting)
         def queuedRuns = Queue.findAllByStatus(0 as int)
