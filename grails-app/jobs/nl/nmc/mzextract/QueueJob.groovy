@@ -1,5 +1,7 @@
 package nl.nmc.mzextract
 
+import groovyx.gpars.GParsPool
+
 import org.springframework.context.ApplicationContext
 import org.codehaus.groovy.grails.commons.ApplicationHolder
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
@@ -35,23 +37,25 @@ class QueueJob {
                 def inputFiles = ProjectService.mzxmlFilesFromProjectFolder(projectFolder)  
                 def configFile = ProjectService.configFileFromRunFolder(run)
             
-                inputFiles.each { file ->
-                    def commandExtract = ""
-                        commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
-                        if (config.os == 'lin') { commandExtract += "\"${config.matlab.home}\" "} // add path to MatLab for linux
-                        commandExtract += "\"${file.canonicalPath}\" " // add mzXML file
-                        commandExtract += "\"${configFile.canonicalPath}\" " // add config file
-                    println commandExtract
-                    if (config.os != 'osx'){
-                        def procExtract = commandExtract.execute()
-                        procExtract.waitFor()
+                GParsPool.withPool(10) {
+                    inputFiles.eachParallel { file ->
+                        def commandExtract = ""
+                            commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
+                            if (config.os == 'lin') { commandExtract += "\"${config.matlab.home}\" "} // add path to MatLab for linux
+                            commandExtract += "\"${file.canonicalPath}\" " // add mzXML file
+                            commandExtract += "\"${configFile.canonicalPath}\" " // add config file
+                        println commandExtract
+                        if (config.os != 'osx'){
+                            def procExtract = commandExtract.execute()
+                            procExtract.waitFor()
 
-                        if (procExtract.exitValue() != 0){
-                            println " = = = ERROR = = = "
-                            println "command: ${commandExtract}"
-                            println "stdout: ${procExtract.in.text}"							
-                            println "stderr: ${procExtract.err.text}"
-                            println " = = = = = = = = = "
+                            if (procExtract.exitValue() != 0){
+                                println " = = = ERROR = = = "
+                                println "command: ${commandExtract}"
+                                println "stdout: ${procExtract.in.text}"							
+                                println "stderr: ${procExtract.err.text}"
+                                println " = = = = = = = = = "
+                            }
                         }
                     }
                 }
