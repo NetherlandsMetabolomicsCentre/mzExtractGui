@@ -16,15 +16,15 @@ class QueueJob {
 
     	def config = ConfigurationHolder.config.mzextract
 
-    	// retrieve all runs that have status 0 (waiting)
-        def queuedRuns = Queue.findAllByStatus(0 as int)
+    	// retrieve all runs that have status 2 (waiting to run)
+        def queuedRuns = Queue.findAllByStatus(2 as int)
 
         if (queuedRuns){
             // get the oldest one
             def queue = queuedRuns.sort { a,b -> a.dateCreated <=> b.dateCreated }[0]
             
             // mark it as running
-            queue.status = 1 as int
+            queue.status = 3 as int
             queue.save(flush: true)                    
 
             try {
@@ -34,7 +34,7 @@ class QueueJob {
                 def inputFiles = ProjectService.mzxmlFilesFromProjectFolder(projectFolder)  
                 def configFile = ProjectService.configFileFromRunFolder(run)
             
-                GParsPool.withPool(10) {
+                GParsPool.withPool() {
                     inputFiles.eachParallel { file ->
                         def commandExtract = ""
                             commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
@@ -88,7 +88,7 @@ class QueueJob {
                 }
 
                 // mark it as done
-                queue.status = 2 as int
+                queue.status = 4 as int
                 queue.save(flush: true)			
             } catch (e) {
 

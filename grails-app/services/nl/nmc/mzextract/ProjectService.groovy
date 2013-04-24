@@ -3,6 +3,7 @@ package nl.nmc.mzextract
 class ProjectService {
     
     def grailsApplication 
+    def runService
     
     // returns a File object of the directory where the projects are
     def projectsFolder(){
@@ -37,7 +38,7 @@ class ProjectService {
     def mzFileFromProjectFolder(File projectFolder){    
         return new File(projectFolder.canonicalPath + '/mzs.txt')
     }
-    
+        
     // returns a list of File objects, each representing a run done on the project data
     def runFoldersFromProjectFolder(File projectFolder){
         

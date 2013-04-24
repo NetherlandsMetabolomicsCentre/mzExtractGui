@@ -5,9 +5,14 @@
   </head>
   <body>
     <h2>Run</h2>
-    project: <g:link action="project" params="[project: projectFolder.name.encodeAsSHA1()]">${projectFolder.name}</g:link>
+    <p>project: <g:link action="project" params="[project: projectFolder.name.encodeAsSHA1()]">${projectFolder.name}</g:link><br /></p>
+    <ul><mzextract:projectRun project="${projectFolder}" run="${run}" /></ul>
+  
+    <h3>settings</h3>    
+    <mzextract:settingsForm settings="${settings}" project="${projectFolder}"/>    
+  
   <h3>inputFiles</h3>
-  <ul>
+  <ul> 
     <g:each in="${inputFiles.sort()}" var="${inputFile}">
       <li><i class="icon-signal"></i> ${inputFile.name} (${new Date(inputFile.lastModified())})</li>
     </g:each>

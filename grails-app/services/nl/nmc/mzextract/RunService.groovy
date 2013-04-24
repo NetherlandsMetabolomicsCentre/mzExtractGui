@@ -18,4 +18,8 @@ class RunService {
             
         return settings
     }
+    
+    def status(String projectSha1, String runSha1){
+        return Queue.findByProjectAndRun(projectSha1, runSha1)?.status ?: 0
+    }    
 }

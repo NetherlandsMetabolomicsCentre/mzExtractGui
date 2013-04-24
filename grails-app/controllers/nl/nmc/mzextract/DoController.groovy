@@ -19,71 +19,58 @@ class DoController {
     	[   
             projectFolder: projectFolder,
             projectMzxmlFiles: ProjectService.mzxmlFilesFromProjectFolder(projectFolder),
-            projectRunFolders: ProjectService.runFoldersFromProjectFolder(projectFolder),
             projectMzFile: ProjectService.mzFileFromProjectFolder(projectFolder)
         ]
     }
 
-    def settings(){
-
-    	def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(params.project)
-    	def settings = RunService.settings().sort { a,b -> a.name <=> b.name }
+    def run(){
         
-        if (projectFolder?.isDirectory()){
-            if (params.do){
-                redirect(action: "schedule", params: params)
-            }
-        }
-
-    	[projectFolder: projectFolder, settings: settings]
-    }
-
-    def schedule(){
-
-    	def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(params.project)
-    	def settings = RunService.settings().sort { a,b -> a.name <=> b.name }
-
-        if (projectFolder?.isDirectory()){
-
+        def project = ProjectService.projectFolderFromSHA1EncodedProjectName(params.project)
+        def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.project, params.run) ?: null
+        
+        // create the required directories before we continue
+        if (run == null){
             //prepare a run directory
-            def runFolder = new File(projectFolder.canonicalPath + '/runs/' + new Date().format('yyyy-MM-dd_hh-mm-ss'))
-            runFolder.mkdirs()		
-                        
-            //prepare the settings file
-            def configXML = ""
+            run = new File(project.canonicalPath + '/runs/' + new Date().format('yyyy-MM-dd_hh-mm-ss'))
+            run.mkdirs()
+
+            def runSha1 = run.name.encodeAsSHA1()
+            def projectSha1 = project.name.encodeAsSHA1()                
+
+            //queue run
+            new Queue(project: projectSha1, run: runSha1, status:1 as int).save()
+        }        
+        
+    	def settings = RunService.settings().sort { a,b -> a.name <=> b.name }        
+        def outputFiles = ProjectService.runFolderFilesFromRunFolder(run)
+        def inputFiles = ProjectService.mzxmlFilesFromProjectFolder(project)
+        
+        if (project?.isDirectory()){
+
+            if (params.do){
+                //prepare the settings file
+                def configXML = ""
                 configXML += "<config>\n"
-                configXML += "\t<outputpath>" + runFolder.canonicalPath + "</outputpath>\n"
+                configXML += "\t<outputpath>" + run.canonicalPath + "</outputpath>\n"
                 configXML += settings.collect { setting -> "\t<" + setting.name + ">" + (params[setting.name] ?: setting.default) + "</" + setting.name + '>'}.join("\n")
                 if (params['usemz'].split(',')[0] == 'yes'){
-                    def mzFile = ProjectService.mzFileFromProjectFolder(projectFolder)
+                    def mzFile = ProjectService.mzFileFromProjectFolder(project)
                     if (mzFile.exists()){
                         configXML += "\n\t<mzfile>" + mzFile.canonicalPath + "</mzfile>"
                     }
                 }
                 configXML += "\n</config>"
+
+                // save XML to config file
+                def configFile = ProjectService.configFileFromRunFolder(run)
+                if (configFile.exists()){
+                    configFile.delete()
+                }
+                configFile << configXML
+            }
+        }
                 
-            ProjectService.configFileFromRunFolder(runFolder) << configXML
-
-            def encodedRunFolder = runFolder.name.encodeAsSHA1()
-            def encodedProjectFolder = projectFolder.name.encodeAsSHA1()
-            
-            //queue run
-            new Queue(project: encodedProjectFolder, run: encodedRunFolder, status:0 as int).save()
-
-            // redirect to run page
-            redirect(action: "run", params: [project: encodedProjectFolder, run: encodedRunFolder])                
-        }         	
-    }
-
-    def run(){
-        
-        def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(params.project)
-        def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.project, params.run)
-        def outputFiles = ProjectService.runFolderFilesFromRunFolder(run)
-        def inputFiles = ProjectService.mzxmlFilesFromProjectFolder(projectFolder)
-
-        
-        [projectFolder: projectFolder, run: run, outputFiles: outputFiles, inputFiles: inputFiles]
+        [projectFolder: project, run: run, settings: settings, outputFiles: outputFiles, inputFiles: inputFiles]
     } 
     
     def delrun(){
@@ -91,19 +78,38 @@ class DoController {
         def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.project, params.run)
 
         // delete the run directory. This can cause problems when you delete a run which is still running!!!
-        run.deleteDir()
+        if (run.deleteDir()){
+            Queue.findByProjectAndRun(params.project, params.run)?.delete()
+        }
         
         // redirect to project page
         redirect(action: "project", params: [project: params.project])                        
     }
+    
+    def queue(){
+        
+        def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.project, params.run)
+
+        // delete all non xml files from the output directory.
+        ProjectService.runFolderFilesFromRunFolder(run).each { outFile ->
+            if (outFile.name.tokenize('.')[-1].toLowerCase() != 'xml'){
+                outFile.delete()
+            }        
+        }
+        
+        def queue = Queue.findByProjectAndRun(params.project, params.run)
+        if (queue){
+            queue.status = 2 as int
+            queue.save(flush: true)
+        } else {
+            new Queue(project: params.project, run: params.run, status:2 as int).save()
+        }
+        
+        // redirect to project page
+        redirect(action: "project", params: [project: params.project])                        
+    }    
 
     def download(){
-
-        def run
-        def project
-        def status = null
-        def outputFiles = []
-        def inputFiles = []
 
         if (params.id){
             def download = new File(new String(params.id.decodeBase64()))
