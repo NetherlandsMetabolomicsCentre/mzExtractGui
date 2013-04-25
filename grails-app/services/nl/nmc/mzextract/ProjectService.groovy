@@ -2,6 +2,8 @@ package nl.nmc.mzextract
 
 class ProjectService {
     
+    boolean transactional = false    
+    
     def grailsApplication 
     def runService
     
@@ -69,13 +71,13 @@ class ProjectService {
             }
     	}
         
-        return runFolderFiles  
-    } 
-    
-    // returns a File object of the config file of the run
-    def configFileFromRunFolder(File runFolder){
-        return new File(runFolder.canonicalPath + '/config.xml')
+        return runFolderFiles ?: []  
     }
+    
+    // returns a list of File objects, each representing a output file from the run folder
+    def runFolderOutputFilesFromRunFolder(File runFolder){        
+        return runFolderFilesFromRunFolder(runFolder).findAll { file -> file.name.tokenize('.')[-1].toLowerCase() != 'xml' }
+    }    
     
     // returns a list of File objects, each representing a mzXML file from the project data
     def mzxmlFilesFromProjectFolder(File projectFolder){

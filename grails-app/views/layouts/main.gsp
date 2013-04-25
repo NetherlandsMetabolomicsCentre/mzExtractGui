@@ -10,15 +10,17 @@
 		<title><g:layoutTitle default="mzExtract"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap.min.css')}" type="text/css">
-                <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">                
+                <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">  
+                <g:javascript library="jquery" />      
 		<style>
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
 			body { padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ }
 			ul { list-style: none; }
 		</style>
 
-		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-responsive.min.css')}" type="text/css">
-
+<!--		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-responsive.min.css')}" type="text/css">-->
+                <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>                
+                
 		<g:layoutHead/>
 		<r:layoutResources />
 	</head>
@@ -46,6 +48,7 @@
 	    <div class="container">		
 		<g:layoutBody/>
             </div> <!-- /container -->	
+            <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>           
             <g:javascript library="application"/>
             <r:layoutResources />
 	</body>

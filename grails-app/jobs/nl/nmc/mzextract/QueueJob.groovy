@@ -6,14 +6,15 @@ import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class QueueJob {
     
-    def ProjectService
+    def projectService
+    def runService
     
     static triggers = {
-        simple repeatInterval: 1000l
+        simple repeatInterval: 5000l
     }
 
     def execute() {
-
+        
     	def config = ConfigurationHolder.config.mzextract
 
     	// retrieve all runs that have status 2 (waiting to run)
@@ -27,32 +28,47 @@ class QueueJob {
             queue.status = 3 as int
             queue.save(flush: true)                    
 
-            try {
+            //try {
                 // and run it
-                def projectFolder = ProjectService.projectFolderFromSHA1EncodedProjectName(queue.project)
-                def run = ProjectService.runFolderFromSHA1EncodedProjectNameAndRunName(queue.project, queue.run)
-                def inputFiles = ProjectService.mzxmlFilesFromProjectFolder(projectFolder)  
-                def configFile = ProjectService.configFileFromRunFolder(run)
+                def projectFolder = projectService.projectFolderFromSHA1EncodedProjectName(queue.project)
+                def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(queue.project, queue.run)
+                def inputFiles = projectService.mzxmlFilesFromProjectFolder(projectFolder)  
+                def configFile = runService.configFileFromRunFolder(run)
             
-                GParsPool.withPool() {
+                GParsPool.withPool(1) {
                     inputFiles.eachParallel { file ->
-                        def commandExtract = ""
-                            commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
-                            if (config.os == 'lin') { commandExtract += "\"${config.matlab.home}\" "} // add path to MatLab for linux
-                            commandExtract += "\"${file.canonicalPath}\" " // add mzXML file
-                            commandExtract += "\"${configFile.canonicalPath}\" " // add config file
-                        println commandExtract
-                        if (config.os != 'osx'){
-                            def procExtract = commandExtract.execute()
-                            procExtract.waitFor()
+                        
+                        println configFile.text
+                        println runService.configFileFromRunFolder(run).text
+                        println ""
+                        
+                        //stop when config changed
+                        if (configFile.text == runService.configFileFromRunFolder(run).text){
+                        
+                            def commandExtract = ""
+                                commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
+                                if (config.os == 'lin') { commandExtract += "\"${config.matlab.home}\" "} // add path to MatLab for linux
+                                commandExtract += "\"${file.canonicalPath}\" " // add mzXML file
+                                commandExtract += "\"${configFile.canonicalPath}\" " // add config file
+                            println commandExtract
+                            if (config.os != 'osx'){
+                                def procExtract = commandExtract.execute()
+                                procExtract.waitFor()
 
-                            if (procExtract.exitValue() != 0){
-                                println " = = = ERROR = = = "
-                                println "command: ${commandExtract}"
-                                println "stdout: ${procExtract.in.text}"							
-                                println "stderr: ${procExtract.err.text}"
-                                println " = = = = = = = = = "
+                                if (procExtract.exitValue() != 0){
+                                    println " = = = ERROR = = = "
+                                    println "command: ${commandExtract}"
+                                    println "stdout: ${procExtract.in.text}"							
+                                    println "stderr: ${procExtract.err.text}"
+                                    println " = = = = = = = = = "
+                                }
+                            } else {
+                                // for osx we simulate a processing time of 30 seconds
+                                println "Sleeping 30 seconds..."
+                                sleep(30*1000)
                             }
+                        } else {
+                            println "STOPPING, CONFIG CHANGED!!!"
                         }
                     }
                 }
@@ -90,15 +106,15 @@ class QueueJob {
                 // mark it as done
                 queue.status = 4 as int
                 queue.save(flush: true)			
-            } catch (e) {
-
-                println e
-                println e.dump()
-
-                // mark it as failed
-                queue.status = -1 as int
-                queue.save(flush: true)							
-            }
+//            } catch (e) {
+//
+//                println e
+//                println e.dump()
+//
+//                // mark it as failed
+//                queue.status = -1 as int
+//                queue.save(flush: true)							
+//            }
         }
     }
 }
