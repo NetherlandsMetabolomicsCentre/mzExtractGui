@@ -28,22 +28,20 @@ class QueueJob {
             queue.status = 3 as int
             queue.save(flush: true)                    
 
-            //try {
+            try {
                 // and run it
                 def projectFolder = projectService.projectFolderFromSHA1EncodedProjectName(queue.project)
                 def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(queue.project, queue.run)
                 def inputFiles = projectService.mzxmlFilesFromProjectFolder(projectFolder)  
                 def configFile = runService.configFileFromRunFolder(run)
+                
+                def configFileText = configFile.text.encodeAsBase64().toString() 
             
                 GParsPool.withPool(1) {
                     inputFiles.eachParallel { file ->
-                        
-                        println configFile.text
-                        println runService.configFileFromRunFolder(run).text
-                        println ""
-                        
+                                            
                         //stop when config changed
-                        if (configFile.text == runService.configFileFromRunFolder(run).text){
+                        if (configFileText == runService.configFileFromRunFolder(run).text){
                         
                             def commandExtract = ""
                                 commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
@@ -63,12 +61,15 @@ class QueueJob {
                                     println " = = = = = = = = = "
                                 }
                             } else {
-                                // for osx we simulate a processing time of 30 seconds
-                                println "Sleeping 30 seconds..."
-                                sleep(30*1000)
+                                // for osx we simulate a processing time of x seconds
+                                def delay = 20 as int
+                                println "Sleeping ${delay} seconds..."
+                                sleep(delay*1000)
                             }
                         } else {
+                            println "###########################"
                             println "STOPPING, CONFIG CHANGED!!!"
+                            println "###########################"
                         }
                     }
                 }
@@ -106,15 +107,15 @@ class QueueJob {
                 // mark it as done
                 queue.status = 4 as int
                 queue.save(flush: true)			
-//            } catch (e) {
-//
-//                println e
-//                println e.dump()
-//
-//                // mark it as failed
-//                queue.status = -1 as int
-//                queue.save(flush: true)							
-//            }
+            } catch (e) {
+
+                println e
+                println e.dump()
+
+                // mark it as failed
+                queue.status = -1 as int
+                queue.save(flush: true)							
+            }
         }
     }
 }

@@ -43,6 +43,7 @@ class RunService {
         //prepare the settings file
         def configXML = ""
         configXML += "<config>\n"
+        configXML += "\t<created>" + new Date().time + "</created>\n"
         configXML += "\t<outputpath>" + run.canonicalPath + "</outputpath>\n"
         configXML += settings.findAll{ name, setting -> setting.value != '' }.collect { name, setting -> "\t<" + name + ">" + setting.value + "</" + name + '>'}.join("\n")
         
