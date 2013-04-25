@@ -15,22 +15,32 @@
       <p><font color="red">${flash.message}</font></p>
     </g:if>
     
-    <table>
+    <table width="100%">
       <tr>
-        <td valign="top">
+        <td width="1" valign="top">
 
           <h3>input files</h3>
           <ul> 
             <g:each in="${inputFiles.sort()}" var="${inputFile}">
-              <li><i class="icon-signal"></i> ${inputFile.name} (${new Date(inputFile.lastModified())})</li>
+              <li>
+                <div class="hint  hint--right hint--rounded" data-hint="${new Date(inputFile.lastModified())}">
+                  <i class="icon-signal"></i> 
+                  <g:link action="download" id="${(inputFile.canonicalPath).encodeAsBase64().toString()}">${inputFile.name}</g:link>
+                </div>
+              </li>
             </g:each>
           </ul>
         </td>
-        <td valign="top">
+        <td width="1" valign="top">
           <h3>output files</h3>
           <ul>
             <g:each in="${outputFiles.sort()}" var="${outputFile}">
-              <li><i class="icon-download"></i> <g:link action="download" id="${(outputFile.canonicalPath).encodeAsBase64().toString()}">${outputFile.name}</g:link> (${new Date(outputFile.lastModified())})</li>
+              <li>
+                <div class="hint  hint--right hint--rounded" data-hint="${new Date(outputFile.lastModified())}">
+                  <i class="icon-download"></i> 
+                  <g:link action="download" id="${(outputFile.canonicalPath).encodeAsBase64().toString()}">${outputFile.name}</g:link>
+                </div>
+              </li>
             </g:each>		
           </ul>          
         </td>

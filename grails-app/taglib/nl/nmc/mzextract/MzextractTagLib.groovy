@@ -80,7 +80,7 @@ class MzextractTagLib {
         out << '&nbsp;'        
         out <<    run.name.replace('_',' ')
         out << '&nbsp;'        
-        out << '  <div class="hint  hint--right hint--rounded" data-hint="status: 0=Waiting, 1=Queued, 3=Running, 4=Done, -1=Failed">'
+        out << '  <div class="hint  hint--right hint--rounded" data-hint="status: 10=New, 11=Stopped, 20=Waiting, 30=Running, 40=Finished, -1=Failed">'
         out <<      runService.status(projectSha1,runSha1)
         out << '  </div>'        
         out << '</li>'

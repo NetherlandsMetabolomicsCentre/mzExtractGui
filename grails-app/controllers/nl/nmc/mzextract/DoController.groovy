@@ -65,6 +65,12 @@ class DoController {
         // just re-write the existing config to change the file.date which will stop the Job from processing new files
         runService.writeSettings(project, run, [:])
         
+        def queue = Queue.findByProjectAndRun(params.project, params.run)
+        if (queue){
+            queue.status = 11 as int
+            queue.save(flush: true)
+        }        
+        
         // redirect to run page
         redirect(action: "run", params: [project: params.project, run: params.run])        
     }
@@ -82,10 +88,10 @@ class DoController {
         
         def queue = Queue.findByProjectAndRun(params.project, params.run)
         if (queue){
-            queue.status = 2 as int
+            queue.status = 20 as int
             queue.save(flush: true)
         } else {
-            new Queue(project: params.project, run: params.run, status:2 as int).save()
+            new Queue(project: params.project, run: params.run, status:20 as int).save()
         }
         
         // redirect to run page

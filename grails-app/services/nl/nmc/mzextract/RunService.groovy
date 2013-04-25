@@ -18,7 +18,7 @@ class RunService {
         def projectSha1 = project.name.encodeAsSHA1()                
 
         //queue run
-        new Queue(project: projectSha1, run: runSha1, status:1 as int).save()
+        new Queue(project: projectSha1, run: runSha1, status:10 as int).save()
         
         return run
     }

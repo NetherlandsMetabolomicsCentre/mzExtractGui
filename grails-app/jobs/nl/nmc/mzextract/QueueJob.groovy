@@ -17,15 +17,15 @@ class QueueJob {
         
     	def config = ConfigurationHolder.config.mzextract
 
-    	// retrieve all runs that have status 2 (waiting to run)
-        def queuedRuns = Queue.findAllByStatus(2 as int)
+    	// retrieve all runs that have status 20 (waiting to run)
+        def queuedRuns = Queue.findAllByStatus(20 as int)
 
         if (queuedRuns){
             // get the oldest one
             def queue = queuedRuns.sort { a,b -> a.dateCreated <=> b.dateCreated }[0]
             
             // mark it as running
-            queue.status = 3 as int
+            queue.status = 30 as int
             queue.save(flush: true)                    
 
             try {
@@ -41,7 +41,7 @@ class QueueJob {
                     inputFiles.eachParallel { file ->
                                             
                         //stop when config changed
-                        if (configFileText == runService.configFileFromRunFolder(run).text){
+                        if (configFileText == runService.configFileFromRunFolder(run).text.encodeAsBase64().toString()){
                         
                             def commandExtract = ""
                                 commandExtract += "${config.path.commandline}/${config.path.command.extract} " // add executable
@@ -105,12 +105,12 @@ class QueueJob {
                 }
 
                 // mark it as done
-                queue.status = 4 as int
+                queue.status = 40 as int
                 queue.save(flush: true)			
             } catch (e) {
 
-                println e
-                println e.dump()
+                //println e
+                //println e.dump()
 
                 // mark it as failed
                 queue.status = -1 as int
