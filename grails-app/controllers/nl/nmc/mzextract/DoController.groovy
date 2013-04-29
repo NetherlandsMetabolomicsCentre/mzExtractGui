@@ -113,4 +113,11 @@ class DoController {
             render "file not found"
         }
     }
+    
+    def runButtons(){ 
+        def project = projectService.projectFolderFromSHA1EncodedProjectName(params.projectSha1)                
+        def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.projectSha1, params.runSha1)
+        
+        render mzextract.runButtons(project: project, run: run)
+    }
 }

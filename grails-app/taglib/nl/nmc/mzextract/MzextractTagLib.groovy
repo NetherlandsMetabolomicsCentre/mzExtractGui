@@ -93,7 +93,58 @@ class MzextractTagLib {
         def projectSha1 = project.name.encodeAsSHA1()
         def run = attrs.run
         def runSha1 = run.name.encodeAsSHA1()
- 
+        
+        def buttonBoxId = "buttonBox_${projectSha1}_${runSha1}"
+        
+        out << '<div style="height:50px;" id="'+ buttonBoxId + '">'        
+        out << runButtons(project: project, run: run)       
+        out << '</div>'        
+        
+        def jsReload = """
+        
+        <script type="text/javascript">
+        function AjaxReLoad(){
+        var xmlHttp;
+        try{ xmlHttp=new XMLHttpRequest(); } // Firefox, Opera 8.0+, Safari
+        catch (e){
+        try{ xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); } // Internet Explorer
+        catch (e){
+        try{ xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+        catch (e){
+        alert("No AjaxReLoad!?");
+        return false;
+        }
+        }
+        }
+
+        xmlHttp.onreadystatechange=function(){
+        if(xmlHttp.readyState==4){
+        document.getElementById('${buttonBoxId}').innerHTML=xmlHttp.responseText;
+        setTimeout('AjaxReLoad()',2500);
+        }
+        }
+        xmlHttp.open("GET","${g.createLink(controller: 'do', action: 'runButtons', params:[projectSha1:projectSha1 , runSha1:runSha1], base: resource(dir:''))}",true);
+        xmlHttp.send(null);
+        }
+
+        window.onload=function(){ setTimeout('AjaxReLoad()',100); }
+        </script>"""
+        
+        out << jsReload
+    }
+
+    def runButtons = { attrs, body ->
+        
+        def project = attrs.project
+        def projectSha1 = project.name.encodeAsSHA1()
+        def run = attrs.run
+        def runSha1 = run.name.encodeAsSHA1()
+        
+        out << '&nbsp;'                
+        out << '<div class="hint hint--right hint--rounded" data-hint="status">'
+        out <<      runStatus(projectSha1:projectSha1, runSha1:runSha1)
+        out << '</div>'                
+        out << '&nbsp;' 
         out << '<div class="hint hint--right hint--rounded" data-hint="settings">'
         out <<      '<a href="#settings" role="button" class="btn btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
         out << '</div>'
@@ -104,10 +155,29 @@ class MzextractTagLib {
         out << '&nbsp;'        
         out << '<div class="hint hint--right hint--rounded" data-hint="stop">'
         out <<      g.link(action:'stoprun', params:[project: projectSha1, run: runSha1], class:"btn btn-large", onclick:"return confirm('Are you sure you want to stop this run?')") { '<i class="icon-stop"></i>' }
-        out << '</div>'        
+        out << '</div>' 
         out << '&nbsp;'        
         out << '<div class="hint hint--right hint--rounded" data-hint="delete">'
         out <<      g.link(action:'delrun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-danger", onclick:"return confirm('Are you sure you want to delete this run?')") { '<i class="icon-remove-sign"></i>' }
         out << '</div>' 
+    }
+    
+    def runStatus = { attrs, body ->        
+        
+        def status = runService.status(attrs.projectSha1, attrs.runSha1) ?: ''
+        
+        out << '<button disabled class="btn btn-large" type="button" style="width:200px;'
+        
+        switch(status){
+            case '-1':    out << '"> failed <i class="icon-warning-sign"></i>'; break;            
+            case '10':    out << '"> new <i class="icon-plus"></i>'; break;            
+            case '11':    out << '"> stopped <i class="icon-stop"></i>'; break;            
+            case '20':    out << '"> waiting <i class="icon-time"></i>'; break;            
+            case '30':    out << '"> running <i class="icon-repeat"></i>'; break;                            
+            case '40':    out << '"> finished <i class="icon-ok"></i>'; break;                
+            default:    out << 'unknown'; break;
+        } 
+        
+        out << '    </button>'
     }    
 }

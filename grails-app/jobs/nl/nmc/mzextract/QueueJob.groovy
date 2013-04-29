@@ -23,6 +23,7 @@ class QueueJob {
         if (queuedRuns){
             // get the oldest one
             def queue = queuedRuns.sort { a,b -> a.dateCreated <=> b.dateCreated }[0]
+            def queueID = queue.id
             
             // mark it as running
             queue.status = 30 as int
@@ -36,6 +37,8 @@ class QueueJob {
                 def configFile = runService.configFileFromRunFolder(run)
                 
                 def configFileText = configFile.text.encodeAsBase64().toString() 
+                
+                queue = null // destroy object :(
             
                 GParsPool.withPool(1) {
                     inputFiles.eachParallel { file ->
@@ -62,7 +65,7 @@ class QueueJob {
                                 }
                             } else {
                                 // for osx we simulate a processing time of x seconds
-                                def delay = 20 as int
+                                def delay = 10 as int
                                 println "Sleeping ${delay} seconds..."
                                 sleep(delay*1000)
                             }
@@ -105,6 +108,7 @@ class QueueJob {
                 }
 
                 // mark it as done
+                queue = Queue.get(queueID)                
                 queue.status = 40 as int
                 queue.save(flush: true)			
             } catch (e) {
@@ -113,6 +117,7 @@ class QueueJob {
                 //println e.dump()
 
                 // mark it as failed
+                queue = Queue.get(queueID)                
                 queue.status = -1 as int
                 queue.save(flush: true)							
             }

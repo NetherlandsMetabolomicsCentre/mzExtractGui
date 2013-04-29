@@ -5,9 +5,9 @@
   </head>
   <body>
     
-    <div style="float: right;"><mzextract:settingsForm settings="${settings}" project="${project}" run="${run}"/></div>
+    <mzextract:settingsForm settings="${settings}" project="${project}" run="${run}"/>
     
-    <h2><g:link action="project" params="[project: project.name.encodeAsSHA1()]">${project.name}</g:link> <small>${run.name.replace('_',' ')}</small></h2>    
+    <h2><g:link action="project" params="[project: project.name.encodeAsSHA1()]">${project.name}</g:link> <small>${run.name.replace('_',' ')}</small></h2>
         
     <mzextract:projectRunButtons project="${project}" run="${run}" />
     
@@ -45,6 +45,6 @@
           </ul>          
         </td>
       </tr>
-    </table>    
+    </table> 
 </body>
 </html>
