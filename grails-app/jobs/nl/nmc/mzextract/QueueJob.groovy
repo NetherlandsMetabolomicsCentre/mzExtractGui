@@ -108,18 +108,24 @@ class QueueJob {
                 }
 
                 // mark it as done
-                queue = Queue.get(queueID)                
-                queue.status = 40 as int
-                queue.save(flush: true)			
+                queue = Queue.get(queueID)
+                if (queue){
+                    queue.status = 40 as int
+                    queue.save(flush: true)
+                    queue = null
+                }
             } catch (e) {
 
                 //println e
                 //println e.dump()
 
                 // mark it as failed
-                queue = Queue.get(queueID)                
-                queue.status = -1 as int
-                queue.save(flush: true)							
+                queue = Queue.get(queueID) 
+                if (queue){
+                    queue.status = -1 as int
+                    queue.save(flush: true)							
+                    queue = null
+                }
             }
         }
     }
