@@ -140,25 +140,43 @@ class MzextractTagLib {
         def run = attrs.run
         def runSha1 = run.name.encodeAsSHA1()
         
-        out << '&nbsp;'                
-        out << '<div class="hint hint--right hint--rounded" data-hint="status">'
-        out <<      runStatus(projectSha1:projectSha1, runSha1:runSha1)
-        out << '</div>'                
+        def status = runService.status(projectSha1, runSha1) as int
+         
         out << '&nbsp;' 
         out << '<div class="hint hint--right hint--rounded" data-hint="settings">'
-        out <<      '<a href="#settings" role="button" class="btn btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
+        if (status < 20 || status >= 40 ){
+            out <<      '<a href="#settings" role="button" class="btn btn-info btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
+        } else {
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
+        }
         out << '</div>'
         out << '&nbsp;'
         out << '<div class="hint hint--right hint--rounded" data-hint="start">'
-        out <<      g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-large", onclick:"return confirm('Are you sure you want to start this run? Existing data will be deleted first!')") { '<i class="icon-play"></i>' }         
+        if (status < 20 || status >= 40 ){        
+            out <<      g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-success btn-large", onclick:"return confirm('Are you sure you want to start this run? Existing data will be deleted first!')") { '<i class="icon-play"></i>' }         
+        } else {
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-play"></i></a>'
+        }
         out << '</div>'        
         out << '&nbsp;'        
         out << '<div class="hint hint--right hint--rounded" data-hint="stop">'
-        out <<      g.link(action:'stoprun', params:[project: projectSha1, run: runSha1], class:"btn btn-large", onclick:"return confirm('Are you sure you want to stop this run?')") { '<i class="icon-stop"></i>' }
+        if (status >= 20 && status < 40 ){        
+            out <<      g.link(action:'stoprun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-warning", onclick:"return confirm('Are you sure you want to stop this run?')") { '<i class="icon-stop"></i>' }
+        } else {
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-stop"></i></a>'            
+        }
         out << '</div>' 
+        out << '&nbsp;'                
+        out << '<div class="hint hint--right hint--rounded" data-hint="status">'
+        out <<      runStatus(projectSha1:projectSha1, runSha1:runSha1)
+        out << '</div>'         
         out << '&nbsp;'        
         out << '<div class="hint hint--right hint--rounded" data-hint="delete">'
-        out <<      g.link(action:'delrun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-danger", onclick:"return confirm('Are you sure you want to delete this run?')") { '<i class="icon-remove-sign"></i>' }
+        if (status < 20 || status >= 40 ){        
+            out <<      g.link(action:'delrun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-danger", onclick:"return confirm('Are you sure you want to delete this run?')") { '<i class="icon-remove-sign"></i>' }
+        } else {
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-remove-sign"></i></a>'
+        }
         out << '</div>' 
     }
     
@@ -173,9 +191,9 @@ class MzextractTagLib {
             case '10':    out << '"> new <i class="icon-plus"></i>'; break;            
             case '11':    out << '"> stopped <i class="icon-stop"></i>'; break;            
             case '20':    out << '"> waiting <i class="icon-time"></i>'; break;            
-            case '30':    out << '"> running <i class="icon-repeat"></i>'; break;                            
+            case '30':    out << '"> running <img id="spinner" width="18px" src="' + resource(dir: 'images', file: 'spin.gif') + '" alt="Spinner"/>'; break;                            
             case '40':    out << '"> finished <i class="icon-ok"></i>'; break;                
-            default:    out << 'unknown'; break;
+            default:    out << '"> unknown'; break;
         } 
         
         out << '    </button>'
