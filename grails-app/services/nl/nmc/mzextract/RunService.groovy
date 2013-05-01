@@ -35,12 +35,15 @@ class RunService {
         def xmlSettings = null
         def configFile = configFileFromRunFolder(run)
         if (configFile.exists()){
+            // read old settings
             xmlSettings = new XmlSlurper().parseText(configFile.text)
+            //delete old settings
+            configFile.delete()            
         }            
             
-        // add all config settings from file which are not in the parameters, or use the default
+        // add all config settings from file which are not in the parameters, or use the value
         settings.each { name, setting ->
-            settings[name]['value'] = parameters[name] ?: (xmlSettings?."${name}"?.text() ?: (setting['default'] ?: ''))
+            settings[name]['value'] = parameters[name] ?: (xmlSettings?."${name}"?.text() ?: (setting['value'] ?: ''))
         }
                 
         //prepare the settings file
@@ -58,8 +61,7 @@ class RunService {
         }
         configXML += "\n</config>"
 
-        // save XML to config file
-        if (configFile.exists()){ configFile.delete() }                
+        // save XML to config file                
         configFileFromRunFolder(run) << configXML
         
         return settings
@@ -70,15 +72,15 @@ class RunService {
     def settings() {
 
         def settings = [:]
-            settings['mstype'] = ['label':'MS Type', 'type':'number', 'default':'5', 'help':'MS type']
-            settings['calibrationmass'] = ['label':'Calibration mass', 'type':'number', 'default':'1000', 'help':'Calibration mass']
-            settings['noisethresholdfactor'] = ['label':'Noise threshold factor', 'type':'number', 'default':'10', 'help':'Noise threshold factor']
-            settings['ppmresolution'] = ['label':'PPM resolution', 'type':'number', 'default':'4000', 'help':'PPM resolution']
-            settings['centroidthreshold'] = ['label':'Centroid threshold', 'type':'number', 'default':'1000', 'help':'Centroid threshold']
-            settings['splitratio'] = ['label':'Split ratio', 'type':'number', 'default':'0.001', 'help':'Split ratio']
-            settings['mode'] = ['label':'Mode', 'type':'select', 'default':'positive', 'options': [['value':'positive', 'label':'positive'],['value':'negative', 'label':'negative']], 'help':'Mode (positive/negative)']
-            settings['sgfilt'] = ['label':'SG filter', 'type':'number', 'default':'1', 'help':'SG filter']
-            settings['usemz'] = ['label':'Use the mz file', 'default':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']
+            settings['mstype'] = ['label':'MS Type', 'type':'number', 'value':'5', 'help':'MS type']
+            settings['calibrationmass'] = ['label':'Calibration mass', 'type':'number', 'value':'1000', 'help':'Calibration mass']
+            settings['noisethresholdfactor'] = ['label':'Noise threshold factor', 'type':'number', 'value':'10', 'help':'Noise threshold factor']
+            settings['ppmresolution'] = ['label':'PPM resolution', 'type':'number', 'value':'4000', 'help':'PPM resolution']
+            settings['centroidthreshold'] = ['label':'Centroid threshold', 'type':'number', 'value':'1000', 'help':'Centroid threshold']
+            settings['splitratio'] = ['label':'Split ratio', 'type':'number', 'value':'0.001', 'help':'Split ratio']
+            settings['mode'] = ['label':'Mode', 'type':'select', 'value':'positive', 'options': [['value':'positive', 'label':'positive'],['value':'negative', 'label':'negative']], 'help':'Mode (positive/negative)']
+            settings['sgfilt'] = ['label':'SG filter', 'type':'number', 'value':'1', 'help':'SG filter']
+            settings['usemz'] = ['label':'Use the mz file', 'value':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']
             
         return settings
     }

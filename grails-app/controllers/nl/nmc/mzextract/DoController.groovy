@@ -80,7 +80,7 @@ class DoController {
 
         // delete all non xml files from the output directory.
         projectService.runFolderFilesFromRunFolder(run).each { outFile ->
-            if (outFile.name.tokenize('.')[-1].toLowerCase() != 'xml'){
+            if (outFile.name != 'config.xml'){
                 outFile.delete()
             }        
         }
