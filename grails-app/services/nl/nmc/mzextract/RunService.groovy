@@ -15,7 +15,10 @@ class RunService {
         run.mkdirs()
 
         def runSha1 = run.name.encodeAsSHA1()
-        def projectSha1 = project.name.encodeAsSHA1()                
+        def projectSha1 = project.name.encodeAsSHA1()   
+        
+        // write settings
+        writeSettings(project, run, [:])
 
         //queue run
         new Queue(project: projectSha1, run: runSha1, status:10 as int).save()
@@ -75,7 +78,7 @@ class RunService {
             settings['splitratio'] = ['label':'Split ratio', 'type':'number', 'default':'0.001', 'help':'Split ratio']
             settings['mode'] = ['label':'Mode', 'type':'select', 'default':'positive', 'options': [['value':'positive', 'label':'positive'],['value':'negative', 'label':'negative']], 'help':'Mode (positive/negative)']
             settings['sgfilt'] = ['label':'SG filter', 'type':'number', 'default':'1', 'help':'SG filter']
-            settings['usemz'] = ['label':'Use the mz file', 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']
+            settings['usemz'] = ['label':'Use the mz file', 'default':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']
             
         return settings
     }

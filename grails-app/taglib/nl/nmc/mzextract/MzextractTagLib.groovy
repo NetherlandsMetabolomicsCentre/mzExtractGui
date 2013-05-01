@@ -98,7 +98,8 @@ class MzextractTagLib {
         out <<      projectRunButtons(project: project, run: run)       
         out << '</div>'
 
-        def outputFiles = projectService.runFolderOutputFilesFromRunFolder(run)
+        //def outputFiles = projectService.runFolderOutputFilesFromRunFolder(run)
+        def outputFiles = projectService.runFolderFilesFromRunFolder(run)
         def inputFiles = projectService.mzxmlFilesFromProjectFolder(project)
         
         out << '<table width="100%">'
