@@ -87,53 +87,56 @@ class MzextractTagLib {
         
     }
     
-    def projectRunButtons = { attrs, body ->
+    def runDetails = { attrs, body ->
         
-        def project = attrs.project
-        def projectSha1 = project.name.encodeAsSHA1()
-        def run = attrs.run
-        def runSha1 = run.name.encodeAsSHA1()
+        def projectSha1 = attrs.projectSha1
+        def project = projectService.projectFolderFromSHA1EncodedProjectName(projectSha1)
+        def runSha1 = attrs.runSha1
+        def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(projectSha1, runSha1)
         
-        def buttonBoxId = "buttonBox_${projectSha1}_${runSha1}"
-        
-        out << '<div style="height:50px;" id="'+ buttonBoxId + '">'        
-        out << runButtons(project: project, run: run)       
-        out << '</div>'        
-        
-        def jsReload = """
-        
-        <script type="text/javascript">
-        function AjaxReLoad(){
-        var xmlHttp;
-        try{ xmlHttp=new XMLHttpRequest(); } // Firefox, Opera 8.0+, Safari
-        catch (e){
-        try{ xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); } // Internet Explorer
-        catch (e){
-        try{ xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
-        catch (e){
-        alert("No AjaxReLoad!?");
-        return false;
-        }
-        }
-        }
+        out << '<div style="height:50px;">'        
+        out <<      projectRunButtons(project: project, run: run)       
+        out << '</div>'
 
-        xmlHttp.onreadystatechange=function(){
-        if(xmlHttp.readyState==4){
-        document.getElementById('${buttonBoxId}').innerHTML=xmlHttp.responseText;
-        setTimeout('AjaxReLoad()',2500);
-        }
-        }
-        xmlHttp.open("GET","${g.createLink(controller: 'do', action: 'runButtons', params:[projectSha1:projectSha1 , runSha1:runSha1], base: resource(dir:''))}",true);
-        xmlHttp.send(null);
-        }
-
-        window.onload=function(){ setTimeout('AjaxReLoad()',100); }
-        </script>"""
+        def outputFiles = projectService.runFolderOutputFilesFromRunFolder(run)
+        def inputFiles = projectService.mzxmlFilesFromProjectFolder(project)
         
-        out << jsReload
+        out << '<table width="100%">'
+        out << '    <tr>'
+        out << '        <td width="1" valign="top">'
+        out << '            <h3>input files</h3>'
+        out << '            <ul>'
+        
+        inputFiles.sort().each { inputFile ->
+            out << '    <li>'
+            out << '        <div class="hint  hint--right hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
+            out << '            <i class="icon-signal"></i> '
+            out <<              g.link(action:"download", id:(inputFile.canonicalPath).encodeAsBase64().toString()) { inputFile.name }
+            out << '        </div>'
+            out << '    </li>'
+        }
+        out << '            </ul>'
+        out << '        </td>'
+        out << '        <td width="1" valign="top">'
+        out << '            <h3>output files</h3>'
+        out << '            <ul>'
+        
+        outputFiles.sort().each { outputFile ->
+            out << '    <li>'
+            out << '        <div class="hint  hint--right hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
+            out << '            <i class="icon-download"></i> '
+            out <<              g.link(action:"download", id:(outputFile.canonicalPath).encodeAsBase64().toString()) { outputFile.name }
+            out << '        </div>'
+            out << '    </li>'
+        }
+        
+        out << '            </ul>'
+        out << '        </td>'
+        out << '    </tr>'
+        out << '</table>' 
     }
-
-    def runButtons = { attrs, body ->
+    
+    def projectRunButtons = { attrs, body ->
         
         def project = attrs.project
         def projectSha1 = project.name.encodeAsSHA1()

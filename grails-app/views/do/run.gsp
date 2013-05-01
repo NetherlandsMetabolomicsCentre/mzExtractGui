@@ -8,43 +8,40 @@
     <mzextract:settingsForm settings="${settings}" project="${project}" run="${run}"/>
     
     <h2><g:link action="project" params="[project: project.name.encodeAsSHA1()]">${project.name}</g:link> <small>${run.name.replace('_',' ')}</small></h2>
-        
-    <mzextract:projectRunButtons project="${project}" run="${run}" />
-    
+
     <g:if test="${flash.message}">
       <p><font color="red">${flash.message}</font></p>
     </g:if>
     
-    <table width="100%">
-      <tr>
-        <td width="1" valign="top">
+    <div style="height:50px;" id="runDetails">
+      <mzextract:runDetails projectSha1="${project.name.encodeAsSHA1()}" runSha1="${run.name.encodeAsSHA1()}" />    
+    </div>
+    
+    <script type="text/javascript">
+        function AjaxReLoad(){
+            var xmlHttp;
+            try{ xmlHttp=new XMLHttpRequest(); } // Firefox, Opera 8.0+, Safari
+            catch (e){
+                try{ xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); } // Internet Explorer
+                catch (e){
+                    try{ xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
+                    catch (e){ return false;
+                    }
+                }
+            }
 
-          <h3>input files</h3>
-          <ul> 
-            <g:each in="${inputFiles.sort()}" var="${inputFile}">
-              <li>
-                <div class="hint  hint--right hint--rounded" data-hint="${new Date(inputFile.lastModified())}">
-                  <i class="icon-signal"></i> 
-                  <g:link action="download" id="${(inputFile.canonicalPath).encodeAsBase64().toString()}">${inputFile.name}</g:link>
-                </div>
-              </li>
-            </g:each>
-          </ul>
-        </td>
-        <td width="1" valign="top">
-          <h3>output files</h3>
-          <ul>
-            <g:each in="${outputFiles.sort()}" var="${outputFile}">
-              <li>
-                <div class="hint  hint--right hint--rounded" data-hint="${new Date(outputFile.lastModified())}">
-                  <i class="icon-download"></i> 
-                  <g:link action="download" id="${(outputFile.canonicalPath).encodeAsBase64().toString()}">${outputFile.name}</g:link>
-                </div>
-              </li>
-            </g:each>		
-          </ul>          
-        </td>
-      </tr>
-    </table> 
+            xmlHttp.onreadystatechange=function(){
+                if(xmlHttp.readyState==4){
+                    document.getElementById('runDetails').innerHTML=xmlHttp.responseText;
+                    setTimeout('AjaxReLoad()',2500);
+                }
+            }
+
+            xmlHttp.open("GET","${g.createLink(controller: 'do', action: 'runDetails', params:[projectSha1:project.name.encodeAsSHA1() , runSha1:run.name.encodeAsSHA1()], base: resource(dir:''))}",true);
+            xmlHttp.send(null);
+        }
+
+        window.onload=function(){ setTimeout('AjaxReLoad()',100); }
+    </script>  
 </body>
 </html>

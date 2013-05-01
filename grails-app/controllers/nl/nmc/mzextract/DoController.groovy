@@ -38,11 +38,8 @@ class DoController {
         
         // parse the parameters and save them to the XML file
         def settings = runService.writeSettings(project, run, params)
-        
-        def outputFiles = projectService.runFolderOutputFilesFromRunFolder(run)
-        def inputFiles = projectService.mzxmlFilesFromProjectFolder(project)
                 
-        [project: project, run: run, settings: settings, outputFiles: outputFiles, inputFiles: inputFiles]
+        [project: project, run: run, settings: settings]
     } 
     
     def delrun(){
@@ -114,10 +111,7 @@ class DoController {
         }
     }
     
-    def runButtons(){ 
-        def project = projectService.projectFolderFromSHA1EncodedProjectName(params.projectSha1)                
-        def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.projectSha1, params.runSha1)
-        
-        render mzextract.runButtons(project: project, run: run)
+    def runDetails(){ 
+        render mzextract.runDetails(projectSha1: params.projectSha1, runSha1: params.runSha1)
     }
 }
