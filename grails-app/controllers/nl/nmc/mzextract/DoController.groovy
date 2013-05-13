@@ -35,7 +35,7 @@ class DoController {
             run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(params.project, params.run)           
         }
         
-        def settings = runService.settings()
+        def settings = runService.readSettings(project, run)
         if (params.do){
             // parse the parameters and save them to the XML file
             settings = runService.writeSettings(project, run, params)

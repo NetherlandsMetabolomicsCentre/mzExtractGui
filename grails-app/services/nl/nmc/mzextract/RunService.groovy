@@ -29,29 +29,14 @@ class RunService {
     def writeSettings(File project, File run, parameters){
         
         // all expected settings sorted
-    	def settings = settings()
-        
-        // read existing config from file
-        def xmlSettings = null
-        def configFile = configFileFromRunFolder(run)
-        if (configFile.exists()){
-            // read old settings
-            xmlSettings = new XmlSlurper().parseText(configFile.text)
-            //delete old settings
-            configFile.delete()            
-        }            
-            
-        // add all config settings from file which are not in the parameters, or use the value
-        settings.each { name, setting ->
-            settings[name]['value'] = parameters[name] ?: (xmlSettings?."${name}"?.text() ?: (setting['value'] ?: ''))
-        }
+    	def settings = readSettings(project, run)
                 
         //prepare the settings file
         def configXML = ""
         configXML += "<config>\n"
         configXML += "\t<created>" + new Date().time + "</created>\n"
         configXML += "\t<outputpath>" + run.canonicalPath + "</outputpath>\n"
-        configXML += settings.findAll{ name, setting -> setting.value != '' }.collect { name, setting -> "\t<" + name + ">" + setting.value + "</" + name + '>'}.join("\n")
+        configXML += settings.findAll{ name, setting -> setting.value != '' }.collect { name, setting -> "\t<" + name + ">" + (parameters[name] ?: setting.value) + "</" + name + '>'}.join("\n")
         
         if (!parameters['usemz'] || parameters['usemz'] != '0'){
             def mzFile = projectService.mzFileFromProjectFolder(project)
@@ -61,16 +46,23 @@ class RunService {
         }
         configXML += "\n</config>"
 
-        // save XML to config file                
+        // delete/save XML to config file                
+        def configFile = configFileFromRunFolder(run)
+        if (configFile.exists()){
+            configFile.delete()
+        }        
         configFileFromRunFolder(run) << configXML
+        
+        // read new settings
+        settings = readSettings(project, run)
         
         return settings
         
     }
 
     // returns a List of run setting properties
-    def settings() {
-
+    def readSettings(File project, File run) {
+        
         def settings = [:]
             settings['mstype'] = ['label':'MS Type', 'type':'number', 'value':'5', 'help':'MS type']
             settings['calibrationmass'] = ['label':'Calibration mass', 'type':'number', 'value':'1000', 'help':'Calibration mass']
@@ -80,7 +72,20 @@ class RunService {
             settings['splitratio'] = ['label':'Split ratio', 'type':'number', 'value':'0.001', 'help':'Split ratio']
             settings['mode'] = ['label':'Mode', 'type':'select', 'value':'positive', 'options': [['value':'positive', 'label':'positive'],['value':'negative', 'label':'negative']], 'help':'Mode (positive/negative)']
             settings['sgfilt'] = ['label':'SG filter', 'type':'number', 'value':'1', 'help':'SG filter']
-            settings['usemz'] = ['label':'Use the mz file', 'value':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']
+            settings['usemz'] = ['label':'Use the mz file', 'value':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']        
+        
+        // read existing config from file
+        def xmlSettings = null
+        def configFile = configFileFromRunFolder(run)
+        if (configFile.exists()){
+            // read old settings
+            xmlSettings = new XmlSlurper().parseText(configFile.text)            
+        }            
+            
+        // add all config settings from file which are not in the parameters, or use the value
+        settings.each { name, setting ->
+            settings[name]['value'] = xmlSettings?."${name}"?.text() ?: (setting['value'] ?: '')
+        }
             
         return settings
     }

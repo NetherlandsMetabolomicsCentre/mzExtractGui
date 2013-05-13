@@ -32,8 +32,8 @@ class MzextractTagLib {
                     out << '        <td style="padding-right:15px;"><div style="margin: 10px" class="hint hint--right hint--rounded" data-hint="' + setting.help + '"><i class="icon-info-sign"></i></div> ' + setting.label + '</td>'
                     out << '        <td>'
                     switch(setting.type){
-                        case 'number':  out << g.field(type:"number", name:name, value:setting.value)
-                                        break;
+//                        case 'number':  out << g.field(type:"number", name:name, value:setting.value)
+//                                        break;
                         case 'select':  out << g.select(name:name, optionKey:"value", optionValue:"label", from:setting.options, value:setting.value)
                                         break;  
                         default      :  out << g.field(type:"text", name:name, value:setting.value)
