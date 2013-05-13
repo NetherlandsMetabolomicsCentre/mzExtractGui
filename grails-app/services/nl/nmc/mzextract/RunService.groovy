@@ -11,7 +11,7 @@ class RunService {
     def initRun(File project){
 
         //prepare a run directory
-        def run = new File(project.canonicalPath + '/runs/' + new Date().format('yyyy-MM-dd_hh-mm-ss'))
+        def run = new File(project.canonicalPath + '/runs/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
         run.mkdirs()
 
         def runSha1 = run.name.encodeAsSHA1()
