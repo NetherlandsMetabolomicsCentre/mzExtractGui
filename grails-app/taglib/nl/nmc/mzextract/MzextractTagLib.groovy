@@ -29,7 +29,7 @@ class MzextractTagLib {
             out << '<table>'
                 settings.each { name, setting ->
                     out << '    <tr>'
-                    out << '        <td style="padding-right:15px;"><div style="margin: 10px" class="hint hint--right hint--rounded" data-hint="' + setting.help + '"><i class="icon-info-sign"></i></div> ' + setting.label + '</td>'
+                    out << '        <td style="padding-right:15px;"><div style="margin: 10px" class="hint hint--top hint--rounded" data-hint="' + setting.help + '"><i class="icon-info-sign"></i></div> ' + setting.label + '</td>'
                     out << '        <td>'
                     switch(setting.type){
 //                        case 'number':  out << g.field(type:"number", name:name, value:setting.value)
@@ -74,13 +74,13 @@ class MzextractTagLib {
         def runSha1 = run.name.encodeAsSHA1()
 
         out << '<li>'   
-        out << '  <div class="hint  hint--right hint--rounded" data-hint="view">'
+        out << '  <div class="hint  hint--top hint--rounded" data-hint="view">'
         out <<      g.link(action:'run', params:[project: projectSha1, run: runSha1]) { '<i class="icon-tasks"></i>' } 
         out << '  </div>'          
         out << '&nbsp;'        
         out <<    run.name.replace('_',' ')
         out << '&nbsp;'        
-        out << '  <div class="hint  hint--right hint--rounded" data-hint="status: 10=New, 11=Stopped, 20=Waiting, 30=Running, 40=Finished, -1=Failed">'
+        out << '  <div class="hint  hint--top hint--rounded" data-hint="status: 10=New, 11=Stopped, 20=Waiting, 30=Running, 40=Finished, -1=Failed">'
         out <<      runService.status(projectSha1,runSha1)
         out << '  </div>'        
         out << '</li>'
@@ -110,7 +110,7 @@ class MzextractTagLib {
         
         inputFiles.sort().each { inputFile ->
             out << '    <li>'
-            out << '        <div class="hint  hint--right hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
+            out << '        <div class="hint  hint--top hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
             out << '            <i class="icon-signal"></i> '
             out <<              g.link(action:"download", id:(inputFile.canonicalPath).encodeAsBase64().toString()) { inputFile.name }
             out << '        </div>'
@@ -124,7 +124,7 @@ class MzextractTagLib {
         
         outputFiles.sort().each { outputFile ->
             out << '    <li>'
-            out << '        <div class="hint  hint--right hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
+            out << '        <div class="hint  hint--top hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
             out << '            <i class="icon-download"></i> '
             out <<              g.link(action:"download", id:(outputFile.canonicalPath).encodeAsBase64().toString()) { outputFile.name }
             out << '        </div>'
@@ -147,7 +147,7 @@ class MzextractTagLib {
         def status = runService.status(projectSha1, runSha1) as int
          
         out << '&nbsp;' 
-        out << '<div class="hint hint--right hint--rounded" data-hint="settings">'
+        out << '<div class="hint hint--top hint--rounded" data-hint="settings">'
         if (status < 20 || status >= 40 ){
             out <<      '<a href="#settings" role="button" class="btn btn-info btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
         } else {
@@ -155,7 +155,7 @@ class MzextractTagLib {
         }
         out << '</div>'
         out << '&nbsp;'
-        out << '<div class="hint hint--right hint--rounded" data-hint="start">'
+        out << '<div class="hint hint--top hint--rounded" data-hint="start">'
         if (status < 20 || status >= 40 ){        
             out <<      g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-success btn-large", onclick:"return confirm('Are you sure you want to start this run? Existing data will be deleted first!')") { '<i class="icon-play"></i>' }         
         } else {
@@ -163,7 +163,7 @@ class MzextractTagLib {
         }
         out << '</div>'        
         out << '&nbsp;'        
-        out << '<div class="hint hint--right hint--rounded" data-hint="stop">'
+        out << '<div class="hint hint--top hint--rounded" data-hint="stop">'
         if (status >= 20 && status < 40 ){        
             out <<      g.link(action:'stoprun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-warning", onclick:"return confirm('Are you sure you want to stop this run?')") { '<i class="icon-stop"></i>' }
         } else {
@@ -171,11 +171,11 @@ class MzextractTagLib {
         }
         out << '</div>' 
         out << '&nbsp;'                
-        out << '<div class="hint hint--right hint--rounded" data-hint="status">'
+        out << '<div class="hint hint--top hint--rounded" data-hint="status">'
         out <<      runStatus(projectSha1:projectSha1, runSha1:runSha1)
         out << '</div>'         
         out << '&nbsp;'        
-        out << '<div class="hint hint--right hint--rounded" data-hint="delete">'
+        out << '<div class="hint hint--top hint--rounded" data-hint="delete">'
         if (status < 20 || status >= 40 ){        
             out <<      g.link(action:'delrun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-danger", onclick:"return confirm('Are you sure you want to delete this run?')") { '<i class="icon-remove-sign"></i>' }
         } else {
