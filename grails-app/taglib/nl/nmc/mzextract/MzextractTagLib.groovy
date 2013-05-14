@@ -70,12 +70,13 @@ class MzextractTagLib {
         def run = attrs.run
         def runSha1 = run.name.encodeAsSHA1()
 
-        out << '<li>'   
-        out << runStatus(projectSha1: projectSha1, runSha1: runSha1, buttonSize: 'btn-mini', buttonWidth: '100px')
-        out << '&nbsp;'                                     
+        out << '<li>'                                       
         out << '  <div class="hint  hint--top hint--rounded" data-hint="view">'
         out <<      g.link(action:'run', params:[project: projectSha1, run: runSha1], style:'text-decoration: none;') { 
-                        '<i class="icon-tasks"></i> ' + run.name.replace('_',' ')                    
+                        '<i class="icon-tasks"></i> ' + 
+                        run.name.replace('_',' ') +
+                        '&nbsp;' +
+                        runStatus(projectSha1: projectSha1, runSha1: runSha1, buttonSize: 'btn-mini', buttonWidth: '100px')
                     }       
         out << '  </div>'          
         out << '</li>'
@@ -170,17 +171,17 @@ class MzextractTagLib {
         }
         out << '</div>' 
         out << '&nbsp;'                
-        out << '<div class="hint hint--top hint--rounded" data-hint="status">'
-        out <<      runStatus(projectSha1:projectSha1, runSha1:runSha1)
-        out << '</div>'         
-        out << '&nbsp;'        
         out << '<div class="hint hint--top hint--rounded" data-hint="delete">'
         if (status < 20 || status >= 40 ){        
             out <<      g.link(action:'delrun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-danger", onclick:"return confirm('Are you sure you want to delete this run?')") { '<i class="icon-remove-sign"></i>' }
         } else {
             out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-remove-sign"></i></a>'
         }
-        out << '</div>' 
+        out << '</div>'         
+        out << '&nbsp;'        
+        out << '<div class="hint hint--top hint--rounded" data-hint="status">'
+        out <<      runStatus(projectSha1:projectSha1, runSha1:runSha1)
+        out << '</div>'         
     }
     
     def runStatus = { attrs, body ->        
@@ -190,7 +191,7 @@ class MzextractTagLib {
         def buttonSize = attrs.buttonSize ?: 'btn-large'
         def buttonWidth = attrs.buttonWidth ?: '200px'
         
-        out << '<button disabled class="btn '+buttonSize+'" type="button" style="width:'+buttonWidth+';'
+        out << '<button disabled class="btn btn-link '+buttonSize+'" type="button" style="width:'+buttonWidth+';'
         
         switch(status){
             case '-1'   :    out << '"> failed <i class="icon-warning-sign"></i>'; break;            
