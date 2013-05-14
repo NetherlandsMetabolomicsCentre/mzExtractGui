@@ -9,9 +9,9 @@
     
     <h2><g:link action="project" params="[project: project.name.encodeAsSHA1()]">${project.name}</g:link> <small>${run.name.replace('_',' ')}</small></h2>
 
-    <g:if test="${flash.message}">
+    <div style="height:25px;">
       <p><font color="red">${flash.message}</font></p>
-    </g:if>
+    </div>    
     
     <div style="height:50px;" id="runDetails">
       <mzextract:runDetails projectSha1="${project.name.encodeAsSHA1()}" runSha1="${run.name.encodeAsSHA1()}" />    
