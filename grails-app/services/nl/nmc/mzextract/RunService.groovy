@@ -93,6 +93,18 @@ class RunService {
     def status(String projectSha1, String runSha1){
         return Queue.findByProjectAndRun(projectSha1, runSha1)?.status ?: 0
     } 
+
+    def hasData(String projectSha1, String runSha1){
+        
+        def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(projectSha1, runSha1)
+        if (new FileNameFinder().getFileNames(run.canonicalPath, '**/*.mat **/*.txt')){
+            println 'true'
+            return true            
+        } else {
+            println 'false'            
+            return false
+        }
+    }
     
     // returns a File object of the config file of the run
     def configFileFromRunFolder(File runFolder){

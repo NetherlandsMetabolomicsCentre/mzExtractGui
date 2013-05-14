@@ -154,8 +154,12 @@ class MzextractTagLib {
         out << '</div>'
         out << '&nbsp;'
         out << '<div class="hint hint--top hint--rounded" data-hint="start">'
-        if (status < 20 || status >= 40 ){        
-            out <<      g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-success btn-large", onclick:"return confirm('Are you sure you want to start this run? Existing data will be deleted first!')") { '<i class="icon-play"></i>' }         
+        if (status < 20 || status >= 40 ){
+            if (runService.hasData(projectSha1, runSha1)){
+                out << g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-success btn-large", onclick:"return confirm('Are you sure you want to start this run? Existing data will be deleted first!')") { '<i class="icon-play"></i>' }         
+            } else {
+                out << g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-success btn-large") { '<i class="icon-play"></i>' }                         
+            }
         } else {
             out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-play"></i></a>'
         }
