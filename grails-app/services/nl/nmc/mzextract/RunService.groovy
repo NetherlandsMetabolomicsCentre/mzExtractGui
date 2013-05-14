@@ -97,13 +97,16 @@ class RunService {
     def hasData(String projectSha1, String runSha1){
         
         def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(projectSha1, runSha1)
-        if (new FileNameFinder().getFileNames(run.canonicalPath, '**/*.mat **/*.txt')){
-            println 'true'
-            return true            
-        } else {
-            println 'false'            
-            return false
+        
+        try {
+            if (new FileNameFinder().getFileNames(run.canonicalPath, '**/*.mat **/*.txt')){
+                return true            
+            }
+        } catch (e) {
+            // could not determine if the run has data
         }
+        
+        return false
     }
     
     // returns a File object of the config file of the run
