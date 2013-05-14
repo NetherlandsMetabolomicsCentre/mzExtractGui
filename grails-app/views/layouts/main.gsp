@@ -20,7 +20,7 @@
 
 <!--		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-responsive.min.css')}" type="text/css">-->
                 <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>
-                <script src="${resource(dir: 'js', file: 'jquery-1.9.1.js')}"></script>
+                
                 
 		<g:layoutHead/>
 		<r:layoutResources />
