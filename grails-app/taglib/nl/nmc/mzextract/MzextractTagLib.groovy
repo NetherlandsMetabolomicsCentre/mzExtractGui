@@ -74,15 +74,13 @@ class MzextractTagLib {
         def runSha1 = run.name.encodeAsSHA1()
 
         out << '<li>'   
+        out << runStatus(projectSha1: projectSha1, runSha1: runSha1, buttonSize: 'btn-mini', buttonWidth: '100px')
+        out << '&nbsp;'                                     
         out << '  <div class="hint  hint--top hint--rounded" data-hint="view">'
-        out <<      g.link(action:'run', params:[project: projectSha1, run: runSha1]) { '<i class="icon-tasks"></i>' } 
+        out <<      g.link(action:'run', params:[project: projectSha1, run: runSha1], style:'text-decoration: none;') { 
+                        '<i class="icon-tasks"></i> ' + run.name.replace('_',' ')                    
+                    }       
         out << '  </div>'          
-        out << '&nbsp;'        
-        out <<    run.name.replace('_',' ')
-        out << '&nbsp;'        
-        out << '  <div class="hint  hint--top hint--rounded" data-hint="status: 10=New, 11=Stopped, 20=Waiting, 30=Running, 40=Finished, -1=Failed">'
-        out <<      runService.status(projectSha1,runSha1)
-        out << '  </div>'        
         out << '</li>'
         
     }
@@ -136,7 +134,7 @@ class MzextractTagLib {
         out << '    </tr>'
         out << '</table>' 
     }
-    
+        
     def projectRunButtons = { attrs, body ->
         
         def project = attrs.project
@@ -188,7 +186,10 @@ class MzextractTagLib {
         
         def status = runService.status(attrs.projectSha1, attrs.runSha1) ?: ''
         
-        out << '<button disabled class="btn btn-large" type="button" style="width:200px;'
+        def buttonSize = attrs.buttonSize ?: 'btn-large'
+        def buttonWidth = attrs.buttonWidth ?: '200px'
+        
+        out << '<button disabled class="btn '+buttonSize+'" type="button" style="width:'+buttonWidth+';'
         
         switch(status){
             case '-1'   :    out << '"> failed <i class="icon-warning-sign"></i>'; break;            
