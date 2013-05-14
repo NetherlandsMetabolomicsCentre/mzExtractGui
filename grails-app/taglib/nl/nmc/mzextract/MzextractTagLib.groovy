@@ -57,13 +57,10 @@ class MzextractTagLib {
         def project = attrs.project
         def projectSha1 = project.name.encodeAsSHA1()       
         def projectRunFolders = projectService.runFoldersFromProjectFolder(project)
-        
-        out << '<h3>runs</h3>'
-        out << '<ul>'        
+                
         projectRunFolders.each { run -> 
             out << projectRun(project: project, run: run)
         }
-        out << '</ul>'         
     }
     
     def projectRun = { attrs, body ->

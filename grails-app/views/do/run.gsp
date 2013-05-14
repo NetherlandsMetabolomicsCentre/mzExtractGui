@@ -17,31 +17,17 @@
       <mzextract:runDetails projectSha1="${project.name.encodeAsSHA1()}" runSha1="${run.name.encodeAsSHA1()}" />    
     </div>
     
-    <script type="text/javascript">
-        function AjaxReLoad(){
-            var xmlHttp;
-            try{ xmlHttp=new XMLHttpRequest(); } // Firefox, Opera 8.0+, Safari
-            catch (e){
-                try{ xmlHttp=new ActiveXObject("Msxml2.XMLHTTP"); } // Internet Explorer
-                catch (e){
-                    try{ xmlHttp=new ActiveXObject("Microsoft.XMLHTTP"); }
-                    catch (e){ return false;
-                    }
-                }
-            }
-
-            xmlHttp.onreadystatechange=function(){
-                if(xmlHttp.readyState==4){
-                    document.getElementById('runDetails').innerHTML=xmlHttp.responseText;
-                    setTimeout('AjaxReLoad()',2500);
-                }
-            }
-
-            xmlHttp.open("GET","${g.createLink(controller: 'do', action: 'runDetails', params:[projectSha1:project.name.encodeAsSHA1() , runSha1:run.name.encodeAsSHA1()], base: resource(dir:''))}",true);
-            xmlHttp.send(null);
-        }
-
-        window.onload=function(){ setTimeout('AjaxReLoad()',100); }
-    </script>  
+    <g:set var="runDetailsUrl" value="${g.createLink(controller: 'do', action: 'runDetails', params:[projectSha1:project.name.encodeAsSHA1() , runSha1:run.name.encodeAsSHA1()], base: resource(dir:''))}" /> 
+    <script>
+     $(document).ready(function() {
+         $("#runDetails").load("${runDetailsUrl}");
+       var refreshId = setInterval(function() {
+          $("#runDetails").load('${runDetailsUrl}');
+       }, 2500);
+       $.ajaxSetup({ cache: false });
+    });
+    </script>    
+    <div id="runDetails">
+    </div>      
 </body>
 </html>

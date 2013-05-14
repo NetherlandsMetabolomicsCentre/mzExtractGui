@@ -116,4 +116,9 @@ class DoController {
     def runDetails(){ 
         render mzextract.runDetails(projectSha1: params.projectSha1, runSha1: params.runSha1)
     }
+    
+    def projectRuns(){
+        def project = projectService.projectFolderFromSHA1EncodedProjectName(params.projectSha1)        
+        render mzextract.projectRuns(project: project)
+    }
 }

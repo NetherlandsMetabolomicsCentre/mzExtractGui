@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="layout" content="main"/>
+    <meta name="layout" content="main"/>    
   </head>
   <body>
     <h2>${projectFolder.name}</h2>
@@ -29,6 +29,21 @@
     </ul>
   </g:if>  
 
-  <mzextract:projectRuns project="${projectFolder}"/>
+  <h3>runs</h3>
+  <ul>
+    
+    <g:set var="runsUrl" value="${g.createLink(controller: 'do', action: 'projectRuns', params:[projectSha1:projectFolder.name.encodeAsSHA1()], base: resource(dir:''))}" /> 
+    <script>
+     $(document).ready(function() {
+         $("#projectruns").load("${runsUrl}");
+       var refreshId = setInterval(function() {
+          $("#projectruns").load('${runsUrl}');
+       }, 2500);
+       $.ajaxSetup({ cache: false });
+    });
+    </script>    
+    <div id="projectruns">
+    </div>     
+  </ul>
 </body>
 </html>
