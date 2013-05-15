@@ -75,7 +75,7 @@ class MzextractTagLib {
         def runSha1 = run.name.encodeAsSHA1()
 
         out << '<li>'                                       
-        out << '  <div class="hint  hint--top hint--rounded" data-hint="view">'
+        out << '  <div class="hint hint--bottom hint--rounded" data-hint="view">'
         out <<      g.link(action:'run', params:[project: projectSha1, run: runSha1], style:'text-decoration: none;') { 
                         '<i class="icon-tasks"></i> ' + 
                         run.name.replace('_',' ') +
@@ -89,18 +89,12 @@ class MzextractTagLib {
     
     def runDetails = { attrs, body ->
         
-        def projectSha1 = attrs.projectSha1
-        def project = projectService.projectFolderFromSHA1EncodedProjectName(projectSha1)
-        def runSha1 = attrs.runSha1
-        def run = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(projectSha1, runSha1)
+        def project = projectService.projectFolderFromSHA1EncodedProjectName(attrs.projectSha1)
+        def run     = projectService.runFolderFromSHA1EncodedProjectNameAndRunName(attrs.projectSha1, attrs.runSha1)
         
         out << '<div style="height:50px;">'        
         out <<      projectRunButtons(project: project, run: run)       
         out << '</div>'
-
-        //def outputFiles = projectService.runFolderOutputFilesFromRunFolder(run)
-        def outputFiles = projectService.runFolderFilesFromRunFolder(run)
-        def inputFiles = projectService.mzxmlFilesFromProjectFolder(project)
         
         out << '<table width="100%">'
         out << '    <tr>'
@@ -108,12 +102,12 @@ class MzextractTagLib {
         out << '            <h3>input files</h3>'
         out << '            <ul>'
         
-        inputFiles.sort().each { inputFile ->
+        projectService.mzxmlFilesFromProjectFolder(project)?.sort().each { inputFile ->
             out << '    <li>'
-            out << '        <div class="hint  hint--top hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
-            out << '            <i class="icon-signal"></i> '
-            out <<              g.link(action:"download", id:(inputFile.canonicalPath).encodeAsBase64().toString()) { inputFile.name }
-            out << '        </div>'
+            out << '        <div class="hint hint--bottom hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
+            out << '            <i class="icon-signal"></i>'
+            out << '        </div>&nbsp;'            
+            out <<          g.link(action:"download", id:(inputFile.canonicalPath).encodeAsBase64().toString()) { inputFile.name }
             out << '    </li>'
         }
         out << '            </ul>'
@@ -122,12 +116,12 @@ class MzextractTagLib {
         out << '            <h3>output files</h3>'
         out << '            <ul>'
         
-        outputFiles.sort().each { outputFile ->
+        projectService.runFolderFilesFromRunFolder(run)?.sort().each { outputFile ->
             out << '    <li>'
-            out << '        <div class="hint  hint--top hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
-            out << '            <i class="icon-download"></i> '
-            out <<              g.link(action:"download", id:(outputFile.canonicalPath).encodeAsBase64().toString()) { outputFile.name }
-            out << '        </div>'
+            out << '        <div class="hint hint--bottom hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
+            out << '            <i class="icon-download"></i>'
+            out << '        </div>&nbsp;'
+            out <<          g.link(action:"download", id:(outputFile.canonicalPath).encodeAsBase64().toString()) { outputFile.name }            
             out << '    </li>'
         }
         
