@@ -201,7 +201,7 @@ class MzextractTagLib {
             case '-1'   :    out << '"> failed <i class="icon-warning-sign"></i>'; break;            
             case '11'   :    out << '"> stopped <i class="icon-stop"></i>'; break;            
             case '20'   :    out << '"> waiting <i class="icon-time"></i>'; break;            
-            case '30'   :    out << '"> running <img id="spinner" width="18px" src="' + resource(dir: 'images', file: 'spin.gif') + '" alt="Spinner"/>'; break;                            
+            case '30'   :    out << '"> running <img id="spinner" style="width:15px;" src="' + resource(dir: 'images', file: 'spin.gif') + '" alt="Spinner"/>'; break;                            
             case '40'   :    out << '"> finished <i class="icon-ok"></i>'; break;                
             default     :    out << '"> new <i class="icon-plus"></i>';
         } 
