@@ -28,6 +28,10 @@ class RunService {
     
     def writeSettings(File project, File run, parameters){
         
+        // get Sha1 hashes
+        def projectSha1 = project.name.encodeAsSHA1()        
+        def runSha1 = run.name.encodeAsSHA1()        
+        
         // all expected settings sorted
     	def settings = readSettings(project, run)
                 
@@ -45,12 +49,20 @@ class RunService {
             }
         }
         configXML += "\n</config>"
-
-        // delete/save XML to config file                
-        def configFile = configFileFromRunFolder(run)
-        if (configFile.exists()){
-            configFile.delete()
-        }        
+        
+        // new settings means deleting all the previous output
+        run.eachFile { it.delete() }
+        
+        // set status to new again
+        def queue = Queue.findByProjectAndRun(projectSha1, runSha1)
+        if (queue){
+            queue.status = 10 as int
+            queue.save()
+        } else {
+            new Queue(project: projectSha1, run: runSha1, status:10 as int).save()
+        }
+        
+        // save new XML to config file                        
         configFileFromRunFolder(run) << configXML
         
         // read new settings

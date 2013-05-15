@@ -36,7 +36,8 @@ class DoController {
         }
         
         def settings = runService.readSettings(project, run)
-        if (params.do){
+        if (params.do){            
+            
             // parse the parameters and save them to the XML file
             settings = runService.writeSettings(project, run, params)
         }

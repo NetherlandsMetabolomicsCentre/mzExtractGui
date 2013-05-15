@@ -45,7 +45,11 @@ class MzextractTagLib {
             out << '</table>'         
             out << '</div>'
             out << '<div class="modal-footer">'
-            out << g.submitButton(name:"do", value:"Save changes", class:"btn btn-primary")
+            if (runService.hasData(projectSha1, runSha1)){            
+                out << g.submitButton(name:"do", value:"Save changes", class:"btn btn-primary", onclick:"return confirm('Are you sure you want to save the settings? Existing data will be deleted as the output files do not reflect the results from the new settings!')")
+            } else {
+                out << g.submitButton(name:"do", value:"Save changes", class:"btn btn-primary")
+            }
             out << '</div>'
             out << '</div>'
         }              
