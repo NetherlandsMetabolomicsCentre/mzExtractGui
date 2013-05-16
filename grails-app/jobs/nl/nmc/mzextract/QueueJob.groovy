@@ -40,7 +40,7 @@ class QueueJob {
                 
                 queue = null // destroy object :(
             
-                GParsPool.withPool(1) {
+                GParsPool.withPool(10) {
                     inputFiles.eachParallel { file ->
                                             
                         //stop when config changed
@@ -57,11 +57,13 @@ class QueueJob {
                                 procExtract.waitFor()
 
                                 if (procExtract.exitValue() != 0){
-                                    println " = = = ERROR = = = "
-                                    println "command: ${commandExtract}"
-                                    println "stdout: ${procExtract.in.text}"							
-                                    println "stderr: ${procExtract.err.text}"
-                                    println " = = = = = = = = = "
+                                    //log this to a file and store it in the run directory
+                                    def errorLogEntry = ""
+                                    errorLogEntry += "command: ${commandExtract}"
+                                    errorLogEntry += "stdout: ${procExtract.in.text}"							
+                                    errorLogEntry += "stderr: ${procExtract.err.text}"                                    
+                                    
+                                    new File(file.canonicalPath + '.error.log') << errorLogEntry
                                 }
                             } else {
                                 // for osx we simulate a processing time of x seconds
@@ -99,11 +101,13 @@ class QueueJob {
                     procCombine.waitFor()
 
                     if (procCombine.exitValue() != 0){
-                        println " = = = ERROR = = = "
-                        println "command: ${commandCombine}"
-                        println "stdout: ${procCombine.in.text}"							
-                        println "stderr: ${procCombine.err.text}"
-                        println " = = = = = = = = = "
+                        //log this to a file and store it in the run directory
+                        def errorLogCombineEntry = ""
+                        errorLogCombineEntry += "command: ${commandCombine}"
+                        errorLogCombineEntry += "stdout: ${procCombine.in.text}"							
+                        errorLogCombineEntry += "stderr: ${procCombine.err.text}"                                    
+
+                        new File(run.canonicalPath + 'combine.error.log') << errorLogEntry                        
                     }
                 }
 
