@@ -4,23 +4,11 @@
     <meta name="layout" content="main"/>    
   </head>
   <body>
-    <h2>${projectFolder.name}</h2>
-  <g:link action="run" params="[project: projectFolder.name.encodeAsSHA1()]">create run</g:link> <i class="icon-indent-left"></i>
+    <h2>${project.name}</h2>
+  <g:link action="run" params="[project: project.name.encodeAsSHA1()]">create run</g:link> <i class="icon-indent-left"></i>
   <hr />
   <h3>files</h3>
-  <g:if test="${projectMzxmlFiles}">	
-    <ul>	
-      <g:each in="${projectMzxmlFiles}" var="${file}">
-        <li>
-          <i class="icon-signal"></i> ${file.name} 
-          <small>(${new Date(file.lastModified()).format('yyyy-MM-dd')})</small>
-        </li>
-      </g:each>
-    </ul>
-  </g:if>
-  <g:else>
-    no files found!
-  </g:else>
+  <mzextract:projectMzxmls project="${project}" />
   
   <g:if test="${projectMzFile.exists()}">
     <h3>mzFile</h3>
@@ -32,7 +20,7 @@
   <h3>runs</h3>
   <ul>
     
-    <g:set var="runsUrl" value="${g.createLink(controller: 'do', action: 'projectRuns', params:[projectSha1:projectFolder.name.encodeAsSHA1()], base: resource(dir:''))}" /> 
+    <g:set var="runsUrl" value="${g.createLink(controller: 'do', action: 'projectRuns', params:[projectSha1:project.name.encodeAsSHA1()], base: resource(dir:''))}" /> 
     <script>
      $(document).ready(function() {
          $("#projectruns").load("${runsUrl}");

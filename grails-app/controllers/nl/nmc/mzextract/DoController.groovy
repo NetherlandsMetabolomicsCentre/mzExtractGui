@@ -4,22 +4,22 @@ class DoController {
     
     def projectService
     def runService
+    def mzxmlService
 
     def home(){}
     def help(){}
 
     def index() {         
     	[projects: projectService.projectFolders().collect { it.name }]
-    }
-
+    }    
+    
     def project(){
 
-        def projectFolder = projectService.projectFolderFromSHA1EncodedProjectName(params.project)
+        def project = projectService.projectFolderFromSHA1EncodedProjectName(params.project)
         
     	[   
-            projectFolder: projectFolder,
-            projectMzxmlFiles: projectService.mzxmlFilesFromProjectFolder(projectFolder),
-            projectMzFile: projectService.mzFileFromProjectFolder(projectFolder)
+            project: project,
+            projectMzFile: projectService.mzFileFromProjectFolder(project)
         ]
     }
 

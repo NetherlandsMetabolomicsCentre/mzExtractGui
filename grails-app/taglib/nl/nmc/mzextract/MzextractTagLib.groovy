@@ -6,6 +6,7 @@ class MzextractTagLib {
     
     def projectService
     def runService    
+    def mzxmlService    
     
     def settingsForm = { attrs, body ->
         
@@ -55,6 +56,39 @@ class MzextractTagLib {
         }              
           
     }
+    
+    def projectMzxmls = { attrs, body ->
+                
+        def project = attrs.project
+        def mzxmlFiles = projectService.mzxmlFilesFromProjectFolder(project)
+        
+        out << '<table>'
+        mzxmlFiles.each { mzxml ->
+            
+            def mzxmlMeta = mzxmlService.parseHeader(mzxml)
+            def mzxmlSha1 = mzxml?.name?.encodeAsSHA1()
+            
+            out << '    <tr>'
+            out << '        <td><i class="icon-signal"></i></td>'
+            out << '        <td>' + mzxml.name + '</td>'
+            out << '        <td><a href="#mzxml'+mzxmlSha1+'" data-toggle="modal"><i class="icon-info-sign"></i></a>'
+            out << '            <div id="mzxml'+mzxmlSha1+'" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">'
+            out << '                <div class="modal-header">'
+            out << '                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'
+            out << '                    <h3 id="myModalLabel">mzXML header information</h3>'
+            out << '                </div>'
+            out << '                <div class="modal-body">'
+            mzxmlMeta.each { k, v ->
+                out << "<b>${k}</b>: ${v}<br />"
+            }
+            out << '                </div>'
+            out << '                <div class="modal-footer"></div>'
+            out << '            </div>'
+              out << '        </td>'
+            out << '    </tr>'
+        }
+        out << '</table>'
+    }        
 
     def projectRuns = { attrs, body ->
                 
@@ -145,7 +179,7 @@ class MzextractTagLib {
         if (status < 20 || status >= 40 ){
             out <<      '<a href="#settings" role="button" class="btn btn-info btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
         } else {
-            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-cog"></i></a>'
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large"><i class="icon-cog"></i></a>'
         }
         out << '</div>'
         out << '&nbsp;'
@@ -157,7 +191,7 @@ class MzextractTagLib {
                 out << g.link(action:'queue', params:[project: projectSha1, run: runSha1], class:"btn btn-success btn-large") { '<i class="icon-play"></i>' }                         
             }
         } else {
-            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-play"></i></a>'
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large"><i class="icon-play"></i></a>'
         }
         out << '</div>'        
         out << '&nbsp;'        
@@ -165,7 +199,7 @@ class MzextractTagLib {
         if (status >= 20 && status < 40 ){        
             out <<      g.link(action:'stoprun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-warning", onclick:"return confirm('Are you sure you want to stop this run?')") { '<i class="icon-stop"></i>' }
         } else {
-            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-stop"></i></a>'            
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large"><i class="icon-stop"></i></a>'            
         }
         out << '</div>' 
         out << '&nbsp;'                
@@ -173,7 +207,7 @@ class MzextractTagLib {
         if (status < 20 || status >= 40 ){        
             out <<      g.link(action:'delrun', params:[project: projectSha1, run: runSha1], class:"btn btn-large btn-danger", onclick:"return confirm('Are you sure you want to delete this run?')") { '<i class="icon-remove-sign"></i>' }
         } else {
-            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large" data-toggle="modal"><i class="icon-remove-sign"></i></a>'
+            out <<      '<a href="" role="button" disabled="disabled" class="btn btn-large"><i class="icon-remove-sign"></i></a>'
         }
         out << '</div>'         
         out << '&nbsp;'        
