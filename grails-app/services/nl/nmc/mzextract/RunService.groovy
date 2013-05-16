@@ -76,14 +76,14 @@ class RunService {
     def readSettings(File project, File run) {
         
         def settings = [:]
-            settings['mstype'] = ['label':'MS Type', 'type':'number', 'value':'5', 'help':'MS type']
+            settings['mstype'] = ['label':'MS Type', 'type':'select', 'value':'5', 'options':[['value':1, 'label':'FT'],['value':2, 'label':'ORBITRAP'],['value':3, 'label':'TOF'],['value':4, 'label':'GC/UNIT (MASS)'],['value':5, 'label':'QUADRUPOLE']], 'help':'MS type']
             settings['calibrationmass'] = ['label':'Calibration mass', 'type':'number', 'value':'1000', 'help':'Calibration mass']
             settings['noisethresholdfactor'] = ['label':'Noise threshold factor', 'type':'number', 'value':'10', 'help':'Noise threshold factor']
             settings['ppmresolution'] = ['label':'PPM resolution', 'type':'number', 'value':'4000', 'help':'PPM resolution']
             settings['centroidthreshold'] = ['label':'Centroid threshold', 'type':'number', 'value':'1000', 'help':'Centroid threshold']
             settings['splitratio'] = ['label':'Split ratio', 'type':'number', 'value':'0.001', 'help':'Split ratio']
             settings['mode'] = ['label':'Mode', 'type':'select', 'value':'positive', 'options': [['value':'positive', 'label':'positive'],['value':'negative', 'label':'negative']], 'help':'Mode (positive/negative)']
-            settings['sgfilt'] = ['label':'SG filter', 'type':'number', 'value':'1', 'help':'SG filter']
+            settings['sgfilt'] = ['label':'SG filter', 'type':'select', 'value':'1', 'options':[['value':0, 'label':'no'],['value':1, 'label':'yes']], 'help':'SG filter']
             settings['usemz'] = ['label':'Use the mz file', 'value':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']        
         
         // read existing config from file
