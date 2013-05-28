@@ -37,8 +37,7 @@
 	          <g:link controller="do" action="home" class="brand"><em>mz</em><strong>Extract</strong></g:link>
 	          <div class="nav-collapse collapse">
 	            <ul class="nav">
-	              <li class="active"><g:link controller="do" action="home">Home</g:link></li>
-	              <li><g:link controller="do" action="index">Projects</g:link></li>
+	              <li class="active"><g:link controller="do" action="index">Projects</g:link></li>
 	              <li><g:link controller="do" action="help">Help</g:link></li>
 	            </ul>
 	          </div><!--/.nav-collapse -->
