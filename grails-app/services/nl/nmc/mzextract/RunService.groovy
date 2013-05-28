@@ -106,7 +106,25 @@ class RunService {
     }
     
     def status(String projectSha1, String runSha1){
-        return Queue.findByProjectAndRun(projectSha1, runSha1)?.status ?: 0
+        
+        def status
+        
+        def queue = Queue.findByProjectAndRun(projectSha1, runSha1)
+        if (queue?.status){
+            status = queue?.status
+        } else {
+            // no entry!
+            if (hasData(projectSha1, runSha1)){
+                // when it has data set it to finished
+                status = 40
+            } else {
+                // no data we assume it is new
+                status = 0
+            }
+            new Queue(project: projectSha1, run: runSha1, status:status as int).save()
+        }
+        
+        return status
     } 
 
     def hasData(String projectSha1, String runSha1){
