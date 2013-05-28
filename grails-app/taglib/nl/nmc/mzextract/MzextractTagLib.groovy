@@ -25,12 +25,12 @@ class MzextractTagLib {
             out << '    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>'
             out << '    <h3 id="myModalLabel">Settings</h3>'
             out << '  </div>'
-            out << '  <div class="modal-body">'
+            out << '  <div class="modal-body" style="min-height: 520px;">'
 
             out << '<table>'
                 settings.each { name, setting ->
                     out << '    <tr>'
-                    out << '        <td style="padding-right:15px;"><div style="margin: 10px" class="hint hint--top hint--rounded" data-hint="' + setting.help + '"><i class="icon-info-sign"></i></div> ' + setting.label + '</td>'
+                    out << '        <td style="padding-right:15px;"><div style="margin: 5px" class="hint hint--top hint--rounded" data-hint="' + setting.help + '"><i class="icon-info-sign"></i></div> ' + setting.label + '</td>'
                     out << '        <td>'
                     switch(setting.type){
 //                        case 'number':  out << g.field(type:"number", name:name, value:setting.value)

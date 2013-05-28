@@ -85,6 +85,9 @@ class RunService {
             settings['mode'] = ['label':'Mode', 'type':'select', 'value':'positive', 'options': [['value':'positive', 'label':'positive'],['value':'negative', 'label':'negative']], 'help':'Mode (positive/negative)']
             settings['sgfilt'] = ['label':'SG filter', 'type':'select', 'value':'1', 'options':[['value':0, 'label':'no'],['value':1, 'label':'yes']], 'help':'SG filter']
             settings['usemz'] = ['label':'Use the mz file', 'value':0, 'type':'select', 'options':[['value':0, 'label':'no, ignore the mzfile'],['value':1, 'label':'yes, use it when available']], 'help':'An mzFile can be added to the project to ... when...']        
+            settings['rtwindow'] = ['label':'Retention time window', 'type':'number', 'value':'10', 'help':'Retention time window (in seconds)']
+            settings['rs2sf'] = ['label':'Revert search to single features', 'type':'select', 'value':'1', 'options':[['value':0, 'label':'no'],['value':1, 'label':'yes']], 'help':'Revert search to single features']
+            settings['msfonly'] = ['label':'Match single features only', 'type':'select', 'value':'1', 'options':[['value':0, 'label':'no'],['value':1, 'label':'yes']], 'help':'Match single features only']
         
         // read existing config from file
         def xmlSettings = null
