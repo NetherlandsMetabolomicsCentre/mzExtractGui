@@ -47,9 +47,9 @@ class MzextractTagLib {
             out << '</div>'
             out << '<div class="modal-footer">'
             if (runService.hasData(projectSha1, runSha1)){            
-                out << g.submitButton(name:"do", value:"Save changes", class:"btn btn-primary", onclick:"return confirm('Are you sure you want to save the settings? Existing data will be deleted as the output files do not reflect the results from the new settings!')")
+                out << g.submitButton(name:"do", value:" - - - - - - - - Save changes - - - - - - - - ", class:"btn btn-primary", style:"z-index:1000;", onclick:"return confirm('Are you sure you want to save the settings? Existing data will be deleted as the output files do not reflect the results from the new settings!')")
             } else {
-                out << g.submitButton(name:"do", value:"Save changes", class:"btn btn-primary")
+                out << g.submitButton(name:"do", value:" - - - - - - - - Save changes - - - - - - - - ", class:"btn btn-primary", style:"z-index:1000;")
             }
             out << '</div>'
             out << '</div>'
@@ -138,7 +138,7 @@ class MzextractTagLib {
         
         projectService.mzxmlFilesFromProjectFolder(project)?.sort().each { inputFile ->
             out << '    <li>'
-            out << '        <div class="hint hint--bottom hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
+            out << '        <div style="z-index:-1;" class="hint hint--bottom hint--rounded" data-hint="' + new Date(inputFile.lastModified()) + '">'
             out << '            <i class="icon-signal"></i>'
             out << '        </div>&nbsp;'            
             out <<          g.link(action:"download", id:(inputFile.canonicalPath).encodeAsBase64().toString()) { inputFile.name }
@@ -152,7 +152,7 @@ class MzextractTagLib {
         
         projectService.runFolderFilesFromRunFolder(run)?.sort().each { outputFile ->
             out << '    <li>'
-            out << '        <div class="hint hint--bottom hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
+            out << '        <div style="z-index:-1;" class="hint hint--bottom hint--rounded" data-hint="' + new Date(outputFile.lastModified()) + '">'
             out << '            <i class="icon-download"></i>'
             out << '        </div>&nbsp;'
             out <<          g.link(action:"download", id:(outputFile.canonicalPath).encodeAsBase64().toString()) { outputFile.name }            
