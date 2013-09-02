@@ -76,10 +76,11 @@ environments {
 log4j = {
     // Example of changing the log pattern for the default console appender:
     //
-    //appenders {
-    //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
-    //}
+    appenders {
+        console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
+    }
 
+    info "grails.app"
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts
@@ -90,19 +91,22 @@ log4j = {
            'org.codehaus.groovy.grails.orm.hibernate',      // hibernate integration
            'org.springframework',
            'org.hibernate',
-           'net.sf.ehcache.hibernate'
+           'net.sf.ehcache.hibernate',
+           'nl.nmc.mzextract' // mzExtract errors
 }
 
 jetty.port=9000
 
-mzextract.os = 'osx' // win/lin/osx
+mzextract.exepted.extensions = ['xml', 'mzxml', 'mat', 'txt']
+
+mzextract.os = 'lin' // win/lin/osx
 
 // mzExtract config
 mzextract.matlab.home = '/Applications/MATLAB/MATLAB_Compiler_Runtime/v80' //OSX
 //mzextract.matlab.home = '/usr/local/MATLAB/MATLAB_Compiler_Runtime/v80' //LINUX
 //mzextract.matlab.home = 'C:/Program Files/MATLAB/MATLAB Compiler Runtime/v80' //WINDOWS
 
-mzextract.path.commandline = '/Users/miv/Desktop/NMC/mzextract/osx' //OSX
+mzextract.path.commandline = '/Users/miv/Desktop/temp/mzextract/osx' //OSX
 //mzextract.path.commandline = '/home/miv/Documents/workspace-preprocess/linux' //LINUX
 //mzextract.path.commandline = 'C:/Users/MichaelBox/Documents/mzextract' //WINDOWS
 
@@ -110,10 +114,14 @@ mzextract.path.command.extract = 'extract.sh' //OSX
 //mzextract.path.command.extract = 'extract.sh' //LINUX
 //mzextract.path.command.extract = 'extract.exe' //WINDOWS
 
+mzextract.path.command.align = 'align.sh' //OSX
+//mzextract.path.command.align = 'align.sh' //LINUX
+//mzextract.path.command.align = 'align.exe' //WINDOWS
+
 mzextract.path.command.combine = 'combine.sh' //OSX
 //mzextract.path.command.combine = 'combine.sh' //LINUX
 //mzextract.path.command.combine = 'combine.exe' //WINDOWS
 
-mzextract.path.project = '/Users/miv/Desktop/NMC/mzextract/data/project' //OSX
+mzextract.path.project = '/Users/miv/Desktop/temp/mzextract/data/project/' //OSX
 //mzextract.path.project = '/home/miv/Documents/workspace-preprocess/data/project' //LINUX
 //mzextract.path.project = 'C:/Users/MichaelBox/Documents/mzextract/project' //WINDOWS

@@ -10,8 +10,8 @@
 		<title><g:layoutTitle default="mzExtract"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap.min.css')}" type="text/css">
-                <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">  
-                <g:javascript library="jquery" />      
+                <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">
+                <g:javascript library="jquery" />
 		<style>
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
 			body { padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ }
@@ -20,8 +20,8 @@
 
 <!--		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-responsive.min.css')}" type="text/css">-->
                 <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>
-                
-                
+
+
 		<g:layoutHead/>
 		<r:layoutResources />
 	</head>
@@ -37,7 +37,7 @@
 	          <g:link controller="do" action="home" class="brand"><em>mz</em><strong>Extract</strong></g:link>
 	          <div class="nav-collapse collapse">
 	            <ul class="nav">
-	              <li class="active"><g:link controller="do" action="index">Projects</g:link></li>
+	              <li class="active"><g:link controller="data" action="index">Data</g:link></li>
 	              <li><g:link controller="do" action="help">Help</g:link></li>
 	            </ul>
 	          </div><!--/.nav-collapse -->
@@ -45,10 +45,10 @@
 	      </div>
 	    </div>
 
-	    <div class="container">		
+	    <div class="container">
 		<g:layoutBody/>
-            </div> <!-- /container -->	
-            <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>           
+            </div> <!-- /container -->
+            <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>
             <g:javascript library="application"/>
             <r:layoutResources />
 	</body>
