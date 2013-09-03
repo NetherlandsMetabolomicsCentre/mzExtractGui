@@ -39,11 +39,11 @@ class ExtractService {
         executionService.execCommand("${config.path.commandline}/${config.path.command.extract}", [mzXMLFile, configFile])
 
         /***** for testing purposes!!! ******/
-        def xmlConfig = new XmlSlurper().parseText(new File(configFile).text)
+        //def xmlConfig = new XmlSlurper().parseText(new File(configFile).text)
 
-        def matFile = new File("${xmlConfig.outputpath}/${mzXMLFile.tokenize('/')[-1]}.mat")
-        matFile.delete()
-        matFile << "Dummy matlab file for testing"
+        //def matFile = new File("${xmlConfig.outputpath}/${mzXMLFile.tokenize('/')[-1]}.mat")
+        //matFile.delete()
+        //matFile << "Dummy matlab file for testing"
 
     }
 

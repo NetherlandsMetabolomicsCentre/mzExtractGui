@@ -1,5 +1,7 @@
 package nl.nmc.mzextract
 
+import groovyx.gpars.GParsPool
+
 class ExtractionJob {
     static triggers = {
       simple repeatInterval: 5000l // execute job once in 5 seconds
@@ -41,11 +43,19 @@ class ExtractionJob {
 
             // retrieve a list of the selected mzxml files to process
             def selectedMzxmlFiles = []
-            new File(extractionFolder.path + '/mzxml.txt').eachLine { mzxmlFileKey ->
-                def fileToProcess = dataFolder.files['mzxml'].find { it.key == mzxmlFileKey } ?: null
+            new File(extractionFolder.path + '/mzxml.txt').eachLine { line ->
+                selectedMzxmlFiles << line
+            }            
+            
+            GParsPool.withPool(10) {
+                
+                // run parallel
+                selectedMzxmlFiles.eachParallel { mzxmlFileKey ->
+                    def fileToProcess = dataFolder.files['mzxml'].find { it.key == mzxmlFileKey } ?: null
 
-                if (fileToProcess != null){
-                    extractService.extract(fileToProcess.path, configFile.canonicalPath)
+                    if (fileToProcess != null){
+                        extractService.extract(fileToProcess.path, configFile.canonicalPath)
+                    }
                 }
             }
         }

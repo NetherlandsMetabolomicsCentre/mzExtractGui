@@ -20,7 +20,12 @@ class ExecutionService {
         if (config.os == 'lin') { command += "${config.matlab.home} " }
 
         // add arguments
-        command += "${arguments.join(' ')}"
+        arguments.each { argument -> 
+            command += "\"${argument}\" "
+        }
+        //command += "${arguments.join(' ')}"
+        
+        println command
 
         // start the execution
         def proc = command.execute()
