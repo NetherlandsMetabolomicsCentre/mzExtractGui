@@ -107,6 +107,20 @@ class BootStrap {
 
         sgfilt.save()
 
+        // DUMMY
+        def dummy = new Setting()
+        dummy.category = 'align'
+        dummy.name = 'dummy'
+        dummy.label = 'dummy Filter'
+        dummy.type = 'select'
+        dummy.value = '1'
+        dummy.help = 'dummy dummy dummy'
+
+        dummy.addToOptions(new Option(label:"no", value:"0"))
+        dummy.addToOptions(new Option(label:"yes", value:"1"))
+
+        dummy.save()
+
         // USE MZFILE
         def usemz = new Setting()
         usemz.category = 'combine'

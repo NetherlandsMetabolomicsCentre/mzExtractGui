@@ -21,7 +21,7 @@ class ExtractController {
             extractionFolders = extractService.extractionFolders(dataFolder.key)
 
             // see if the user selected one or more mzXML files
-            if (params['mzxmlfiles']?.size() >= 1){
+            if (params.mzxmlfiles?.size() >= 1){
 
                 // extract all unique keys
                 def uniqueFiles = []
@@ -85,16 +85,5 @@ class ExtractController {
             // redirect to data folder page
             redirect(controller:'data', action:'folder', params:[dataFolderKey: params.dataFolderKey])
         }
-    }
-
-
-    def test(){
-
-        def testFile = '/Users/miv/Desktop/temp/mzextract/data/project/small/small.mzXML'
-        def testConfig = '/Users/miv/Desktop/temp/mzextract/data/project/small/extract.xml'
-
-        extractService.extract(testFile, testConfig)
-
-        render ("done")
     }
 }

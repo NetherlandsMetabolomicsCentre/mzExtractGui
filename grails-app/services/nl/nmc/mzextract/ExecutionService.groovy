@@ -1,6 +1,5 @@
 package nl.nmc.mzextract
 
-//import groovyx.gpars.GParsPool
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class ExecutionService {
@@ -17,15 +16,10 @@ class ExecutionService {
         command += "${executable} "
 
         // calling MATLAB executables on Linux requires an additional argument, the path of MATLAB home
-        if (config.os == 'lin') { command += "${config.matlab.home} " }
+        if (config.os == 'lin') { command += "\"${config.matlab.home}\" " }
 
         // add arguments
-        arguments.each { argument -> 
-            command += "\"${argument}\" "
-        }
-        //command += "${arguments.join(' ')}"
-        
-        println command
+        arguments.each { argument -> command += "\"${argument}\" " }
 
         // start the execution
         def proc = command.execute()
@@ -36,13 +30,4 @@ class ExecutionService {
         if (proc.exitValue() != 0){ log.error "stderr: ${proc.err.text}" }
         log.info "stdout: ${proc.in.text}"
     }
-
-//    def execCollection(HashMap execCollection){
-//
-//        GParsPool.withPool() {
-//            inputFiles.eachParallel { file ->
-//            }
-//        }
-//    }
-//
 }

@@ -105,6 +105,54 @@ class DataTagLib {
 
     }
 
+    // form to select mat files
+    def matSelect = { attrs, body ->
+
+        def dataFolder = attrs.dataFolder
+        def extractionFolder = attrs.extractionFolder
+
+        out << '''<script language="JavaScript">
+                            <!-- Begin
+                                function checkAll(field){ for (i = 0; i < field.length; i++) field[i].checked = true ; }
+                                function uncheckAll(field){ for (i = 0; i < field.length; i++) field[i].checked = false ; }
+                            //  End -->
+                        </script>'''
+
+        out << g.form(name:"selectMat", action:"select", controller: "align", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key], method:"POST") {
+            out << '<h4>select matlab files for alignment</h4>'
+            out << g.checkBox(name:'matfiles', style:'display:none', checked: false, value:"")
+            out << '<br />'
+            out << '<div style="margin: 10px;">'
+
+            // list all available mat files
+            out << '<table class="table table-striped">'
+            out << '    <tr>'
+            out << '        <td colspan="2">'
+            out << '            <input type=submit name="next" value="next" class="btn">'
+            out << '            <input type=button name="CheckAll" value="select all" class="btn btn-success" onClick="checkAll(document.selectMat.matfiles)"> '
+            out << '            <input type=button name="UnCheckAll" value="deselect all" class="btn btn-inverse" onClick="uncheckAll(document.selectMat.matfiles)">'
+            out << '        </td>'
+            out << '    </tr>'
+            extractionFolder.files['mat'].each { f ->
+                out << '<tr>'
+                out <<      '<td>' + g.checkBox(name:'matfiles', checked: false, value:f.key) + '</td>'
+                out <<      '<td>' + f.name + '</td>'
+                out << '</tr>'
+            }
+            out << '    <tr>'
+            out << '        <td colspan="2">'
+            out << '            <input type=submit name="next" value="next" class="btn">'
+            out << '            <input type=button name="CheckAll" value="select all" class="btn btn-success" onClick="checkAll(document.selectMat.matfiles)"> '
+            out << '            <input type=button name="UnCheckAll" value="deselect all" class="btn btn-inverse" onClick="uncheckAll(document.selectMat.matfiles)">'
+            out << '        </td>'
+            out << '    </tr>'
+            out << '</table>'
+
+            out << '</div>'
+        }
+
+    }
+
     def extractionFolders = { attrs, body ->
 
         def dataFolder = attrs.dataFolder

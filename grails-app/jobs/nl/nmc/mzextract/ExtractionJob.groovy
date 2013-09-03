@@ -29,7 +29,7 @@ class ExtractionJob {
             def dataFolderKey = name.tokenize('_')[0]
             def extractionFolderKey = name.tokenize('_')[1]
 
-            log.info("\nStarting new extraction (${name}).\n")
+            log.info("\nStarting new extraction (${name})...")
 
             // delete the file from the queue
             nextExtractionJob.delete()
@@ -45,19 +45,20 @@ class ExtractionJob {
             def selectedMzxmlFiles = []
             new File(extractionFolder.path + '/mzxml.txt').eachLine { line ->
                 selectedMzxmlFiles << line
-            }            
-            
-            GParsPool.withPool(10) {
-                
-                // run parallel
+            }
+
+            // run parallel
+            GParsPool.withPool(10) { // defines the max number of Threads to use
                 selectedMzxmlFiles.eachParallel { mzxmlFileKey ->
                     def fileToProcess = dataFolder.files['mzxml'].find { it.key == mzxmlFileKey } ?: null
 
                     if (fileToProcess != null){
+                        log.info(" --- extracting file ${fileToProcess.name}")
                         extractService.extract(fileToProcess.path, configFile.canonicalPath)
                     }
                 }
             }
+
         }
     }
 }

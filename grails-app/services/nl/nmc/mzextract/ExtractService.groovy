@@ -39,11 +39,11 @@ class ExtractService {
         executionService.execCommand("${config.path.commandline}/${config.path.command.extract}", [mzXMLFile, configFile])
 
         /***** for testing purposes!!! ******/
-        //def xmlConfig = new XmlSlurper().parseText(new File(configFile).text)
+        def xmlConfig = new XmlSlurper().parseText(new File(configFile).text)
 
-        //def matFile = new File("${xmlConfig.outputpath}/${mzXMLFile.tokenize('/')[-1]}.mat")
-        //matFile.delete()
-        //matFile << "Dummy matlab file for testing"
+        def matFile = new File("${xmlConfig.outputpath}/${mzXMLFile.tokenize('/')[-1]}.mat")
+        matFile.delete()
+        matFile << "Dummy matlab file for testing"
 
     }
 
@@ -54,7 +54,7 @@ class ExtractService {
       */
     def readSettings(String dataFolderKey, String extractionFolderKey){
 
-      def defaultSettings = Setting.findAllByCategory('extract')
+      def defaultSettings = defaultSettings()
 
       // load the extraction folder
       def extractionFolder = extractionFolder(dataFolderKey, extractionFolderKey)
@@ -110,7 +110,7 @@ class ExtractService {
           configXML += "\n</config>"
 
           // write the file
-          def settingsFile = settingsFile(dataFolderKey, extractionFolder.key)
+          def settingsFile = settingsFile(dataFolderKey, extractionFolderKey)
           settingsFile.delete()
           settingsFile << configXML
 
@@ -166,8 +166,7 @@ class ExtractService {
       */
     def initExtraction(String dataFolderKey, ArrayList mzxmlFiles){
 
-        def dataFolder = dataService.dataFolder(dataFolderKey)
-        def newExtractionFolder = new File(extractionsFolder(dataFolder.key).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newExtractionFolder = new File(extractionsFolder(dataFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
 
         // make sure it is created
         newExtractionFolder.mkdirs()

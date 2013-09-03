@@ -27,6 +27,14 @@ class CommonTagLib {
         out << g.link(controller:'extract', action:'extraction', params:[submit_run: 'true', dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key], alt:"Settings") { '<i class="icon-play"></i> run' }
     }
 
+    def alignButton = { attrs, body ->
+
+        def dataFolder = attrs.dataFolder
+        def extractionFolder = attrs.extractionFolder
+
+        out << g.link(controller:'align', action:'select', params:[submit_align: 'true', dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key], alt:"Settings") { ' - align - ' }
+    }
+
     def deleteButton = { attrs, body ->
 
         def dataFolder = attrs.dataFolder
