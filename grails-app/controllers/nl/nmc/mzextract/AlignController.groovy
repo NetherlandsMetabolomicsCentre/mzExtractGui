@@ -12,7 +12,7 @@ class AlignController {
 
         def dataFolder
         def extractionFolder
-        def alignmentFolders
+        def alignmentFolders = []
 
         // check if a datafolder is selected
         if (params.dataFolderKey && params.extractionFolderKey){
@@ -55,7 +55,7 @@ class AlignController {
         // (over-)write settings and return the updated values
         def existingSettings = alignService.writeSettings(params.dataFolderKey, params.extractionFolderKey, params.alignmentFolderKey, params as HashMap)
 
-        // check if the 'Run' button was clicked, if so go to the next page to schedule the run
+        // check if the 'Next' button was clicked, if so go to the next page to schedule the run
         if (params['submit_next']){
 
             // redirect to alignment page to view the status
@@ -72,7 +72,7 @@ class AlignController {
         def extractionFolder = extractService.extractionFolder(params.dataFolderKey, params.extractionFolderKey)
         def alignmentFolder = alignService.alignmentFolder(params.dataFolderKey, params.extractionFolderKey, params.alignmentFolderKey)
 
-        // check if the 'Run' button was clicked, if so queue it
+        // check if the 'Align' button was clicked, if so queue it
         if (params['submit_align']){
             alignService.queue(params.dataFolderKey, params.extractionFolderKey, params.alignmentFolderKey)
         }

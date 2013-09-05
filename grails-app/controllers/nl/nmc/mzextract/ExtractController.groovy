@@ -9,7 +9,7 @@ class ExtractController {
     def select() {
 
         def dataFolder
-        def extractionFolders
+        def extractionFolders = []
 
         // check if a datafolder is selected
         if (params.dataFolderKey){
@@ -49,7 +49,7 @@ class ExtractController {
         // (over-)write settings and return the updated values
         def existingSettings = extractService.writeSettings(params.dataFolderKey, params.extractionFolderKey, params as HashMap)
 
-        // check if the 'Run' button was clicked, if so go to the next page to schedule the run
+        // check if the 'Next' button was clicked, if so go to the next page to schedule the run
         if (params['submit_next']){
 
             // redirect to extraction page to view the status
@@ -66,7 +66,7 @@ class ExtractController {
         def extractionFolder = extractService.extractionFolder(params.dataFolderKey, params.extractionFolderKey)
 
         // check if the 'Run' button was clicked, if so queue it
-        if (params['submit_run']){
+        if (params['submit_extract']){
             extractService.queue(params.dataFolderKey, params.extractionFolderKey)
         }
 

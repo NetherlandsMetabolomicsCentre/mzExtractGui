@@ -54,11 +54,12 @@ class QueueService {
     /*
       * add the alignment to the queue for execution
       * @param dataFolderKey String
+      * @param extractionFolderKey String
       * @param alignmentFolderKey String
       */
-    def queueAlignment(String dataFolderKey, String alignmentFolderKey) {
+    def queueAlignment(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey) {
 
-        def queueFile = new File(alignmentsQueueFolder() + '/' + dataFolderKey + '_' + alignmentFolderKey + '.job')
+        def queueFile = new File(alignmentsQueueFolder() + '/' + dataFolderKey + '_' + extractionFolderKey + '_' + alignmentFolderKey + '.job')
         queueFile << "Start Alignment log ${new Date().format('yyyy-MM-dd_HH-mm-ss')}"
 
         return true
@@ -67,11 +68,13 @@ class QueueService {
     /*
       * add the combine to the queue for execution
       * @param dataFolderKey String
+      * @param extractionFolderKey String
+      * @param alignmentFolderKey String
       * @param combineFolderKey String
       */
-    def queueCombine(String dataFolderKey, String combineFolderKey) {
+    def queueCombine(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey, String combineFolderKey) {
 
-        def queueFile = new File(alignmentsQueueFolder() + '/' + dataFolderKey + '_' + combineFolderKey + '.job')
+        def queueFile = new File(combinesQueueFolder() + '/' + dataFolderKey + '_' + extractionFolderKey + '_' + alignmentFolderKey + '_' + combineFolderKey + '.job')
         queueFile << "Start Combine log ${new Date().format('yyyy-MM-dd_HH-mm-ss')}"
 
         return true

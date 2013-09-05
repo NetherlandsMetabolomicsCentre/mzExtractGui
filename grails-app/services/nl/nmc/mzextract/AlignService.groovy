@@ -31,7 +31,7 @@ class AlignService {
     }
 
     /*
-      * run extraction on a collection of matlab files using the supplied arguments
+      * run alignment on a collection of matlab files using the supplied arguments
       *
       * @param configFile String
       */
@@ -49,14 +49,11 @@ class AlignService {
 
       def defaultSettings = defaultSettings()
 
-      // load the alignment folder
-      def alignmentFolder = alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)
-
       // init empty settings HashMap
       def settings = [:]
 
       // load settings file
-      def settingsFile = settingsFile(dataFolderKey, extractionFolderKey, alignmentFolder.key)
+      def settingsFile = settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey)
 
       // read old settings
       def xmlSettings = [:]
@@ -73,7 +70,7 @@ class AlignService {
     }
 
     /*
-      * (over)write settings to the alignment.xml file in the alignment folder
+      * (over)write settings to the align.xml file in the alignment folder
       * @param dataFolderKey String
       * @param extractionFolderKey String
       * @param alignmentFolderKey String
@@ -84,7 +81,7 @@ class AlignService {
         try {
 
           // load the alignment folder
-          def alignmentFolder = alignementFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+          def alignmentFolder = alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)
 
           // load existing settings
           def existingSettings = readSettings(dataFolderKey, extractionFolderKey, alignmentFolderKey)
@@ -135,7 +132,7 @@ class AlignService {
       */
     def alignmentsFolder(String dataFolderKey, String extractionFolderKey){
         def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
-        return dataService.getFolder(new File(extractionFolder.path + '/alignments/'))
+        return dataService.getFolder(new File(extractionFolder.path + '/.alignments/'))
     }
 
     /*
@@ -153,7 +150,7 @@ class AlignService {
       * @param alignmentFolderKey String
       */
     def alignmentFolder(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey){
-        return dataService.getFolder(new File(alignmentFolders(dataFolderKey, extractionFolderKey).find { it.key == alignmentFolderKey }.path))
+        return dataService.getFolder(new File(alignmentFolders(dataFolderKey, extractionFolderKey).find { it.key == alignmentFolderKey }?.path))
     }
 
     /*

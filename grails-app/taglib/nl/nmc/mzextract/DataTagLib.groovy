@@ -108,8 +108,11 @@ class DataTagLib {
     // form to select mat files
     def matSelect = { attrs, body ->
 
+        def controller = attrs.controller
+        def action = attrs.action
         def dataFolder = attrs.dataFolder
         def extractionFolder = attrs.extractionFolder
+        def alignmentFolder = attrs.alignmentFolder
 
         out << '''<script language="JavaScript">
                             <!-- Begin
@@ -118,7 +121,7 @@ class DataTagLib {
                             //  End -->
                         </script>'''
 
-        out << g.form(name:"selectMat", action:"select", controller: "align", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key], method:"POST") {
+        out << g.form(name:"selectMat", action:action, controller:controller, params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder?.key ?: null], method:"POST") {
             out << '<h4>select matlab files for alignment</h4>'
             out << g.checkBox(name:'matfiles', style:'display:none', checked: false, value:"")
             out << '<br />'

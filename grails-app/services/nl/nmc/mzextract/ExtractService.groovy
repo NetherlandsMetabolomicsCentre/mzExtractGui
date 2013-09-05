@@ -139,7 +139,7 @@ class ExtractService {
       */
     def extractionsFolder(String dataFolderKey){
         def dataFolder = dataService.dataFolder(dataFolderKey)
-        return dataService.getFolder(new File(dataFolder.path + '/extractions/'))
+        return dataService.getFolder(new File(dataFolder.path + '/.extractions/'))
     }
 
     /*
