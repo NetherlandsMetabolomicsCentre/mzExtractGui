@@ -4,7 +4,7 @@
         <meta name="layout" content="main"/>
     </head>
     <body>
-        <h2>Alignment</h2>
+        <h2>Align</h2>
 
         <g:form controller="align" action="settings" name="save_alignment_settings" method="POST">
             <g:field name="alignmentFolderKey" type="hidden" value="${params.alignmentFolderKey}" />

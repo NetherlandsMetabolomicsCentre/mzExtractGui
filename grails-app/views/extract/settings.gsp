@@ -4,7 +4,7 @@
         <meta name="layout" content="main"/>
     </head>
     <body>
-        <h2>Extraction</h2>
+        <h2>Extract</h2>
 
         <g:form controller="extract" action="settings" name="save_extraction_settings" method="POST">
             <g:field name="extractionFolderKey" type="hidden" value="${params.extractionFolderKey}" />

@@ -8,6 +8,8 @@ class DataTagLib {
 
     def dataService
     def extractService
+    def alignService
+    def combineService
 
     // include configuration of mzExtract
     def config = ConfigurationHolder.config.mzextract
@@ -161,12 +163,52 @@ class DataTagLib {
         def dataFolder = attrs.dataFolder
         def extractionFolders = extractService.extractionFolders(dataFolder.key)
 
+        out << '<h3>Extraction folders</h3>'
         out << '<ul>'
-        extractionFolders.each { executionFolder ->
+        extractionFolders.each { extractionFolder ->
                 out << '<li>'
                 out << '    <i class="icon-th-list"></i> '
-                out <<      g.link(controller: 'extract', action:"extraction", params:[dataFolderKey: dataFolder.key, extractionFolderKey: executionFolder.key]){ executionFolder.name }
-                out <<      common.deleteButton(dataFolder:dataFolder, extractionFolder: executionFolder)
+                out <<      g.link(controller: 'extract', action:"extraction", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key]){ extractionFolder.name }
+                out <<      common.deleteExtractionButton(dataFolder:dataFolder, extractionFolder: extractionFolder)
+                out << '</li>'
+        }
+        out << '</ul>'
+
+    }
+
+    def alignmentFolders = { attrs, body ->
+
+        def dataFolder = attrs.dataFolder
+        def extractionFolder = attrs.extractionFolder
+        def alignmentFolders = alignService.alignmentFolders(dataFolder.key, extractionFolder.key)
+
+        out << '<h3>Alignment folders</h3>'
+        out << '<ul>'
+        alignmentFolders.each { alignmentFolder ->
+                out << '<li>'
+                out << '    <i class="icon-th-list"></i> '
+                out <<      g.link(controller: 'align', action:"alignment", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder.key]){ alignmentFolder.name }
+                out <<      common.deleteAlignButton(dataFolder:dataFolder, extractionFolder: extractionFolder, alignmentFolder: alignmentFolder)
+                out << '</li>'
+        }
+        out << '</ul>'
+
+    }
+
+    def combineFolders = { attrs, body ->
+
+        def dataFolder = attrs.dataFolder
+        def extractionFolder = attrs.extractionFolder
+        def alignmentFolder = attrs.alignmentFolder ?: null //optional
+        def combineFolders = combineService.combineFolders(dataFolder.key, extractionFolder.key, alignmentFolder?.key ?: '')
+
+        out << '<h3>Combine folders</h3>'
+        out << '<ul>'
+        combineFolders.each { combineFolder ->
+                out << '<li>'
+                out << '    <i class="icon-th-list"></i> '
+                out <<      g.link(controller: 'combine', action:"combine", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder?.key, combineFolderKey: combineFolder.key]){ combineFolder.name }
+                out <<      common.deleteCombineButton(dataFolder:dataFolder, extractionFolder: executionFolder, alignmentFolder: alignmentFolder, combineFolder: combineFolder)
                 out << '</li>'
         }
         out << '</ul>'

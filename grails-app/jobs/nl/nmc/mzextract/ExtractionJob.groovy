@@ -18,7 +18,7 @@ class ExtractionJob {
 
         if (queuedExtractions.size()){
             // get first from the queue (TODO: sort by date to play fair)
-            nextExtractionJob = queueService.queuedExtractions()[0]
+            nextExtractionJob = queuedExtractions[0]
         }
 
         if (nextExtractionJob != null){

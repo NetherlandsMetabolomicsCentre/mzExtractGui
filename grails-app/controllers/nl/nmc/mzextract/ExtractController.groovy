@@ -4,6 +4,8 @@ class ExtractController {
 
     def dataService
     def extractService
+    def alignService
+    def combineService
 
     // starting point, enable the user to select one or more mzXML files to extract features from
     def select() {
@@ -64,6 +66,9 @@ class ExtractController {
 
         def dataFolder = dataService.dataFolder(params.dataFolderKey)
         def extractionFolder = extractService.extractionFolder(params.dataFolderKey, params.extractionFolderKey)
+
+        def extractionAlignmentFolders = alignService.alignmentFolders(params.dataFolderKey, params.extractionFolderKey)
+        def extractionCombineFolders = combineService.combineFolders(params.dataFolderKey, params.extractionFolderKey)
 
         // check if the 'Run' button was clicked, if so queue it
         if (params['submit_extract']){
