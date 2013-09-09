@@ -49,8 +49,9 @@ class AlignmentJob {
             }
 
             // run parallel
-            GParsPool.withPool(10) { // defines the max number of Threads to use
-                selectedMatFiles.eachParallel { matFileKey ->
+            //GParsPool.withPool(10) { // defines the max number of Threads to use
+                //selectedMatFiles.eachParallel { matFileKey ->
+                selectedMatFiles.each { matFileKey ->
                     def fileToProcess = extractionFolder.files['mat'].find { it.key == matFileKey } ?: null
 
                     if (fileToProcess != null){
@@ -58,7 +59,7 @@ class AlignmentJob {
                         alignService.align(fileToProcess.path, configFile.canonicalPath)
                     }
                 }
-            }
+            //}
 
         }
     }
