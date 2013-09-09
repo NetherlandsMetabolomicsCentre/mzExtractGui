@@ -208,7 +208,7 @@ class DataTagLib {
                 out << '<li>'
                 out << '    <i class="icon-th-list"></i> '
                 out <<      g.link(controller: 'combine', action:"combine", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder?.key, combineFolderKey: combineFolder.key]){ combineFolder.name }
-                out <<      common.deleteCombineButton(dataFolder:dataFolder, extractionFolder: executionFolder, alignmentFolder: alignmentFolder, combineFolder: combineFolder)
+                out <<      common.deleteCombineButton(dataFolder:dataFolder, extractionFolder: extractionFolder, alignmentFolder: alignmentFolder, combineFolder: combineFolder)
                 out << '</li>'
         }
         out << '</ul>'

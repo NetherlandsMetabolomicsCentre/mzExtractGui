@@ -8,6 +8,7 @@ class AlignmentJob {
     def queueService
     def dataService
     def extractService
+    def alignService
 
     def execute() {
 
@@ -43,7 +44,7 @@ class AlignmentJob {
 
             // retrieve a list of the selected mat files to process
             def selectedMatFiles = []
-            new File(extractionFolder.path + '/mat.txt').eachLine { line ->
+            new File(alignmentFolder.path + '/mat.txt').eachLine { line ->
                 selectedMatFiles << line
             }
 

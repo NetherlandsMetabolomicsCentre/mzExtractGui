@@ -81,9 +81,11 @@ class CombineService {
       */
     def writeSettings(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey = null, String combineFolderKey, HashMap parameters){
 
-        try {
+        //try {
 
-          // load the combine folder
+          // load the extraction, alignment and combine folder
+          def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
+          def alignmentFolder = alignmentFolderKey ? alignService.alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey) : null
           def combineFolder = combineFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
 
           // load existing settings
@@ -93,11 +95,29 @@ class CombineService {
           def configXML = ""
           configXML += "<config>"
           configXML += "\n\t<created>" + new Date().time + "</created>"
-          configXML += "\n\t<outputpath>" + combineFolder.path + "</outputpath>"
+          configXML += "\n\t<exportfile>${combineFolder.path}/combined_results.txt</exportfile>"
 
           // add settings from parameters or use the default value
           existingSettings.each { label, value ->
             configXML += "\n\t<" + label + ">" + (parameters[label] ?: value) + "</" + label + ">"
+          }
+
+          // add the files to combine
+          new File(combineFolder.path + '/mat.txt').eachLine { matFileKey ->
+
+            if (extractionFolder?.files['mat']){
+              def matlabFile = extractionFolder.files['mat'].find { it.key == matFileKey }
+              if (matlabFile){
+                configXML += "\n\t<filename>" + matlabFile.path + "</filename>"
+              }
+            }
+
+            if (alignmentFolder != null && alignmentFolder?.files['mat']){
+              def matlabFile = alignmentFolder.files['mat'].find { it.key == matFileKey }
+              if (matlabFile){
+                configXML += "\n\t<filename>" + matlabFile.path + "</filename>"
+              }
+            }
           }
 
           // close the xml
@@ -109,9 +129,9 @@ class CombineService {
           settingsFile << configXML
 
 
-        } catch (e) {
-          log.error(e.message)
-        }
+        //} catch (e) {
+        //  log.error(e.message)
+        //}
 
         return readSettings(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
 

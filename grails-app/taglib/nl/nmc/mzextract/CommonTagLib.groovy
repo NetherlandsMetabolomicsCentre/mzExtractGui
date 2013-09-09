@@ -102,10 +102,10 @@ class CommonTagLib {
 
         def dataFolder = attrs.dataFolder
         def extractionFolder = attrs.extractionFolder
-        def alignmentFolder = attrs.alignmentFolder
+        def alignmentFolder = attrs.alignmentFolder ?: null
         def combineFolder = attrs.combineFolder
 
-        out << g.link(controller:'combine', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder.key, combineFolderKey: combineFolder.key], alt:"Delete") { '<i class="icon-stop"></i> delete' }
+        out << g.link(controller:'combine', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder?.key ?: null, combineFolderKey: combineFolder.key], alt:"Delete") { '<i class="icon-stop"></i> delete' }
     }
 
 }
