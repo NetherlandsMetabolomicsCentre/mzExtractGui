@@ -17,7 +17,7 @@ class DataService {
         fileHash['key'] = file.canonicalPath.encodeAsSHA1()
         fileHash['name'] = file.name
         fileHash['path'] = file.canonicalPath
-        fileHash['relpath'] = file.canonicalPath - "${config.path.project}"
+        fileHash['relpath'] = fileHash['path'] - "${config.path.project}"
         fileHash['relpathencoded'] = fileHash['relpath'].encodeAsBase64().toString()
         fileHash['updated'] = new Date(file.lastModified()).format('yyyy-MM-dd')
         return fileHash

@@ -55,7 +55,6 @@ class DataTagLib {
     def dataFile = { attrs, body ->
 
         def dataFile = attrs.dataFile
-
         out <<  g.link(controller: 'data', action:"download", id:dataFile.relpathencoded) { '<i class="icon-download"></i> ' }
         out <<  dataFile.name
     }

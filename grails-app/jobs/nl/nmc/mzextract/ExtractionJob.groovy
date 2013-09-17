@@ -48,9 +48,9 @@ class ExtractionJob {
             }
 
             // run parallel
-            //GParsPool.withPool(10) { // defines the max number of Threads to use
-            //    selectedMzxmlFiles.eachParallel { mzxmlFileKey ->
-                selectedMzxmlFiles.each { mzxmlFileKey ->
+            GParsPool.withPool(2) { pool -> // defines the max number of Threads to use
+                selectedMzxmlFiles.eachParallel { mzxmlFileKey ->
+                //selectedMzxmlFiles.each { mzxmlFileKey ->
                     def fileToProcess = dataFolder.files['mzxml'].find { it.key == mzxmlFileKey } ?: null
 
                     if (fileToProcess != null){
@@ -58,8 +58,9 @@ class ExtractionJob {
                         extractService.extract(fileToProcess.path, configFile.canonicalPath)
                     }
                 }
-            //}
-
+                
+                pool.shutdown() //remove the pool from memory
+            }
         }
     }
 }

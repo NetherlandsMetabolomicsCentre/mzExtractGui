@@ -16,7 +16,7 @@ class CommonTagLib {
         def dataFolder = attrs.dataFolder
         def extractionFolder = attrs.extractionFolder
 
-        out << g.link(controller:'align', action:'select', params:[submit_align: 'true', dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key], alt:"Align") { ' - align - ' }
+        //out << g.link(controller:'align', action:'select', params:[submit_align: 'true', dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key], alt:"Align") { ' - align - ' }
     }
 
     def combineButton = { attrs, body ->
@@ -41,7 +41,7 @@ class CommonTagLib {
         def extractionFolder = attrs.extractionFolder
         def alignmentFolder = attrs.alignmentFolder
 
-        out << g.link(controller:'align', action:'settings', params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder.key], alt:"Settings") { '<i class="icon-stop"></i> settings' }
+        //out << g.link(controller:'align', action:'settings', params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key, alignmentFolderKey: alignmentFolder.key], alt:"Settings") { '<i class="icon-stop"></i> settings' }
     }
 
     def settingsCombineButton = { attrs, body ->
