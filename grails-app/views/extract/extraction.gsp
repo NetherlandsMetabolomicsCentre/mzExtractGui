@@ -10,10 +10,25 @@
         </h2>
         <common:runExtractButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" />
         <common:settingsExtractButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" />
-        <common:alignButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" />
-        <common:combineButton dataFolder="${dataFolder}" extractionFolder="${extractionFolder}" />
-        <data:dataFolder dataFolder="${extractionFolder}" />
-        <data:alignmentFolders dataFolder="${dataFolder}" extractionFolder="${extractionFolder}"/>
-        <data:combineFolders dataFolder="${dataFolder}" extractionFolder="${extractionFolder}"/>
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#files" data-toggle="tab">files</a></li>
+            <!--<li><a href="#alignments" data-toggle="tab">alignments</a></li>-->
+            <li><a href="#combines" data-toggle="tab">combines</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane active" id="files">
+              <data:dataFolder dataFolder="${extractionFolder}" />
+            </div>
+            <!--<div class="tab-pane" id="alignments">
+              <common:alignButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" />
+              <data:alignmentFolders dataFolder="${dataFolder}" extractionFolder="${extractionFolder}"/>
+            </div>-->
+            <div class="tab-pane" id="combines">
+              <common:combineButton dataFolder="${dataFolder}" extractionFolder="${extractionFolder}" />            
+              <data:combineFolders dataFolder="${dataFolder}" extractionFolder="${extractionFolder}"/>              
+            </div>
+        </div>                  
     </body>
 </html>

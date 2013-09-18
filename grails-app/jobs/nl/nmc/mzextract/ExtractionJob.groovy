@@ -40,6 +40,7 @@ class ExtractionJob {
 
             //fetch config to use
             def configFile = extractService.settingsFile(dataFolderKey, extractionFolderKey)
+            def configFileHash = configFile.text.encodeAsBase64().toString()
 
             // retrieve a list of the selected mzxml files to process
             def selectedMzxmlFiles = []
@@ -48,14 +49,21 @@ class ExtractionJob {
             }
 
             // run parallel
-            GParsPool.withPool(2) { pool -> // defines the max number of Threads to use
+            GParsPool.withPool(10) { pool -> // defines the max number of Threads to use
                 selectedMzxmlFiles.eachParallel { mzxmlFileKey ->
                 //selectedMzxmlFiles.each { mzxmlFileKey ->
-                    def fileToProcess = dataFolder.files['mzxml'].find { it.key == mzxmlFileKey } ?: null
 
-                    if (fileToProcess != null){
-                        log.info(" --- extracting file ${fileToProcess.name}")
-                        extractService.extract(fileToProcess.path, configFile.canonicalPath)
+                    def fileToProcess = dataFolder.files['mzxml'].find { it.key == mzxmlFileKey } ?: null
+                    
+                    //stop when config changed
+                    if (configFileHash == extractService.settingsFile(dataFolderKey, extractionFolderKey).text.encodeAsBase64().toString()){                                       
+
+                        if (fileToProcess != null){
+                            log.info(" - extracting file ${fileToProcess.name}")
+                            extractService.extract(fileToProcess.path, configFile.canonicalPath)
+                        }
+                    } else {
+                        log.info("Skipping file ${fileToProcess.name}, config has changed!")
                     }
                 }
                 

@@ -26,8 +26,11 @@ class ExecutionService {
         proc.waitFor()
 
         // log response and any errors
-        log.info  "executing: ${command}"
+        log.info "################################################################"
+        log.info "/> ${command}"
         if (proc.exitValue() != 0){ log.error "stderr: ${proc.err.text}" }
         log.info "stdout: ${proc.in.text}"
+        log.info "################################################################"
+        log.info " "
     }
 }

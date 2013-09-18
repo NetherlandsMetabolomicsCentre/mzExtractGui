@@ -167,8 +167,10 @@ class DataTagLib {
         extractionFolders.each { extractionFolder ->
                 out << '<li>'
                 out << '    <i class="icon-th-list"></i> '
+                out <<      common.runExtractButton(dataFolder:dataFolder, extractionFolder:extractionFolder)
+                out << ' '
                 out <<      g.link(controller: 'extract', action:"extraction", params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolder.key]){ extractionFolder.name }
-                out <<      common.deleteExtractionButton(dataFolder:dataFolder, extractionFolder: extractionFolder)
+                out <<      common.deleteExtractionButton(dataFolder:dataFolder, extractionFolder: extractionFolder)               
                 out << '</li>'
         }
         out << '</ul>'

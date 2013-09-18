@@ -45,7 +45,7 @@ class CombineJob {
             //fetch config to use
             def configFile = combineService.settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
 
-            log.info(" --- combine file ${configFile.name}")
+            log.info(" --- combine file ${combineFolderKey}")
             combineService.combine(configFile.canonicalPath)
         }
     }
