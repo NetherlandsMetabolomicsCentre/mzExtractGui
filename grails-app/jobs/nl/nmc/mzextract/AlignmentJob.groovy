@@ -22,29 +22,29 @@ class AlignmentJob {
 
         if (nextAlignmentJob != null){
 
-            // store the filename to retrieve the dataFolderKey and extractionFolderKey
+            // store the filename to retrieve the dataFolderKey and extractFolderKey
             def filename = nextAlignmentJob.name
             def name = filename.tokenize('.')[0]
             def dataFolderKey = name.tokenize('_')[0]
-            def extractionFolderKey = name.tokenize('_')[1]
-            def alignmentFolderKey = name.tokenize('_')[2]
+            def extractFolderKey = name.tokenize('_')[1]
+            def alignFolderKey = name.tokenize('_')[2]
 
             log.info("\nStarting new alignment (${name})...")
 
             // delete the file from the queue
             nextAlignmentJob.delete()
 
-            // fetch dataFolder, extractionFolder and alignmentFolder
+            // fetch dataFolder, extractFolder and alignFolder
             def dataFolder = dataService.dataFolder(dataFolderKey)
-            def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
-            def alignmentFolder = alignService.alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+            def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
+            def alignFolder = alignService.alignFolder(dataFolderKey, extractFolderKey, alignFolderKey)
 
             //fetch config to use
-            def configFile = alignService.settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+            def configFile = alignService.settingsFile(dataFolderKey, extractFolderKey, alignFolderKey)
 
             // retrieve a list of the selected mat files to process
             def selectedMatFiles = []
-            new File(alignmentFolder.path + '/mat.txt').eachLine { line ->
+            new File(alignFolder.path + '/mat.txt').eachLine { line ->
                 selectedMatFiles << line
             }
 
@@ -52,7 +52,7 @@ class AlignmentJob {
             //GParsPool.withPool(10) { // defines the max number of Threads to use
                 //selectedMatFiles.eachParallel { matFileKey ->
                 selectedMatFiles.each { matFileKey ->
-                    def fileToProcess = extractionFolder.files['mat'].find { it.key == matFileKey } ?: null
+                    def fileToProcess = extractFolder.files['mat'].find { it.key == matFileKey } ?: null
 
                     if (fileToProcess != null){
                         log.info(" --- aligning file ${fileToProcess.name}")

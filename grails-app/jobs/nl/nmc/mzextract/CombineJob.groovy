@@ -23,12 +23,12 @@ class CombineJob {
 
         if (nextCombineJob != null){
 
-            // store the filename to retrieve the dataFolderKey, extractionFolderKey and alignmentFolderKey
+            // store the filename to retrieve the dataFolderKey, extractFolderKey and alignFolderKey
             def filename = nextCombineJob.name
             def name = filename.tokenize('.')[0]
             def dataFolderKey = name.tokenize('_')[0]
-            def extractionFolderKey = name.tokenize('_')[1]
-            def alignmentFolderKey = name.tokenize('_')[2] != 'null' ? name.tokenize('_')[2] : null
+            def extractFolderKey = name.tokenize('_')[1]
+            def alignFolderKey = name.tokenize('_')[2] != 'null' ? name.tokenize('_')[2] : null
             def combineFolderKey = name.tokenize('_')[3]
 
             log.info("\nStarting new combine (${name})...")
@@ -36,14 +36,14 @@ class CombineJob {
             // delete the file from the queue
             nextCombineJob.delete()
 
-            // fetch dataFolder, extractionFolder and alignmentFolder
+            // fetch dataFolder, extractFolder and alignFolder
             def dataFolder = dataService.dataFolder(dataFolderKey)
-            def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
-            def alignmentFolder = alignmentFolderKey ? alignService.alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey) : null
-            def combineFolder = combineService.combineFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+            def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
+            def alignFolder = alignFolderKey ? alignService.alignFolder(dataFolderKey, extractFolderKey, alignFolderKey) : null
+            def combineFolder = combineService.combineFolder(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
             //fetch config to use
-            def configFile = combineService.settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+            def configFile = combineService.settingsFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
             log.info(" --- combine file ${combineFolderKey}")
             combineService.combine(configFile.canonicalPath)

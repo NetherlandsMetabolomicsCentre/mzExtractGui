@@ -22,12 +22,12 @@ class AlignService {
     /*
       * returns the alignment config file
       */
-    def settingsFile(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey){
+    def settingsFile(String dataFolderKey, String extractFolderKey, String alignFolderKey){
 
         // load the alignment folder
-        def alignmentFolder = alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+        def alignFolder = alignFolder(dataFolderKey, extractFolderKey, alignFolderKey)
 
-        return new File(alignmentFolder.path + '/align.xml')
+        return new File(alignFolder.path + '/align.xml')
     }
 
     /*
@@ -42,10 +42,10 @@ class AlignService {
     /*
       * read settings from the align.xml file in the alignment folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       */
-    def readSettings(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey){
+    def readSettings(String dataFolderKey, String extractFolderKey, String alignFolderKey){
 
       def defaultSettings = defaultSettings()
 
@@ -53,7 +53,7 @@ class AlignService {
       def settings = [:]
 
       // load settings file
-      def settingsFile = settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+      def settingsFile = settingsFile(dataFolderKey, extractFolderKey, alignFolderKey)
 
       // read old settings
       def xmlSettings = [:]
@@ -72,25 +72,25 @@ class AlignService {
     /*
       * (over)write settings to the align.xml file in the alignment folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param parameters HashMap
       */
-    def writeSettings(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey, HashMap parameters){
+    def writeSettings(String dataFolderKey, String extractFolderKey, String alignFolderKey, HashMap parameters){
 
         try {
 
           // load the alignment folder
-          def alignmentFolder = alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+          def alignFolder = alignFolder(dataFolderKey, extractFolderKey, alignFolderKey)
 
           // load existing settings
-          def existingSettings = readSettings(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+          def existingSettings = readSettings(dataFolderKey, extractFolderKey, alignFolderKey)
 
           //prepare the xml
           def configXML = ""
           configXML += "<config>"
           configXML += "\n\t<created>" + new Date().time + "</created>"
-          configXML += "\n\t<outputpath>" + alignmentFolder.path + "</outputpath>"
+          configXML += "\n\t<outputpath>" + alignFolder.path + "</outputpath>"
 
           // add settings from parameters or use the default value
           existingSettings.each { label, value ->
@@ -101,7 +101,7 @@ class AlignService {
           configXML += "\n</config>"
 
           // write the file
-          def settingsFile = settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+          def settingsFile = settingsFile(dataFolderKey, extractFolderKey, alignFolderKey)
           settingsFile.delete()
           settingsFile << configXML
 
@@ -110,64 +110,64 @@ class AlignService {
           log.error(e.message)
         }
 
-        return readSettings(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+        return readSettings(dataFolderKey, extractFolderKey, alignFolderKey)
 
     }
 
     /*
       * add the alignment to the queue for execution
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       */
-    def queue(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey){
-        queueService.queueAlignment(dataFolderKey, extractionFolderKey, alignmentFolderKey)
+    def queue(String dataFolderKey, String extractFolderKey, String alignFolderKey){
+        queueService.queueAlignment(dataFolderKey, extractFolderKey, alignFolderKey)
     }
 
 
     /*
       * retrieve alignments root folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       */
-    def alignmentsFolder(String dataFolderKey, String extractionFolderKey){
-        def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
-        return dataService.getFolder(new File(extractionFolder.path + '/.alignments/'))
+    def alignmentsFolder(String dataFolderKey, String extractFolderKey){
+        def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
+        return dataService.getFolder(new File(extractFolder.path + '/.alignments/'))
     }
 
     /*
       * retrieve alignment folders
       * @param dataFolderKey String
       */
-    def alignmentFolders(String dataFolderKey, String extractionFolderKey){
-        return alignmentsFolder(dataFolderKey, extractionFolderKey)?.folders ?: []
+    def alignFolders(String dataFolderKey, String extractFolderKey){
+        return alignmentsFolder(dataFolderKey, extractFolderKey)?.folders ?: []
     }
 
     /*
       * retrieve an alignment folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       */
-    def alignmentFolder(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey){
-        return dataService.getFolder(new File(alignmentFolders(dataFolderKey, extractionFolderKey).find { it.key == alignmentFolderKey }?.path))
+    def alignFolder(String dataFolderKey, String extractFolderKey, String alignFolderKey){
+        return dataService.getFolder(new File(alignFolders(dataFolderKey, extractFolderKey).find { it.key == alignFolderKey }?.path))
     }
 
     /*
       * initiate a new alignment from a list of mat files
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       * @param matFiles ArrayList
       */
-    def initAlignment(String dataFolderKey, String extractionFolderKey, ArrayList matFiles){
+    def initAlignment(String dataFolderKey, String extractFolderKey, ArrayList matFiles){
 
-        def newAlignmentFolder = new File(alignmentsFolder(dataFolderKey, extractionFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newalignFolder = new File(alignmentsFolder(dataFolderKey, extractFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
 
         // make sure it is created
-        newAlignmentFolder.mkdirs()
+        newalignFolder.mkdirs()
 
         // read alignment folder
-        def alignmentFolder = dataService.getFile(newAlignmentFolder)
+        def alignFolder = dataService.getFile(newalignFolder)
 
         // create list of mat files included in this extraction folder
         def mats = ""
@@ -175,10 +175,10 @@ class AlignService {
             mats += "${matFile}\n"
         }
 
-        new File(alignmentFolder.path + '/mat.txt') << mats
+        new File(alignFolder.path + '/mat.txt') << mats
 
-        // return alignmentFolder key
-        return alignmentFolder.key
+        // return alignFolder key
+        return alignFolder.key
     }
 
 }

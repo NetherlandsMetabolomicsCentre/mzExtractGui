@@ -19,14 +19,105 @@ class ExtractService {
     }
 
     /*
-      * returns the extraction config file
+      * returns the extraction status file
       */
-    def settingsFile(String dataFolderKey, String extractionFolderKey){
+    def statusFile(String dataFolderKey, String extractFolderKey){
 
         // load the extraction folder
-        def extractionFolder = extractionFolder(dataFolderKey, extractionFolderKey)
+        def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
 
-        return new File(extractionFolder.path + '/extract.xml')
+        return new File(extractFolder.path + '/status.xml')
+    } 
+    
+    /*
+      * read status from the status.xml file in the extraction folder
+      * @param dataFolderKey String
+      * @param extractFolderKey String
+      */
+    def readStatus(String dataFolderKey, String extractFolderKey){
+
+      // load the extraction folder
+      def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
+
+      // init empty status HashMap
+      def status = [:]
+
+      // load settings file
+      def statusFile = statusFile(dataFolderKey, extractFolder.key)
+
+      // read old status
+      def xmlStatus = [:]
+      if (statusFile.size() > 0){
+        xmlStatus = new XmlSlurper().parseText(statusFile?.text)
+        xmlStatus.children().each { 
+            status[it.name()] = it.text() 
+        }            
+      }     
+      
+      return status
+    } 
+    
+    /*
+      * (over)write status to the status.xml file in the extraction folder
+      * @param dataFolderKey String
+      * @param extractFolderKey String
+      * @param parameters HashMap
+      */
+    def writeStatus(String dataFolderKey, String extractFolderKey, HashMap parameters){
+
+        def status = [:]
+        
+        //try {
+
+          // load the extraction folder
+          def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
+
+          // load existing status
+          def existingStatus = readStatus(dataFolderKey, extractFolderKey)
+
+          // merge existing status with new status
+          existingStatus.each { label, value ->
+            status["${label}"] = value as String
+          }
+          parameters.each { label, value ->
+            status["${label}"] = value as String
+          }
+            
+          //prepare the xml
+          def statusXML = ""
+          statusXML += "<status>"
+
+          // add status from
+          status.each { label, value ->
+            statusXML += "\n\t<" + label + ">" + value + "</" + label + ">"
+          }
+
+          // close the xml
+          statusXML += "\n</status>"
+          
+          // write the file
+          def statusFile = statusFile(dataFolderKey, extractFolderKey)
+          statusFile.delete()
+          statusFile << statusXML
+
+//
+//        } catch (e) {
+//          log.error(e.message)
+//        }
+
+        return readStatus(dataFolderKey, extractFolderKey)
+
+    }    
+    
+    /*
+      * returns the extraction config file
+      */
+    def settingsFile(String dataFolderKey, String extractFolderKey){
+
+        // load the extraction folder
+        def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
+
+        return new File(extractFolder.path + '/extract.xml')
     }
 
     /*
@@ -50,20 +141,20 @@ class ExtractService {
     /*
       * read settings from the extraction.xml file in the extraction folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       */
-    def readSettings(String dataFolderKey, String extractionFolderKey){
+    def readSettings(String dataFolderKey, String extractFolderKey){
 
       def defaultSettings = defaultSettings()
 
       // load the extraction folder
-      def extractionFolder = extractionFolder(dataFolderKey, extractionFolderKey)
+      def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
 
       // init empty settings HashMap
       def settings = [:]
 
       // load settings file
-      def settingsFile = settingsFile(dataFolderKey, extractionFolder.key)
+      def settingsFile = settingsFile(dataFolderKey, extractFolder.key)
 
       // read old settings
       def xmlSettings = [:]
@@ -82,24 +173,24 @@ class ExtractService {
     /*
       * (over)write settings to the extraction.xml file in the extraction folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       * @param parameters HashMap
       */
-    def writeSettings(String dataFolderKey, String extractionFolderKey, HashMap parameters){
+    def writeSettings(String dataFolderKey, String extractFolderKey, HashMap parameters){
 
         try {
 
           // load the extraction folder
-          def extractionFolder = extractionFolder(dataFolderKey, extractionFolderKey)
+          def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
 
           // load existing settings
-          def existingSettings = readSettings(dataFolderKey, extractionFolderKey)
+          def existingSettings = readSettings(dataFolderKey, extractFolderKey)
 
           //prepare the xml
           def configXML = ""
           configXML += "<config>"
           configXML += "\n\t<created>" + new Date().time + "</created>"
-          configXML += "\n\t<outputpath>" + extractionFolder.path + "</outputpath>"
+          configXML += "\n\t<outputpath>" + extractFolder.path + "</outputpath>"
 
           // add settings from parameters or use the default value
           existingSettings.each { label, value ->
@@ -110,7 +201,7 @@ class ExtractService {
           configXML += "\n</config>"
 
           // write the file
-          def settingsFile = settingsFile(dataFolderKey, extractionFolderKey)
+          def settingsFile = settingsFile(dataFolderKey, extractFolderKey)
           settingsFile.delete()
           settingsFile << configXML
 
@@ -119,17 +210,17 @@ class ExtractService {
           log.error(e.message)
         }
 
-        return readSettings(dataFolderKey, extractionFolderKey)
+        return readSettings(dataFolderKey, extractFolderKey)
 
     }
 
     /*
       * add the extraction to the queue for execution
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       */
-    def queue(String dataFolderKey, String extractionFolderKey){
-        queueService.queueExtraction(dataFolderKey, extractionFolderKey)
+    def queue(String dataFolderKey, String extractFolderKey){
+        queueService.queueExtraction(dataFolderKey, extractFolderKey)
     }
 
 
@@ -146,17 +237,17 @@ class ExtractService {
       * retrieve extraction folders from data folder key
       * @param dataFolderKey String
       */
-    def extractionFolders(String dataFolderKey){
+    def extractFolders(String dataFolderKey){
         return extractionsFolder(dataFolderKey)?.folders ?: []
     }
 
     /*
       * retrieve an extraction folder from a data folder key and extraction folder key
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       */
-    def extractionFolder(String dataFolderKey, String extractionFolderKey){
-        return dataService.getFolder(new File(extractionFolders(dataFolderKey).find { it.key == extractionFolderKey }.path))
+    def extractFolder(String dataFolderKey, String extractFolderKey){
+        return dataService.getFolder(new File(extractFolders(dataFolderKey).find { it.key == extractFolderKey }.path))
     }
 
     /*
@@ -166,13 +257,13 @@ class ExtractService {
       */
     def initExtraction(String dataFolderKey, ArrayList mzxmlFiles){
 
-        def newExtractionFolder = new File(extractionsFolder(dataFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newextractFolder = new File(extractionsFolder(dataFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
 
         // make sure it is created
-        newExtractionFolder.mkdirs()
+        newextractFolder.mkdirs()
 
         // read extraction folder
-        def extractionFolder = dataService.getFile(newExtractionFolder)
+        def extractFolder = dataService.getFile(newextractFolder)
 
         // create list of mzxml files included in this extraction folder
         def mzxmls = ""
@@ -180,9 +271,12 @@ class ExtractService {
             mzxmls += "${mzxmlFile}\n"
         }
 
-        new File(extractionFolder.path + '/mzxml.txt') << mzxmls
+        new File(extractFolder.path + '/mzxml.txt') << mzxmls
+        
+        // set status to new
+        writeStatus(dataFolderKey, extractFolder.key, ['status':'new', 'created': new Date()])
 
-        // return extractionFolder key
-        return extractionFolder.key
+        // return extractFolder key
+        return extractFolder.key
     }
 }

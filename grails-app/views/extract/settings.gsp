@@ -7,7 +7,7 @@
         <h2>Extract</h2>
 
         <g:form controller="extract" action="settings" name="save_extraction_settings" method="POST">
-            <g:field name="extractionFolderKey" type="hidden" value="${params.extractionFolderKey}" />
+            <g:field name="extractFolderKey" type="hidden" value="${params.extractFolderKey}" />
             <g:field name="dataFolderKey" type="hidden" value="${params.dataFolderKey}" />
             <table>
                 <g:each in="${defaultSettings}" var="defaultSetting">
@@ -24,8 +24,17 @@
                     </tr>
                 </g:each>
             </table>
-            <g:submitButton name="submit_save" value="Save" />
-            <g:submitButton name="submit_next" value="Next" />
+            <g:if test="${extractFolder.files['mat']?.size() >= 1}">
+              <div class="alert alert-error">
+                Unable to update the settings! Output exists based on these settings!
+              </div>              
+              <g:submitButton name="submit_save" disabled="disabled" value="Save" />
+              <g:submitButton name="submit_back" value="Back" />
+            </g:if>
+            <g:else>
+              <g:submitButton name="submit_save" value="Save" />
+              <g:submitButton name="submit_next" value="Next" />
+            </g:else>
         </g:form>
     </body>
 </html>

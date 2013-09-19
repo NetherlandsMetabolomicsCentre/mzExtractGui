@@ -41,11 +41,11 @@ class QueueService {
     /*
       * add the extraction to the queue for execution
       * @param dataFolderKey String
-      * @param extractionFolderKey String
+      * @param extractFolderKey String
       */
-    def queueExtraction(String dataFolderKey, String extractionFolderKey) {
+    def queueExtraction(String dataFolderKey, String extractFolderKey) {
 
-        def queueFile = new File(extractionsQueueFolder() + '/' + dataFolderKey + '_' + extractionFolderKey + '.job')
+        def queueFile = new File(extractionsQueueFolder() + '/' + dataFolderKey + '_' + extractFolderKey + '.job')
         queueFile << "Start Extraction log ${new Date().format('yyyy-MM-dd_HH-mm-ss')}"
 
         return true
@@ -54,12 +54,12 @@ class QueueService {
     /*
       * add the alignment to the queue for execution
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       */
-    def queueAlignment(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey) {
+    def queueAlignment(String dataFolderKey, String extractFolderKey, String alignFolderKey) {
 
-        def queueFile = new File(alignmentsQueueFolder() + '/' + dataFolderKey + '_' + extractionFolderKey + '_' + alignmentFolderKey + '.job')
+        def queueFile = new File(alignmentsQueueFolder() + '/' + dataFolderKey + '_' + extractFolderKey + '_' + alignFolderKey + '.job')
         queueFile << "Start Alignment log ${new Date().format('yyyy-MM-dd_HH-mm-ss')}"
 
         return true
@@ -68,13 +68,13 @@ class QueueService {
     /*
       * add the combine to the queue for execution
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param combineFolderKey String
       */
-    def queueCombine(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey, String combineFolderKey) {
+    def queueCombine(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey) {
 
-        def queueFile = new File(combinesQueueFolder() + '/' + dataFolderKey + '_' + extractionFolderKey + '_' + alignmentFolderKey + '_' + combineFolderKey + '.job')
+        def queueFile = new File(combinesQueueFolder() + '/' + dataFolderKey + '_' + extractFolderKey + '_' + alignFolderKey + '_' + combineFolderKey + '.job')
         queueFile << "Start Combine log ${new Date().format('yyyy-MM-dd_HH-mm-ss')}"
 
         return true

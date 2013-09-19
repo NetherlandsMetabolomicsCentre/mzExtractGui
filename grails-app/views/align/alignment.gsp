@@ -6,12 +6,12 @@
     <body>
         <h2>Align
             <g:link controller="data" action="folder" params="[dataFolderKey:dataFolder.key]">${dataFolder.name}</g:link>
-            <small>(${extractionFolder.name})</small>
+            <small>(${extractFolder.name})</small>
         </h2>
-        <h3>${alignmentFolder.name}</h3>
-        <common:runAlignButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" alignmentFolder="${alignmentFolder}" />
-        <common:settingsAlignButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" alignmentFolder="${alignmentFolder}" />
-        <common:combineButton dataFolder="${dataFolder}"  extractionFolder="${extractionFolder}" />
-        <data:dataFolder dataFolder="${alignmentFolder}" />
+        <h3>${alignFolder.name}</h3>
+        <common:runAlignButton dataFolder="${dataFolder}"  extractFolder="${extractFolder}" alignFolder="${alignFolder}" />
+        <common:settingsAlignButton dataFolder="${dataFolder}"  extractFolder="${extractFolder}" alignFolder="${alignFolder}" />
+        <common:combineButton dataFolder="${dataFolder}"  extractFolder="${extractFolder}" />
+        <data:dataFolder dataFolder="${alignFolder}" />
     </body>
 </html>

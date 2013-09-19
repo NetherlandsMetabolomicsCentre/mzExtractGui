@@ -22,7 +22,7 @@ class DataController {
     def folder() {
         [ dataFolder: dataService.dataFolder(params.dataFolderKey) ]
     }
-
+    
     /*
       * Download a file
       */

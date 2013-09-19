@@ -23,10 +23,10 @@ class CombineService {
     /*
       * returns the combine config file
       */
-    def settingsFile(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey, String combineFolderKey){
+    def settingsFile(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey){
 
         // load the combine folder
-        def combineFolder = combineFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+        def combineFolder = combineFolder(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
         return new File(combineFolder.path + '/combine.xml')
     }
@@ -43,11 +43,11 @@ class CombineService {
     /*
       * read settings from the combine.xml file in the combine folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param combineFolderKey String
       */
-    def readSettings(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey = null, String combineFolderKey){
+    def readSettings(String dataFolderKey, String extractFolderKey, String alignFolderKey = null, String combineFolderKey){
 
       def defaultSettings = defaultSettings()
 
@@ -55,7 +55,7 @@ class CombineService {
       def settings = [:]
 
       // load settings file
-      def settingsFile = settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+      def settingsFile = settingsFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
       // read old settings
       def xmlSettings = [:]
@@ -74,22 +74,22 @@ class CombineService {
     /*
       * (over)write settings to the combine.xml file in the combine folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param combineFolderKey String
       * @param parameters HashMap
       */
-    def writeSettings(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey = null, String combineFolderKey, HashMap parameters){
+    def writeSettings(String dataFolderKey, String extractFolderKey, String alignFolderKey = null, String combineFolderKey, HashMap parameters){
 
         //try {
 
           // load the extraction, alignment and combine folder
-          def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
-          def alignmentFolder = alignmentFolderKey ? alignService.alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey) : null
-          def combineFolder = combineFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+          def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
+          def alignFolder = alignFolderKey ? alignService.alignFolder(dataFolderKey, extractFolderKey, alignFolderKey) : null
+          def combineFolder = combineFolder(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
           // load existing settings
-          def existingSettings = readSettings(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+          def existingSettings = readSettings(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
           //prepare the xml
           def configXML = ""
@@ -105,15 +105,15 @@ class CombineService {
           // add the files to combine
           new File(combineFolder.path + '/mat.txt').eachLine { matFileKey ->
 
-            if (extractionFolder?.files['mat']){
-              def matlabFile = extractionFolder.files['mat'].find { it.key == matFileKey }
+            if (extractFolder?.files['mat']){
+              def matlabFile = extractFolder.files['mat'].find { it.key == matFileKey }
               if (matlabFile){
                 configXML += "\n\t<filename>" + matlabFile.path + "</filename>"
               }
             }
 
-            if (alignmentFolder != null && alignmentFolder?.files['mat']){
-              def matlabFile = alignmentFolder.files['mat'].find { it.key == matFileKey }
+            if (alignFolder != null && alignFolder?.files['mat']){
+              def matlabFile = alignFolder.files['mat'].find { it.key == matFileKey }
               if (matlabFile){
                 configXML += "\n\t<filename>" + matlabFile.path + "</filename>"
               }
@@ -124,7 +124,7 @@ class CombineService {
           configXML += "\n</config>"
 
           // write the file
-          def settingsFile = settingsFile(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+          def settingsFile = settingsFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
           settingsFile.delete()
           settingsFile << configXML
 
@@ -133,38 +133,38 @@ class CombineService {
         //  log.error(e.message)
         //}
 
-        return readSettings(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+        return readSettings(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
     }
 
     /*
       * add the combine to the queue for execution
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param combineFolderKey String
       */
-    def queue(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey, String combineFolderKey){
-        queueService.queueCombine(dataFolderKey, extractionFolderKey, alignmentFolderKey, combineFolderKey)
+    def queue(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey){
+        queueService.queueCombine(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
     }
 
 
     /*
       * retrieve combines root folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       */
-    def combinesFolder(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey = null){
+    def combinesFolder(String dataFolderKey, String extractFolderKey, String alignFolderKey = null){
 
         def combinesFolder
 
-        def extractionFolder = extractService.extractionFolder(dataFolderKey, extractionFolderKey)
+        def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
 
-        if (alignmentFolderKey){
-          combinesFolder = dataService.getFolder(new File(alignService.alignmentFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey).path + '/.combines/'))
+        if (alignFolderKey){
+          combinesFolder = dataService.getFolder(new File(alignService.alignFolder(dataFolderKey, extractFolderKey, alignFolderKey).path + '/.combines/'))
         } else {
-          combinesFolder = dataService.getFolder(new File(extractionFolder.path + '/.combines/'))
+          combinesFolder = dataService.getFolder(new File(extractFolder.path + '/.combines/'))
         }
 
         return combinesFolder
@@ -174,31 +174,31 @@ class CombineService {
       * retrieve combine folders
       * @param dataFolderKey String
       */
-    def combineFolders(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey = null){
-        return combinesFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey)?.folders ?: []
+    def combineFolders(String dataFolderKey, String extractFolderKey, String alignFolderKey = null){
+        return combinesFolder(dataFolderKey, extractFolderKey, alignFolderKey)?.folders ?: []
     }
 
     /*
       * retrieve an combine folder
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param combineFolderKey String
       */
-    def combineFolder(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey = null, String combineFolderKey){
-        return dataService.getFolder(new File(combineFolders(dataFolderKey, extractionFolderKey, alignmentFolderKey).find { it.key == combineFolderKey }.path))
+    def combineFolder(String dataFolderKey, String extractFolderKey, String alignFolderKey = null, String combineFolderKey){
+        return dataService.getFolder(new File(combineFolders(dataFolderKey, extractFolderKey, alignFolderKey).find { it.key == combineFolderKey }.path))
     }
 
     /*
       * initiate a new alignment from a list of mat files
       * @param dataFolderKey String
-      * @param extractionFolderKey String
-      * @param alignmentFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
       * @param matFiles ArrayList
       */
-    def initCombine(String dataFolderKey, String extractionFolderKey, String alignmentFolderKey, ArrayList matFiles){
+    def initCombine(String dataFolderKey, String extractFolderKey, String alignFolderKey, ArrayList matFiles){
 
-        def newCombineFolder = new File(combinesFolder(dataFolderKey, extractionFolderKey, alignmentFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newCombineFolder = new File(combinesFolder(dataFolderKey, extractFolderKey, alignFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
 
         // make sure it is created
         newCombineFolder.mkdirs()

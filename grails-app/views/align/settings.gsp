@@ -7,8 +7,8 @@
         <h2>Align</h2>
 
         <g:form controller="align" action="settings" name="save_alignment_settings" method="POST">
-            <g:field name="alignmentFolderKey" type="hidden" value="${params.alignmentFolderKey}" />
-            <g:field name="extractionFolderKey" type="hidden" value="${params.extractionFolderKey}" />
+            <g:field name="alignFolderKey" type="hidden" value="${params.alignFolderKey}" />
+            <g:field name="extractFolderKey" type="hidden" value="${params.extractFolderKey}" />
             <g:field name="dataFolderKey" type="hidden" value="${params.dataFolderKey}" />
             <table>
                 <g:each in="${defaultSettings}" var="defaultSetting">

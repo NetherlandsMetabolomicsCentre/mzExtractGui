@@ -16,7 +16,23 @@
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
 			body { padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ }
 			ul { list-style: none; }
-		</style>
+                        .page-table {
+                          margin: 5px 0;
+                        }
+                        .page-tr {
+                          margin: 1px 0;
+                        }
+                        .page-left, .page-right {
+                          padding: 15px;
+                          margin: 3px;
+                          border-left: thin solid #dcdcdc;
+                          vertical-align: top;
+                          min-width: 300px;
+                        }
+                        .btn {
+                          margin: 1px 5px;
+                        }
+		</style>                
 
 <!--		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap-responsive.min.css')}" type="text/css">-->
                 <script src="${resource(dir: 'js', file: 'bootstrap.min.js')}"></script>

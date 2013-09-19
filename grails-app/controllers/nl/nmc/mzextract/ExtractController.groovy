@@ -11,7 +11,7 @@ class ExtractController {
     def select() {
 
         def dataFolder
-        def extractionFolders = []
+        def extractFolders = []
 
         // check if a datafolder is selected
         if (params.dataFolderKey){
@@ -20,7 +20,7 @@ class ExtractController {
             dataFolder = dataService.dataFolder(params.dataFolderKey)
 
             // fetch extraction folders
-            extractionFolders = extractService.extractionFolders(dataFolder.key)
+            extractFolders = extractService.extractFolders(dataFolder.key)
 
             // see if the user selected one or more mzXML files
             if (params.mzxmlfiles?.size() >= 1){
@@ -36,56 +36,62 @@ class ExtractController {
                 }
 
                 // generate a extraction folder and return the key to pass with the redirect
-                def extractionFolderKey = extractService.initExtraction(dataFolder.key, uniqueFiles)
+                def extractFolderKey = extractService.initExtraction(dataFolder.key, uniqueFiles)
 
                 // files selected, proceed to setting the settings
-                redirect(action:'settings', params:[dataFolderKey: dataFolder.key, extractionFolderKey: extractionFolderKey])
+                redirect(action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolderKey])
             }
         }
 
-        [ dataFolder: dataFolder, extractionFolders: extractionFolders ]
+        [ dataFolder: dataFolder, extractFolders: extractFolders ]
     }
 
     def settings(){
+        
+        def extractFolder = extractService.extractFolder(params.dataFolderKey, params.extractFolderKey)
+        
+        if (params['submit_back']){
+            // redirect to extraction page to view the status
+            redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: params.extractFolderKey])            
+        }
 
         // (over-)write settings and return the updated values
-        def existingSettings = extractService.writeSettings(params.dataFolderKey, params.extractionFolderKey, params as HashMap)
+        def existingSettings = extractService.writeSettings(params.dataFolderKey, params.extractFolderKey, params as HashMap)
 
         // check if the 'Next' button was clicked, if so go to the next page to schedule the run
         if (params['submit_next']){
-
             // redirect to extraction page to view the status
-            redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractionFolderKey: params.extractionFolderKey])
+            redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: params.extractFolderKey])
         }
 
-        [ defaultSettings: extractService.defaultSettings(), existingSettings: existingSettings ]
+        [ extractFolder: extractFolder, defaultSettings: extractService.defaultSettings(), existingSettings: existingSettings ]
 
     }
 
     def extraction(){
 
         def dataFolder = dataService.dataFolder(params.dataFolderKey)
-        def extractionFolder = extractService.extractionFolder(params.dataFolderKey, params.extractionFolderKey)
+        def extractFolder = extractService.extractFolder(params.dataFolderKey, params.extractFolderKey)
 
-        def extractionAlignmentFolders = alignService.alignmentFolders(params.dataFolderKey, params.extractionFolderKey)
-        def extractionCombineFolders = combineService.combineFolders(params.dataFolderKey, params.extractionFolderKey)
+        def extractionalignFolders = alignService.alignFolders(params.dataFolderKey, params.extractFolderKey)
+        def extractionCombineFolders = combineService.combineFolders(params.dataFolderKey, params.extractFolderKey)
 
         // check if the 'Run' button was clicked, if so queue it
         if (params['submit_extract']){
-            extractService.queue(params.dataFolderKey, params.extractionFolderKey)
+            extractService.queue(params.dataFolderKey, params.extractFolderKey)
         }
 
-        [ dataFolder: dataFolder, extractionFolder: extractionFolder ]
+        [ dataFolder: dataFolder, extractFolder: extractFolder ]
     }
 
     def delete(){
 
         def dataFolder = dataService.dataFolder(params.dataFolderKey)
-        def extractionFolder = extractService.extractionFolder(params.dataFolderKey, params.extractionFolderKey)
+        def extractFolder = extractService.extractFolder(params.dataFolderKey, params.extractFolderKey)
 
         // delete it
         if (params.submit_delete){
-            new File(extractionFolder.path).deleteDir()
+            new File(extractFolder.path).deleteDir()
 
             // redirect to data folder page
             redirect(controller:'data', action:'folder', params:[dataFolderKey: params.dataFolderKey])
