@@ -14,10 +14,15 @@ class CommonTagLib {
     def extractButtonData = { attrs, body ->
         def dataFolder = dataService.dataFolder(attrs.dataFolderKey)
         def extractFolder = extractService.extractFolder(attrs.dataFolderKey, attrs.extractFolderKey)
+        def extractStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
 
         out << runExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
         out << settingsExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
         out << deleteExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
+        
+        if (extractStatus){
+            out << " status: ${extractStatus}"
+        }
     }
 
     def extractButtons = { attrs, body ->
@@ -134,10 +139,10 @@ class CommonTagLib {
         def extractStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
         def buttonText = '<i class="icon-stop icon-white"></i> delete'
 
-        if (extractStatus != 'new' && extractStatus != 'done'){
-            out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'
+        if (!extractStatus || (extractStatus == 'new' || extractStatus == 'done')){
+            out << g.link(controller:'extract', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this extraction?')") { buttonText }            
         } else {
-            out << g.link(controller:'extract', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this extraction?')") { buttonText }
+            out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'            
         }
     }
 
