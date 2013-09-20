@@ -32,17 +32,17 @@ class DataTagLib {
 
 
     // display a single datafolder
-    def dataFolder = { attrs, body ->      
-        
+    def dataFolder = { attrs, body ->
+
         def dataFolder = attrs.dataFolder ?: null
         def extractFolder = attrs.extractFolder ?: null
         def alignFolder = attrs.alignFolder ?: null
         def combineFolder = attrs.combineFolder ?: null
-        
+
         out << '<div id="filesList"></div>'
-        
+
         def remoteUrl = g.createLink(controller: 'remote', action: 'filesList', params:[dataFolderKey:dataFolder?.key, extractFolderKey:extractFolder?.key, alignFolderKey:alignFolder?.key, combineFolderKey:combineFolder?.key], base: resource(dir:''))
-        
+
         out << '<script>'
         out << ' $(document).ready(function() {'
         out << '     $("#filesList").load("' + remoteUrl + '");'
@@ -51,16 +51,16 @@ class DataTagLib {
         out << '   }, 1000);'
         out << '   $.ajaxSetup({ cache: false });'
         out << '});'
-        out << '</script>'    
+        out << '</script>'
     }
-    
+
     // display the files in a datafolder
     def dataFolderFiles = { attrs, body ->
-        
+
         def folder = null
-        
+
         def dataFolderKeys = attrs.dataFolderKeys
-                
+
         if (dataFolderKeys['combineFolderKey']){
             folder = combineService.combineFolder(dataFolderKeys['dataFolderKey'], dataFolderKeys['extractFolderKey'], dataFolderKeys['alignFolderKey'] ?: null, dataFolderKeys['combineFolderKey'])
         } else if(dataFolderKeys['alignFolderKey']) {
@@ -70,7 +70,7 @@ class DataTagLib {
         } else if(dataFolderKeys['dataFolderKey']) {
             folder = dataService.dataFolder(dataFolderKeys['dataFolderKey'])
         }
-        
+
         folder?.files?.keySet().each { ext ->
 
             if (ext in config.exepted.extensions){
@@ -81,7 +81,7 @@ class DataTagLib {
                 }
                 out << '</ul>'
             }
-        }         
+        }
     }
 
 
@@ -201,13 +201,15 @@ class DataTagLib {
         out << '<ul>'
         extractFolders.each { extractFolder ->
                 out << '<li>'
-                out << '    <i class="icon-th-list"></i> '
-                out << extractFolder.name
+                out << '     <table><tr>'
+                out << '        <td><i class="icon-th-list"></i></td>'
+                out << '        <td>' + extractFolder.name + '</td>'
 
-                // show buttons
-                def disabled = ['new': true]
-                out << common.extractButtons(dataFolderKey:dataFolder.key, extractFolderKey:extractFolder.key, disabled:disabled)
-                
+                out << '        <td>' + common.viewExtractButton(dataFolder:dataFolder, extractFolder:extractFolder) + '</td>'
+                out << '        <td>' + common.extractButtons(dataFolderKey:dataFolder.key, extractFolderKey:extractFolder.key) + '</td>'
+                out << '        </td>'
+
+                out << '     </tr></table>'
                 out << '</li>'
         }
         out << '</ul>'

@@ -4,20 +4,20 @@ class RemoteController {
 
     def dataService
     def extractService
-    def alignService    
-    def combineService    
-    
+    def alignService
+    def combineService
+
     /*
      * renders a list of files with the data folder
      */
     def filesList() {
-      render(data.dataFolderFiles(dataFolderKeys:params) + "<br />${new Date()}")      
+      render(data.dataFolderFiles(dataFolderKeys:params))
     }
-    
+
     /*
      * renders extract buttons
      */
     def extractButtons(){
-        render common.extractButtonData(dataFolderKey:params.dataFolderKey, extractFolderKey:params.extractFolderKey)
+        render common.extractButtonData(dataFolderKey:params.dataFolderKey, extractFolderKey:params.extractFolderKey, disabled:params.disabled)
     }
 }

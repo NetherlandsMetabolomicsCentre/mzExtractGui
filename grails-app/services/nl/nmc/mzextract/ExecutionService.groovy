@@ -9,6 +9,9 @@ class ExecutionService {
 
     def execCommand(String executable, ArrayList arguments) {
 
+        // log response
+        def response = ""
+
         // init command to execute
         def command = ""
 
@@ -21,16 +24,18 @@ class ExecutionService {
         // add arguments
         arguments.each { argument -> command += "\"${argument}\" " }
 
-        // start the execution
-        def proc = command.execute()
-        proc.waitFor()
+        try {
+            // start the execution
+            def proc = command.execute()
+            proc.waitFor()
 
-        // log response and any errors
-        log.info "################################################################"
-        log.info "/> ${command}"
-        if (proc.exitValue() != 0){ log.error "stderr: ${proc.err.text}" }
-        log.info "stdout: ${proc.in.text}"
-        log.info "################################################################"
-        log.info " "
+            if (proc.exitValue() != 0){ response += "\n --- stderr: ${proc.err.text}" }
+            response += "\n  --- stdout: ${proc.in.text}"
+        } catch (e) {
+            log.error "execution failed of: ${command}"
+            log.error "stderr: ${proc.err.text}"
+        }
+
+        return response
     }
 }
