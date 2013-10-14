@@ -4,7 +4,7 @@ import groovyx.gpars.GParsPool
 
 class ExtractionJob {
     static triggers = {
-      simple repeatInterval: 5000l // execute job once in 5 seconds
+      simple repeatInterval: 3000l // execute job once in 3 seconds
     }
 
     def queueService

@@ -74,7 +74,7 @@ class QueueService {
       */
     def queueCombine(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey) {
 
-        def queueFile = new File(combinesQueueFolder() + '/' + dataFolderKey + '_' + extractFolderKey + '_' + alignFolderKey + '_' + combineFolderKey + '.job')
+        def queueFile = new File(combinesQueueFolder() + '/' + (dataFolderKey ?: 'null') + '_' + (extractFolderKey ?: 'null') + '_' + (alignFolderKey ?: 'null') + '_' + (combineFolderKey ?: 'null') + '.job')
         queueFile << "Start Combine log ${new Date().format('yyyy-MM-dd_HH-mm-ss')}"
 
         return true

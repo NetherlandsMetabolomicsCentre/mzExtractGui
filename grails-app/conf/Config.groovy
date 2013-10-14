@@ -104,6 +104,7 @@ mzextract.os = 'win' // win/lin/osx
 // mzExtract config
 //mzextract.matlab.home = '/Applications/MATLAB/MATLAB_Compiler_Runtime/v80' //OSX
 //mzextract.matlab.home = '/usr/local/MATLAB/MATLAB_Compiler_Runtime/v80' //LINUX
+//mzextract.matlab.home = 'C:\\Program Files\\MATLAB/MATLAB Compiler Runtime\\v81' //WINDOWS
 mzextract.matlab.home = 'C:\\Program Files\\MATLAB/MATLAB Compiler Runtime\\v80' //WINDOWS
 
 //mzextract.path.commandline = '/Users/miv/Desktop/temp/mzextract/osx' //OSX

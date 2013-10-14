@@ -196,17 +196,17 @@ class DataTagLib {
         def dataFolder = attrs.dataFolder
         def extractFolders = extractService.extractFolders(dataFolder.key)
 
-        out << '<h3>extractions</h3>'
+        out << '<div style="float:right;">'
         out << common.extractButton(dataFolder:dataFolder)
+        out << '</div>'
+        out << '<h3>extractions</h3>'        
         out << '<ul>'
         extractFolders.each { extractFolder ->
                 out << '<li>'
-                out << '     <table><tr>'
+                out << '     <table style="padding:13px;"><tr>'
                 out << '        <td><i class="icon-th-list"></i></td>'
-                out << '        <td>' + extractFolder.name + '</td>'
-
                 out << '        <td>' + common.viewExtractButton(dataFolder:dataFolder, extractFolder:extractFolder) + '</td>'
-                out << '        <td>' + common.extractButtons(dataFolderKey:dataFolder.key, extractFolderKey:extractFolder.key) + '</td>'
+                out << '        <td>' + extractFolder.name + '</td>'
                 out << '        </td>'
 
                 out << '     </tr></table>'
@@ -242,15 +242,21 @@ class DataTagLib {
         def alignFolder = attrs.alignFolder ?: null //optional
         def combineFolders = combineService.combineFolders(dataFolder.key, extractFolder.key, alignFolder?.key ?: '')
 
-        out << '<h3>combines</h3>'
+        out << '<div style="float:right;">'
         out << common.combineButton(dataFolder:dataFolder, extractFolder:extractFolder, alignFolder:alignFolder)
+        out << '</div>'
+        out << '<h3>combines</h3>'        
         out << '<ul>'
         combineFolders.each { combineFolder ->
                 out << '<li>'
-                out << '    <i class="icon-th-list"></i> '
-                out <<      g.link(controller: 'combine', action:"combine", params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key]){ combineFolder.name }
-                out <<      common.deleteCombineButton(dataFolder:dataFolder, extractFolder: extractFolder, alignFolder: alignFolder, combineFolder: combineFolder)
-                out << '</li>'
+                out << '     <table style="padding:13px;"><tr>'
+                out << '        <td><i class="icon-th-list"></i></td>'
+                out << '        <td>' + common.viewCombineButton(dataFolder:dataFolder, extractFolder:extractFolder, alignFolder:alignFolder, combineFolder:combineFolder) + '</td>'                
+                out << '        <td>' + combineFolder.name + '</td>'                
+                out << '        </td>'
+
+                out << '     </tr></table>'
+                out << '</li>'            
         }
         out << '</ul>'
 

@@ -11,18 +11,23 @@ class CommonTagLib {
     def extractService
     def alignService
 
+    def extractStatus = { attrs, body ->
+        def extractStatus = extractService.readStatus(attrs.dataFolderKey, attrs.extractFolderKey)['status']
+        if (extractStatus){
+            out << '<div style="float: right;">status: ' + extractStatus + '</div>'
+        }
+    }    
+    
     def extractButtonData = { attrs, body ->
         def dataFolder = dataService.dataFolder(attrs.dataFolderKey)
         def extractFolder = extractService.extractFolder(attrs.dataFolderKey, attrs.extractFolderKey)
-        def extractStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
 
+        out << '<div style="padding-bottom: 5px; border-bottom:thin solid #cdcdcd;">'
         out << runExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
         out << settingsExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
         out << deleteExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
-        
-        if (extractStatus){
-            out << " status: ${extractStatus}"
-        }
+        out << extractStatus(dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key)        
+        out << '</div>'
     }
 
     def extractButtons = { attrs, body ->
@@ -32,9 +37,41 @@ class CommonTagLib {
         def divId = "extractButtons_${UUID.randomUUID()}"
         out << '<div id="' + divId + '"></div>'
         out << '<script>'
-        out << '$(document).ready(function() {$("#' + divId + '").load("' + remoteUrl + '"); var refreshId = setInterval(function() { $("#' + divId + '").load("' + remoteUrl + '"); }, 1000); $.ajaxSetup({ cache: false }); });'
+        out << '$(document).ready(function() {$("#' + divId + '").load("' + remoteUrl + '"); var refreshId = setInterval(function() { $("#' + divId + '").load("' + remoteUrl + '"); }, 2000); $.ajaxSetup({ cache: false }); });'
         out << '</script>'
     }
+
+    def combineStatus = { attrs, body ->
+        def combineStatus = combineService.readStatus(attrs.dataFolderKey, attrs.extractFolderKey, attrs.alignFolderKey, attrs.combineFolderKey)['status']
+        if (combineStatus){
+            out << '<div style="float: right;">status: ' + combineStatus + '</div>'
+        }
+    }        
+        
+    def combineButtonData = { attrs, body ->
+        def dataFolder = dataService.dataFolder(attrs.dataFolderKey)
+        def extractFolder = extractService.extractFolder(attrs.dataFolderKey, attrs.extractFolderKey)
+        def alignFolder = alignService.alignFolder(attrs.dataFolderKey, attrs.extractFolderKey, attrs.alignFolderKey)
+        def combineFolder = combineService.combineFolder(attrs.dataFolderKey, attrs.extractFolderKey, attrs.alignFolderKey, attrs.combineFolderKey)          
+
+        out << '<div style="padding-bottom: 5px; border-bottom:thin solid #cdcdcd;">'
+        out << runCombineButton(dataFolder: dataFolder, extractFolder: extractFolder, alignFolder: alignFolder, combineFolder: combineFolder)
+        out << settingsCombineButton(dataFolder: dataFolder, extractFolder: extractFolder, alignFolder: alignFolder, combineFolder: combineFolder)
+        out << deleteCombineButton(dataFolder: dataFolder, extractFolder: extractFolder, alignFolder: alignFolder, combineFolder: combineFolder)
+        out << combineStatus(dataFolderKey: attrs.dataFolderKey, extractFolderKey: attrs.extractFolderKey, alignFolderKey: attrs.alignFolderKey, combineFolderKey: attrs.combineFolderKey)        
+        out << '</div>'
+    }
+
+    def combineButtons = { attrs, body ->
+
+        def remoteUrl = g.createLink(controller: 'remote', action: 'combineButtons', params:[dataFolderKey:attrs.dataFolderKey, extractFolderKey:attrs.extractFolderKey, alignFolderKey:attrs.alignFolderKey ?: null, combineFolderKey:attrs.combineFolderKey], base: resource(dir:''))
+
+        def divId = "combineButtons_${UUID.randomUUID()}"
+        out << '<div id="' + divId + '"></div>'
+        out << '<script>'
+        out << '$(document).ready(function() {$("#' + divId + '").load("' + remoteUrl + '"); var refreshId = setInterval(function() { $("#' + divId + '").load("' + remoteUrl + '"); }, 2000); $.ajaxSetup({ cache: false }); });'
+        out << '</script>'
+    }        
 
     def extractButton = { attrs, body ->
 
@@ -67,6 +104,16 @@ class CommonTagLib {
         out << g.link(class:"btn btn-mini", controller: 'extract', action:"extraction", params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key]){ 'view' }
     }
 
+    def viewCombineButton = { attrs, body ->
+
+        def dataFolder = attrs.dataFolder
+        def extractFolder = attrs.extractFolder
+        def alignFolder = attrs.alignFolder
+        def combineFolder = attrs.combineFolder        
+
+        out << g.link(class:"btn btn-mini", controller: 'combine', action:"combine", params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key]){ 'view' }
+    }
+    
     def settingsExtractButton = { attrs, body ->
 
         def dataFolder = attrs.dataFolder
@@ -96,7 +143,7 @@ class CommonTagLib {
         def alignFolder = attrs.alignFolder
         def combineFolder = attrs.combineFolder
 
-        out << g.link(controller:'combine', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder.key, combineFolderKey: combineFolder.key], alt:"Settings", class:"btn btn-mini btn-warning") { '<i class="icon-pencil icon-white"></i> settings' }
+        out << g.link(controller:'combine', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Settings", class:"btn btn-mini btn-warning") { '<i class="icon-pencil icon-white"></i> settings' }
     }
 
     def runExtractButton = { attrs, body ->
@@ -119,7 +166,7 @@ class CommonTagLib {
         def extractFolder = attrs.extractFolder
         def alignFolder = attrs.alignFolder
 
-        out << g.link(controller:'align', action:'alignment', params:[submit_align: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder.key], alt:"Run", class:"btn btn-mini btn-success") { '<i class="icon-play icon-white"></i> run' }
+        out << g.link(controller:'align', action:'alignment', params:[submit_align: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key], alt:"Run", class:"btn btn-mini btn-success") { '<i class="icon-play icon-white"></i> run' }
     }
 
     def runCombineButton = { attrs, body ->
@@ -129,7 +176,7 @@ class CommonTagLib {
         def alignFolder = attrs.alignFolder
         def combineFolder = attrs.combineFolder
 
-        out << g.link(controller:'combine', action:'combine', params:[submit_combine: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder.key, combineFolderKey: combineFolder.key], alt:"Run", class:"btn btn-mini btn-success") { '<i class="icon-play icon-white"></i> run' }
+        out << g.link(controller:'combine', action:'combine', params:[submit_combine: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Run", class:"btn btn-mini btn-success") { '<i class="icon-play icon-white"></i> run' }
     }
 
     def deleteExtractButton = { attrs, body ->

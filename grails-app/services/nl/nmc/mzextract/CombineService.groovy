@@ -32,6 +32,93 @@ class CombineService {
     }
 
     /*
+      * returns the combine status file
+      */
+    def statusFile(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey){
+
+        // load the combine folder
+        def combineFolder = combineFolder(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+
+        return new File(combineFolder.path + '/status.xml')
+    } 
+    
+    /*
+      * read status from the status.xml file in the combine folder
+      * @param dataFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
+      * @param combineFolderKey String
+      */
+    def readStatus(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey){
+
+      // init empty status HashMap
+      def status = [:]
+
+      // load settings file
+      def statusFile = statusFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+
+      // read old status
+      def xmlStatus = [:]
+      if (statusFile.size() > 0){
+        xmlStatus = new XmlSlurper().parseText(statusFile?.text)
+        xmlStatus.children().each { 
+            status[it.name()] = it.text() 
+        }            
+      }     
+      
+      return status
+    } 
+    
+    /*
+      * (over)write status to the status.xml file in the extraction folder
+      * @param dataFolderKey String
+      * @param extractFolderKey String
+      * @param alignFolderKey String
+      * @param combineFolderKey String
+      * @param parameters HashMap
+      */
+    def writeStatus(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey, HashMap parameters){
+
+        def status = [:]
+        
+        //try {
+          // load existing status
+          def existingStatus = readStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+
+          // merge existing status with new status
+          existingStatus.each { label, value ->
+            status["${label}"] = value as String
+          }
+          parameters.each { label, value ->
+            status["${label}"] = value as String
+          }
+            
+          //prepare the xml
+          def statusXML = ""
+          statusXML += "<status>"
+
+          // add status from
+          status.each { label, value ->
+            statusXML += "\n\t<" + label + ">" + value + "</" + label + ">"
+          }
+
+          // close the xml
+          statusXML += "\n</status>"
+          
+          // write the file
+          def statusFile = statusFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+          statusFile.delete()
+          statusFile << statusXML
+
+//
+//        } catch (e) {
+//          log.error(e.message)
+//        }
+
+        return readStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+    }
+    
+    /*
       * run combine on a collection of matlab files using the supplied arguments
       *
       * @param configFile String
@@ -96,7 +183,7 @@ class CombineService {
           configXML += "<config>"
           configXML += "\n\t<created>" + new Date().time + "</created>"
           configXML += "\n\t<exportfile>${combineFolder.path}/combined_results.txt</exportfile>"
-
+        
           // add settings from parameters or use the default value
           existingSettings.each { label, value ->
             configXML += "\n\t<" + label + ">" + (parameters[label] ?: value) + "</" + label + ">"
@@ -159,8 +246,8 @@ class CombineService {
 
         def combinesFolder
 
-        def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
-
+        def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)        
+        
         if (alignFolderKey){
           combinesFolder = dataService.getFolder(new File(alignService.alignFolder(dataFolderKey, extractFolderKey, alignFolderKey).path + '/.combines/'))
         } else {
@@ -186,6 +273,7 @@ class CombineService {
       * @param combineFolderKey String
       */
     def combineFolder(String dataFolderKey, String extractFolderKey, String alignFolderKey = null, String combineFolderKey){
+        //println alignFolderKey
         return dataService.getFolder(new File(combineFolders(dataFolderKey, extractFolderKey, alignFolderKey).find { it.key == combineFolderKey }.path))
     }
 

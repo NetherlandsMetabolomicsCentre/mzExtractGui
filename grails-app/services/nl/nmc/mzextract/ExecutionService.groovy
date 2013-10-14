@@ -26,6 +26,7 @@ class ExecutionService {
 
         try {
             // start the execution
+            println command
             def proc = command.execute()
             proc.waitFor()
 

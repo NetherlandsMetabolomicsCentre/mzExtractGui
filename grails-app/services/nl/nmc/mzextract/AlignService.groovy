@@ -150,7 +150,12 @@ class AlignService {
       * @param alignFolderKey String
       */
     def alignFolder(String dataFolderKey, String extractFolderKey, String alignFolderKey){
-        return dataService.getFolder(new File(alignFolders(dataFolderKey, extractFolderKey).find { it.key == alignFolderKey }?.path))
+        def alignmentFolderPath = alignFolders(dataFolderKey, extractFolderKey).find { it.key == alignFolderKey }?.path ?: null
+        if (alignmentFolderPath){
+            return dataService.getFolder(new File(alignmentFolderPath))
+        } else {
+            return null
+        }
     }
 
     /*

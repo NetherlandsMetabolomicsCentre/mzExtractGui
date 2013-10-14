@@ -93,13 +93,19 @@ class CombineController {
 
         def dataFolder = dataService.dataFolder(params.dataFolderKey)
         def extractFolder = extractService.extractFolder(params.dataFolderKey, params.extractFolderKey)
+        def alignFolder = params.alignFolderKey ? alignService.alignFolder(params.dataFolderKey, params.extractFolderKey, params.alignFolderKey) : []
+        def combineFolder = combineService.combineFolder(params.dataFolderKey, params.extractFolderKey, params.alignFolderKey, params.combineFolderKey)
 
         // delete it
         if (params.submit_delete){
-            new File(extractFolder.path).deleteDir()
+            new File(combineFolder.path).deleteDir()
 
-            // redirect to data folder page
-            redirect(controller:'data', action:'folder', params:[dataFolderKey: params.dataFolderKey])
+            // redirect to alignment page
+            if (alignFolder?.key){
+                redirect(controller:'align', action:'alignment', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder.key])
+            } else {
+                redirect(controller:'extract', action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: extractFolder.key])
+            }
         }
     }
 

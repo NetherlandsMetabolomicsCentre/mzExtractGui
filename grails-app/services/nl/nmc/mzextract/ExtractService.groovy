@@ -36,14 +36,11 @@ class ExtractService {
       */
     def readStatus(String dataFolderKey, String extractFolderKey){
 
-      // load the extraction folder
-      def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
-
       // init empty status HashMap
       def status = [:]
 
       // load settings file
-      def statusFile = statusFile(dataFolderKey, extractFolder.key)
+      def statusFile = statusFile(dataFolderKey, extractFolderKey)
 
       // read old status
       def xmlStatus = [:]
@@ -68,10 +65,6 @@ class ExtractService {
         def status = [:]
         
         //try {
-
-          // load the extraction folder
-          def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
-
           // load existing status
           def existingStatus = readStatus(dataFolderKey, extractFolderKey)
 
