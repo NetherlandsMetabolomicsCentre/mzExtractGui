@@ -12,10 +12,15 @@
         <common:combineButtons dataFolderKey="${dataFolder.key}" extractFolderKey="${extractFolder.key}" alignFolderKey="${alignFolder.key}" combineFolderKey="${combineFolder.key}" />      
       
         <h3>${combineFolder.name}</h3>
-        <!--
-          <common:runCombineButton dataFolder="${dataFolder}"  extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}" />
-          <common:settingsCombineButton dataFolder="${dataFolder}"  extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}" />
-        -->
-        <data:dataFolder dataFolder="${dataFolder}" extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}"/>
+        <table class="page-table">
+          <tr class="page-tr">
+            <td class="page-left">
+              <data:dataFolder dataFolder="${dataFolder}" extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}" />
+            </td>
+            <td class="page-right">
+              <data:combineReport dataFolder="${dataFolder}" extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}" />
+            </td>
+          </tr>
+        </table>
     </body>
 </html>

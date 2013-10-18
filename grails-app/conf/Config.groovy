@@ -97,9 +97,11 @@ log4j = {
 
 jetty.port=9000
 
-mzextract.exepted.extensions = ['xml', 'mzxml', 'mat', 'txt']
+mzextract.exepted.extensions = ['xml', 'mzxml', 'mat', 'txt', 'tsv']
 
 mzextract.os = 'win' // win/lin/osx
+
+mzextract.combine.outputfile = 'combined.tsv'
 
 // mzExtract config
 //mzextract.matlab.home = '/Applications/MATLAB/MATLAB_Compiler_Runtime/v80' //OSX

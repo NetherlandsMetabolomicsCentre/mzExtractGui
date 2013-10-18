@@ -41,20 +41,14 @@ class ExtractionJob {
             // include path of extraction in logging
             logging += " -- extraction folder: ${extractFolder.path}\n"
 
-            // update status
-            extractService.writeStatus(dataFolderKey, extractFolderKey, ['status':'running', 'updated': new Date(), 'logging':logging])
-
             //fetch config to use
             def configFile = extractService.settingsFile(dataFolderKey, extractFolderKey)
             def configFileHash = configFile.text.encodeAsBase64().toString()
 
-            // include config of extraction in logging
-            logging += "\n -- settings used \n"
-            extractService.readSettings(dataFolderKey, extractFolderKey).each { label, value ->
-                logging += " --- ${label}\t ${value}\n"
-            }
+            // update status
+            extractService.writeStatus(dataFolderKey, extractFolderKey, ['status':'running', 'updated': new Date(), 'logging':logging])            
+            
             logging += "\n\n"
-
 
             // retrieve a list of the selected mzxml files to process
             def selectedMzxmlFiles = []

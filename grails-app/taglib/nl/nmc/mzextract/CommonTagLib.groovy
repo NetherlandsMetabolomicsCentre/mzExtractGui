@@ -14,7 +14,12 @@ class CommonTagLib {
     def extractStatus = { attrs, body ->
         def extractStatus = extractService.readStatus(attrs.dataFolderKey, attrs.extractFolderKey)['status']
         if (extractStatus){
-            out << '<div style="float: right;">status: ' + extractStatus + '</div>'
+            out << '<div style="float: right;">status: '
+            out << extractStatus
+            if (extractStatus == 'running'){
+                out << ' <img src="' + resource(dir: 'images', file: 'spinner.gif') + '" />'
+            }
+            out << '</div>'
         }
     }    
     
@@ -41,10 +46,15 @@ class CommonTagLib {
         out << '</script>'
     }
 
-    def combineStatus = { attrs, body ->
+    def combineStatus = { attrs, body ->        
         def combineStatus = combineService.readStatus(attrs.dataFolderKey, attrs.extractFolderKey, attrs.alignFolderKey, attrs.combineFolderKey)['status']
         if (combineStatus){
-            out << '<div style="float: right;">status: ' + combineStatus + '</div>'
+            out << '<div style="float: right;">status: '
+            out << combineStatus
+            if (combineStatus == 'running'){
+                out << ' <img src="' + resource(dir: 'images', file: 'spinner.gif') + '" />'
+            }            
+            out << '</div>'
         }
     }        
         
@@ -65,7 +75,6 @@ class CommonTagLib {
     def combineButtons = { attrs, body ->
 
         def remoteUrl = g.createLink(controller: 'remote', action: 'combineButtons', params:[dataFolderKey:attrs.dataFolderKey, extractFolderKey:attrs.extractFolderKey, alignFolderKey:attrs.alignFolderKey ?: null, combineFolderKey:attrs.combineFolderKey], base: resource(dir:''))
-
         def divId = "combineButtons_${UUID.randomUUID()}"
         out << '<div id="' + divId + '"></div>'
         out << '<script>'
@@ -120,7 +129,8 @@ class CommonTagLib {
         def extractFolder = attrs.extractFolder
         def buttonText = '<i class="icon-pencil icon-white"></i> settings'
 
-        if (extractService.readStatus(dataFolder.key, extractFolder.key)['status'] != 'new'){
+        def currentStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
+        if (currentStatus != 'new' ){
             out << '<button class="btn btn-mini  btn-warning disabled">' + buttonText + '</button>'
         } else {
             out << g.link(controller:'extract', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Settings") { '<button class="btn btn-mini btn-warning">' + buttonText + '</button>'}
@@ -143,17 +153,24 @@ class CommonTagLib {
         def alignFolder = attrs.alignFolder
         def combineFolder = attrs.combineFolder
 
-        out << g.link(controller:'combine', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Settings", class:"btn btn-mini btn-warning") { '<i class="icon-pencil icon-white"></i> settings' }
+        def buttonText = '<i class="icon-pencil icon-white"></i> settings'
+
+        def currentStatus = combineService.readStatus(dataFolder.key, extractFolder.key, alignFolder?.key ?: null, combineFolder.key)['status']
+        if (currentStatus != 'new' ){
+            out << '<button class="btn btn-mini  btn-warning disabled">' + buttonText + '</button>'
+        } else {
+            out << g.link(controller:'combine', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Settings", class:"btn btn-mini btn-warning") { buttonText }
+        }                
     }
 
     def runExtractButton = { attrs, body ->
 
         def dataFolder = attrs.dataFolder
         def extractFolder = attrs.extractFolder
-        def extractStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
+        def currentStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
         def buttonText = '<i class="icon-play icon-white"></i> run'
 
-        if (extractStatus != 'new' && extractStatus != 'done'){
+        if (currentStatus != 'new'){
             out << '<button class="btn btn-mini  btn-success disabled">' + buttonText + '</button>'
         } else {
             out << g.link(controller:'extract', action:'extraction', params:[submit_extract: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Run", class:"btn btn-mini btn-success") { buttonText }
@@ -176,17 +193,24 @@ class CommonTagLib {
         def alignFolder = attrs.alignFolder
         def combineFolder = attrs.combineFolder
 
-        out << g.link(controller:'combine', action:'combine', params:[submit_combine: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Run", class:"btn btn-mini btn-success") { '<i class="icon-play icon-white"></i> run' }
+        def currentStatus = combineService.readStatus(dataFolder.key, extractFolder.key, alignFolder?.key ?: null, combineFolder.key)['status']
+        def buttonText = '<i class="icon-play icon-white"></i> run'
+
+        if (currentStatus != 'new'){
+            out << '<button class="btn btn-mini  btn-success disabled">' + buttonText + '</button>'
+        } else {
+            out << g.link(controller:'combine', action:'combine', params:[submit_combine: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Run", class:"btn btn-mini btn-success") { buttonText }
+        }                
     }
 
     def deleteExtractButton = { attrs, body ->
 
         def dataFolder = attrs.dataFolder
         def extractFolder = attrs.extractFolder
-        def extractStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
+        def currentStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
         def buttonText = '<i class="icon-stop icon-white"></i> delete'
 
-        if (!extractStatus || (extractStatus == 'new' || extractStatus == 'done')){
+        if (!currentStatus || (currentStatus == 'new' || currentStatus == 'done')){
             out << g.link(controller:'extract', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this extraction?')") { buttonText }            
         } else {
             out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'            
@@ -208,8 +232,14 @@ class CommonTagLib {
         def extractFolder = attrs.extractFolder
         def alignFolder = attrs.alignFolder ?: null
         def combineFolder = attrs.combineFolder
+        def buttonText = '<i class="icon-stop icon-white"></i> delete'        
 
-        out << g.link(controller:'combine', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key ?: null, combineFolderKey: combineFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this combine?')") { '<i class="icon-stop icon-white"></i> delete' }
+        def currentStatus = combineService.readStatus(dataFolder.key, extractFolder.key, alignFolder?.key ?: null, combineFolder.key)['status']
+        if (!currentStatus || (currentStatus == 'new' || currentStatus == 'done')){
+            out << g.link(controller:'combine', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key ?: null, combineFolderKey: combineFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this combine?')") { buttonText }
+        } else {
+            out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'            
+        }                
     }
 
 }

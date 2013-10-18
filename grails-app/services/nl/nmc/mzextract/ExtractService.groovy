@@ -64,39 +64,39 @@ class ExtractService {
 
         def status = [:]
         
-        //try {
-          // load existing status
-          def existingStatus = readStatus(dataFolderKey, extractFolderKey)
+        // load existing status
+        def existingStatus = readStatus(dataFolderKey, extractFolderKey)
 
-          // merge existing status with new status
-          existingStatus.each { label, value ->
-            status["${label}"] = value as String
-          }
-          parameters.each { label, value ->
-            status["${label}"] = value as String
-          }
-            
-          //prepare the xml
-          def statusXML = ""
-          statusXML += "<status>"
+        // merge existing status with new status
+        existingStatus.each { label, value ->
+          status["${label}"] = value as String
+        }
+        parameters.each { label, value ->
+          status["${label}"] = value as String
+        }
 
-          // add status from
-          status.each { label, value ->
-            statusXML += "\n\t<" + label + ">" + value + "</" + label + ">"
-          }
+        //prepare the xml
+        def statusXML = ""
+        statusXML += "<status>"
 
-          // close the xml
-          statusXML += "\n</status>"
-          
-          // write the file
-          def statusFile = statusFile(dataFolderKey, extractFolderKey)
-          statusFile.delete()
-          statusFile << statusXML
+        // add status from
+        status.each { label, value ->
+          statusXML += "\n\t<" + label + ">" + value + "</" + label + ">"
+        }
 
-//
-//        } catch (e) {
-//          log.error(e.message)
-//        }
+        // include the settings
+        def settingsFile = settingsFile(dataFolderKey, extractFolderKey)
+        if (settingsFile.exists()){
+          statusXML += "\n\t" + settingsFile.text ?: ""
+        }
+
+        // close the xml
+        statusXML += "\n</status>"
+
+        // write the file
+        def statusFile = statusFile(dataFolderKey, extractFolderKey)
+        statusFile.delete()
+        statusFile << statusXML
 
         return readStatus(dataFolderKey, extractFolderKey)
 
@@ -121,14 +121,6 @@ class ExtractService {
       */
     def extract(String mzXMLFile, String configFile) {
         executionService.execCommand("${config.path.commandline}/${config.path.command.extract}", [mzXMLFile, configFile])
-
-        /***** for testing purposes!!! ******/
-        //def xmlConfig = new XmlSlurper().parseText(new File(configFile).text)
-
-        //def matFile = new File("${xmlConfig.outputpath}/${mzXMLFile.tokenize('/')[-1]}.mat")
-        //matFile.delete()
-        //matFile << "Dummy matlab file for testing"
-
     }
 
     /*
@@ -213,6 +205,10 @@ class ExtractService {
       * @param extractFolderKey String
       */
     def queue(String dataFolderKey, String extractFolderKey){
+        
+        // reset any previous status info
+        statusFile(dataFolderKey, extractFolderKey)?.delete()
+        
         queueService.queueExtraction(dataFolderKey, extractFolderKey)
     }
 

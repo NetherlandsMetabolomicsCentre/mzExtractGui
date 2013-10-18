@@ -22,6 +22,8 @@ class CombineJob {
         }
 
         if (nextCombineJob != null){
+            
+            def logging = " -- start ${new Date()}\n"            
 
             // store the filename to retrieve the dataFolderKey, extractFolderKey and alignFolderKey
             def filename = nextCombineJob.name
@@ -32,8 +34,6 @@ class CombineJob {
             def alignFolderKey = name.tokenize('_')[2] != 'null' ? name.tokenize('_')[2] : null
             def combineFolderKey = name.tokenize('_')[3]
 
-            log.info("\nStarting new combine (${name})...")
-
             // delete the file from the queue
             nextCombineJob.delete()
 
@@ -43,11 +43,21 @@ class CombineJob {
             def alignFolder = alignService.alignFolder(dataFolderKey, extractFolderKey, alignFolderKey)
             def combineFolder = combineService.combineFolder(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
+            // include path of combine in logging
+            logging += " -- combine folder: ${combineFolder.path}\n"            
+            
             //fetch config to use
             def configFile = combineService.settingsFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
             log.info(" --- combine file ${combineFolderKey}")
+            
+            // update status
+            combineService.writeStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey, ['status':'running', 'updated': new Date(), 'logging':logging])            
+            
             combineService.combine(configFile.canonicalPath)
+            
+            // update status
+            combineService.writeStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey, ['status':'done', 'updated': new Date(), 'logging':logging])            
         }
     }
 }

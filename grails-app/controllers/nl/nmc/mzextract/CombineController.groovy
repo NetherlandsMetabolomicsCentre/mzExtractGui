@@ -108,6 +108,37 @@ class CombineController {
             }
         }
     }
+    
+    def test = {
+        
+        def html = """
+        
+            <html><head><title>Test</title></head><body>
+            <h1>Test visual</h1>
+            <div id="chartContainer" style="border: thin solid grey;">
+              <script src="http://d3js.org/d3.v3.min.js"></script>
+              <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>
+              <script type="text/javascript">
+                var svg = dimple.newSvg("#chartContainer", 590, 400);
+                  d3.tsv("example_data.tsv", function (data) {
+                    var myChart = new dimple.chart(svg, data);
+                    myChart.setBounds(60, 30, 505, 305)
+                    var x = myChart.addCategoryAxis("x", "Month");
+                    x.addOrderRule("Date");
+                    myChart.addMeasureAxis("y", "Unit Sales");
+                    myChart.addSeries("Channel", dimple.plot.bubble);
+                    myChart.addLegend(180, 10, 360, 20, "right");
+                    myChart.draw();
+                  });
+              </script>
+            </div>
+            </body>
+            </html>
+        """
+        
+        render html
+        
+    }
 
 }
 

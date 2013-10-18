@@ -13,6 +13,13 @@ class RemoteController {
     def filesList() {
       render(data.dataFolderFiles(dataFolderKeys:params))
     }
+    
+    /*
+     * renders a combine report if output present
+     */
+    def combineReport() {
+        render(data.combineReportData(dataFolderKey:params.dataFolderKey, extractFolderKey:params.extractFolderKey, alignFolderKey:params.alignFolderKey, combineFolderKey:params.combineFolderKey))
+    }
 
     /*
      * renders extract buttons

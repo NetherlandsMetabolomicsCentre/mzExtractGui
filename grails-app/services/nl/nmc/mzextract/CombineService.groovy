@@ -80,40 +80,40 @@ class CombineService {
     def writeStatus(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey, HashMap parameters){
 
         def status = [:]
-        
-        //try {
-          // load existing status
-          def existingStatus = readStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+       
+        // load existing status
+        def existingStatus = readStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
 
-          // merge existing status with new status
-          existingStatus.each { label, value ->
-            status["${label}"] = value as String
-          }
-          parameters.each { label, value ->
-            status["${label}"] = value as String
-          }
-            
-          //prepare the xml
-          def statusXML = ""
-          statusXML += "<status>"
+        // merge existing status with new status
+        existingStatus.each { label, value ->
+          status["${label}"] = value as String
+        }
+        parameters.each { label, value ->
+          status["${label}"] = value as String
+        }
 
-          // add status from
-          status.each { label, value ->
-            statusXML += "\n\t<" + label + ">" + value + "</" + label + ">"
-          }
+        //prepare the xml
+        def statusXML = ""
+        statusXML += "<status>"
 
-          // close the xml
-          statusXML += "\n</status>"
-          
-          // write the file
-          def statusFile = statusFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
-          statusFile.delete()
-          statusFile << statusXML
+        // add status from
+        status.each { label, value ->
+          statusXML += "\n\t<" + label + ">" + value + "</" + label + ">"
+        }
 
-//
-//        } catch (e) {
-//          log.error(e.message)
-//        }
+        // include the settings
+        def settingsFile = settingsFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+        if (settingsFile.exists()){
+          statusXML += "\n\t" + settingsFile.text ?: ""
+        }
+
+        // close the xml
+        statusXML += "\n</status>"
+
+        // write the file
+        def statusFile = statusFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
+        statusFile.delete()
+        statusFile << statusXML
 
         return readStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
     }
@@ -182,7 +182,7 @@ class CombineService {
           def configXML = ""
           configXML += "<config>"
           configXML += "\n\t<created>" + new Date().time + "</created>"
-          configXML += "\n\t<exportfile>${combineFolder.path}/combined_results.txt</exportfile>"
+          configXML += "\n\t<exportfile>${combineFolder.path}/${config.combine.outputfile}</exportfile>"
         
           // add settings from parameters or use the default value
           existingSettings.each { label, value ->
@@ -232,6 +232,10 @@ class CombineService {
       * @param combineFolderKey String
       */
     def queue(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey){
+        
+        // reset any previous status info
+        statusFile(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)?.delete()        
+        
         queueService.queueCombine(dataFolderKey, extractFolderKey, alignFolderKey, combineFolderKey)
     }
 
@@ -302,6 +306,9 @@ class CombineService {
 
         new File(combineFolder.path + '/mat.txt') << mats
 
+        // set status to new
+        writeStatus(dataFolderKey, extractFolderKey, alignFolderKey, combineFolder.key, ['status':'new', 'created': new Date()])        
+        
         // return combineFolder key
         return combineFolder.key
     }

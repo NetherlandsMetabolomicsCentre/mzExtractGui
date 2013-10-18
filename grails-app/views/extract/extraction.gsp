@@ -17,15 +17,7 @@
               <data:dataFolder dataFolder="${dataFolder}" extractFolder="${extractFolder}" />
             </td>
             <td class="page-right">
-              <!--
-              <common:alignButton dataFolder="${dataFolder}"  extractFolder="${extractFolder}" />
-              <data:alignFolders dataFolder="${dataFolder}" extractFolder="${extractFolder}"/>
-              -->
-
-              <g:if test="${extractFolder?.files['mat']?.size() >= 1}">
-                <data:combineFolders dataFolder="${dataFolder}" extractFolder="${extractFolder}"/>
-              </g:if>
-
+              <data:combineFolders dataFolder="${dataFolder}" extractFolder="${extractFolder}"/>
             </td>
           </tr>
         </table>

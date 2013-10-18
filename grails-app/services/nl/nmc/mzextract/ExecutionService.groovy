@@ -26,7 +26,6 @@ class ExecutionService {
 
         try {
             // start the execution
-            println command
             def proc = command.execute()
             proc.waitFor()
 
@@ -35,6 +34,7 @@ class ExecutionService {
         } catch (e) {
             log.error "execution failed of: ${command}"
             log.error "stderr: ${proc.err.text}"
+            response += "\n  --- stderr: ${proc.err.text}"
         }
 
         return response
