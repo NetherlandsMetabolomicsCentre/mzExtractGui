@@ -29,87 +29,41 @@ class DataTagLib {
         }
         out << '</ul>'
     }
-
-    def combineReport = { attrs, body ->
-
-        def dataFolder = attrs.dataFolder ?: null
-        def extractFolder = attrs.extractFolder ?: null
-        def alignFolder = attrs.alignFolder ?: null
-        def combineFolder = attrs.combineFolder ?: null
-        
-        out << '<div id="combineReport"></div>'
-
-        def remoteUrl = g.createLink(controller: 'remote', action: 'combineReport', params:[dataFolderKey:dataFolder?.key, extractFolderKey:extractFolder?.key, alignFolderKey:alignFolder?.key, combineFolderKey:combineFolder?.key], base: resource(dir:''))
-
-        out << '<script>'
-        out << ' $(document).ready(function() {'
-        out << '     $("#combineReport").load("' + remoteUrl + '");'
-        out << '     var refreshId = setInterval(function() {'
-        out << '     $("#combineReport").load("' + remoteUrl + '");'
-        out << '   }, 3000);'
-        out << '   $.ajaxSetup({ cache: false });'
-        out << '});'
-        out << '</script>'
-    }
     
     def combineReportData = { attrs, body ->
         
-        def combineFolder = combineService.combineFolder(attrs.dataFolderKey, attrs.extractFolderKey, attrs.alignFolderKey, attrs.combineFolderKey)                  
+        def combineFolder = attrs.combineFolder
         def combineFolderDataFile = new File(combineFolder.path + "/" + config.combine.outputfile)
         if (combineFolderDataFile.exists()){
-//            out << combineFolderDataFile.text
-        }
             
             Random random = new Random()
             def features = ["A", "B", "C", "D", "E", "F"]
-            def rts = []
-            300.times { rtIdx ->
-                rts << ("${random.nextInt(9999)}" as Double) * 0.2351
-            }
-                   
             def jsonData = '['
-            rts.unique().sort{ a,b -> a <=> b }.each { rt ->
+            500.times { rt ->
                 features.each { feature ->
-                    def intensity = random.nextInt(99) * ("0.3${random.nextInt(1000)}" as Double) * ("0.7${random.nextInt(1000)}" as Double)
-                    jsonData += '{ "RT (min)":'+rt+', "Feature":"'+feature+'", "Intensity":'+intensity+'},'
+                    def intensity = random.nextInt(999) * ("0.3${random.nextInt(1000)}" as Double) * ("0.7${random.nextInt(1000)}" as Double)
+                    jsonData += '{ "RT (min)":"'+rt+'", "Feature":"'+feature+'", "Intensity":'+intensity+'},'
                 }            
             }
             jsonData += ']'
             //println jsonData
                    
             def html = ''
-            html += ' <div id="chartContainer" style="border:thin solid grey"><br />'
             html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
             html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>'            
             html += """
                         <script type="text/javascript">
-                          var svg = dimple.newSvg("body", 800, 600);
+                          var svg = dimple.newSvg("body", 1200, 800);
                           var data = ${jsonData};
                           var chart = new dimple.chart(svg, data);
-                          chart.addMeasureAxis("x", "RT (min)");
-                          chart.addMeasureAxis("y", "Intensity");
+                          var xAxis = chart.addCategoryAxis("x", "RT (min)");\n\
+                          xAxis.addOrderRule("RT (min)");
+                          var yAxis = chart.addMeasureAxis("y", "Intensity");
                           chart.addSeries("Feature", dimple.plot.bubble);
-                          chart.addSeries("Intensity", dimple.plot.bubble);
                           chart.draw();
                         </script>"""
-        
-//            html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
-//            html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>'
-//            html += '    <script type="text/javascript">'
-//            html += '        var svg = dimple.newSvg("#chartContainer", 590, 400);'
-//            html += '        d3.tsv("' + resource(dir: 'data', file: 'example_data.tsv') + '", function (data) {'
-//            html += '            var myChart = new dimple.chart(svg, data);'
-//            html += '            myChart.setBounds(60, 30, 505, 305)'
-//            html += '            var x = myChart.addCategoryAxis("x", "Month");'
-//            html += '            x.addOrderRule("Date");'
-//            html += '            myChart.addMeasureAxis("y", "Unit Sales");'
-//            html += '            myChart.addSeries("Channel", dimple.plot.bubble);'
-//            html += '            myChart.addLegend(180, 10, 360, 20, "right");'
-//            html += '            myChart.draw();'
-//            html += '        });'
-//            html += '    </script>'
-            html += '</div>'            
             out << html
+        }
     }
 
     // display a single datafolder

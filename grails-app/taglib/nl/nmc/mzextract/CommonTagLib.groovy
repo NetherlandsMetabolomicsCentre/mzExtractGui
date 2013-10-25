@@ -235,6 +235,7 @@ class CommonTagLib {
         def buttonText = '<i class="icon-stop icon-white"></i> delete'        
 
         def currentStatus = combineService.readStatus(dataFolder.key, extractFolder.key, alignFolder?.key ?: null, combineFolder.key)['status']
+        
         if (!currentStatus || (currentStatus == 'new' || currentStatus == 'done')){
             out << g.link(controller:'combine', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key ?: null, combineFolderKey: combineFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this combine?')") { buttonText }
         } else {
