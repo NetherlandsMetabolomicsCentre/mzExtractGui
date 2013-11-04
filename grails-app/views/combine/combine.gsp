@@ -18,9 +18,9 @@
               <data:dataFolder dataFolder="${dataFolder}" extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}" />
             </td>
             <td class="page-right">
-              <data:combineReportData combineFolder="${combineFolder}" />
+                <data:combineReportData combineFolder="${combineFolder}" />
             </td>
           </tr>
-        </table>
+        </table>        
     </body>
 </html>

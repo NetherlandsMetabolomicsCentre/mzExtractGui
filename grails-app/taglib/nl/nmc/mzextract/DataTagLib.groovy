@@ -37,12 +37,13 @@ class DataTagLib {
         if (combineFolderDataFile.exists()){
             
             Random random = new Random()
-            def features = ["A", "B", "C", "D", "E", "F"]
+            def features = ["L(-)-Nicotine pestanal", "Quindoxin", "Phenylalanyl-Isoleucine"]
             def jsonData = '['
-            500.times { rt ->
+            40.times { rt ->
                 features.each { feature ->
-                    def intensity = random.nextInt(999) * ("0.3${random.nextInt(1000)}" as Double) * ("0.7${random.nextInt(1000)}" as Double)
-                    jsonData += '{ "RT (min)":"'+rt+'", "Feature":"'+feature+'", "Intensity":'+intensity+'},'
+                    def intensity = random.nextInt(999) * ("0.3${random.nextInt(1000)}" as Double) * ("1.7${random.nextInt(1000)}" as Double)
+                    if (intensity < 550) { intensity = 0 }
+                    jsonData += '{ "RT (min)":"'+((rt+1)*1.43514)+'", "Feature":"'+feature+'", "Intensity":'+intensity+'},'
                 }            
             }
             jsonData += ']'
@@ -51,17 +52,22 @@ class DataTagLib {
             def html = ''
             html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
             html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>'            
-            html += """
+            html += """ <div id="exampleSVG">
                         <script type="text/javascript">
-                          var svg = dimple.newSvg("body", 1200, 800);
+                          var svg = dimple.newSvg("#exampleSVG", 750, 400);
                           var data = ${jsonData};
-                          var chart = new dimple.chart(svg, data);
+                          var chart = new dimple.chart(svg, data);\n\
+                          chart.setBounds(60, 30, 585, 305)
                           var xAxis = chart.addCategoryAxis("x", "RT (min)");\n\
                           xAxis.addOrderRule("RT (min)");
                           var yAxis = chart.addMeasureAxis("y", "Intensity");
-                          chart.addSeries("Feature", dimple.plot.bubble);
+                          chart.addSeries("Feature", dimple.plot.line);\n\
+                          chart.addLegend(80, 10, 600, 20, "left");
                           chart.draw();
-                        </script>"""
+                        </script>
+                        </div>
+                    """            
+            
             out << html
         }
     }

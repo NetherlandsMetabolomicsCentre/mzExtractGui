@@ -14,26 +14,35 @@
                 <g:javascript library="jquery" />
 		<style>
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
-			body { padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ }
+			body { 
+                            margin: 0px auto;
+                            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ 
+                        }                           
 			ul { list-style: none; }
-
-                                        .page-table {
-                                          margin: 5px 0;
-                                        }
-                                        .page-tr {
-                                          margin: 1px 0;
-                                        }
-                                        .page-left, .page-right {
-                                          padding: 15px;
-                                          margin: 3px;
-                                          border-left: thin solid #dcdcdc;
-                                          vertical-align: top;
-                                          min-width: 450px;
-                                        }
-                                        .btn {
-                                          margin-right: 3px;
-                                          margin-top: 1px;
-                                        }
+                        .page-table {
+                          margin: 5px 0;
+                        }
+                        .page-tr {
+                          margin: 1px 0;
+                        }
+                        .page-left {
+                          padding: 15px;
+                          margin: 3px;
+                          border-left: thin solid #dcdcdc;
+                          vertical-align: top;
+                          min-width: 250px;
+                        }
+                        .page-right {
+                          padding: 15px;
+                          margin: 3px;
+                          border-left: thin solid #dcdcdc;
+                          vertical-align: top;
+                          min-width: 450px;
+                        }
+                        .btn {
+                          margin-right: 3px;
+                          margin-top: 1px;
+                        }
 
 		</style>
 
