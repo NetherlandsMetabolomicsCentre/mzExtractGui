@@ -57,7 +57,7 @@ class ExtractionJob {
             }
 
             // run parallel
-            GParsPool.withPool(10) { pool -> // defines the max number of Threads to use
+            GParsPool.withPool(2) { pool -> // defines the max number of Threads to use
                 selectedMzxmlFiles.eachParallel { mzxmlFileKey ->
                 //selectedMzxmlFiles.each { mzxmlFileKey ->
 

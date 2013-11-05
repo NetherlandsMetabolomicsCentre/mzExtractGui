@@ -16,7 +16,7 @@ class CommonTagLib {
         if (extractStatus){
             out << '<div style="float: right;">status: '
             out << extractStatus
-            if (extractStatus == 'running'){
+            if ((extractStatus == 'running') || (extractStatus == 'stopping')){
                 out << ' <img src="' + resource(dir: 'images', file: 'spinner.gif') + '" />'
             }
             out << '</div>'
@@ -31,6 +31,7 @@ class CommonTagLib {
         out << runExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
         out << settingsExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
         out << deleteExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)
+        out << stopExtractButton(dataFolder: dataFolder, extractFolder: extractFolder)        
         out << extractStatus(dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key)        
         out << '</div>'
     }
@@ -217,6 +218,20 @@ class CommonTagLib {
         }
     }
 
+    def stopExtractButton = { attrs, body ->
+
+        def dataFolder = attrs.dataFolder
+        def extractFolder = attrs.extractFolder
+        def currentStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
+        def buttonText = '<i class="icon-stop icon-white"></i> stop'
+
+        if (currentStatus == 'running'){
+            out << g.link(controller:'extract', action:'stop', params:[submit_stop: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Stop", class:"btn btn-mini", onclick:"return confirm('Are you sure you want to stop this extraction of the remaining files?')") { buttonText }            
+        } else {
+            out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'            
+        }
+    }
+    
     def deleteAlignButton = { attrs, body ->
 
         def dataFolder = attrs.dataFolder

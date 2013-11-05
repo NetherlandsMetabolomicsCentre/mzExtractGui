@@ -86,7 +86,6 @@ class ExtractController {
 
     def delete(){
 
-        def dataFolder = dataService.dataFolder(params.dataFolderKey)
         def extractFolder = extractService.extractFolder(params.dataFolderKey, params.extractFolderKey)
 
         // delete it
@@ -97,4 +96,18 @@ class ExtractController {
             redirect(controller:'data', action:'folder', params:[dataFolderKey: params.dataFolderKey])
         }
     }
+    
+    def stop(){
+
+        // delete it
+        if (params.submit_stop){
+            
+            // change timestamp to change the config hash resulting in the job to skip new files
+            extractService.writeSettings(params.dataFolderKey, params.extractFolderKey, [:])
+            extractService.writeStatus(params.dataFolderKey, params.extractFolderKey, ['status':'stopping', 'updated': new Date(), 'logging':'Stopping job!'])
+            
+            // redirect back to extract folder page
+            redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: params.extractFolderKey])
+        }
+    }    
 }
