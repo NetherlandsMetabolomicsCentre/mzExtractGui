@@ -69,7 +69,9 @@ class ExtractService {
 
         // merge existing status with new status
         existingStatus.each { label, value ->
-          status["${label}"] = value as String
+            if (label != 'config'){            
+                status["${label}"] = value as String                
+            }
         }
         parameters.each { label, value ->
           status["${label}"] = value as String
