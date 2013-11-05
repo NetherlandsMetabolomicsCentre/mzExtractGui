@@ -132,7 +132,7 @@ class CommonTagLib {
 
         def currentStatus = extractService.readStatus(dataFolder.key, extractFolder.key)['status']
         if (currentStatus != 'new' ){
-            out << '<button class="btn btn-mini  btn-warning disabled">' + buttonText + '</button>'
+            out << '<button class="btn btn-mini disabled">' + buttonText + '</button>'
         } else {
             out << g.link(controller:'extract', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Settings") { '<button class="btn btn-mini btn-warning">' + buttonText + '</button>'}
         }
@@ -158,7 +158,7 @@ class CommonTagLib {
 
         def currentStatus = combineService.readStatus(dataFolder.key, extractFolder.key, alignFolder?.key ?: null, combineFolder.key)['status']
         if (currentStatus != 'new' ){
-            out << '<button class="btn btn-mini  btn-warning disabled">' + buttonText + '</button>'
+            out << '<button class="btn btn-mini disabled">' + buttonText + '</button>'
         } else {
             out << g.link(controller:'combine', action:'settings', params:[dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Settings", class:"btn btn-mini btn-warning") { buttonText }
         }                
@@ -172,7 +172,7 @@ class CommonTagLib {
         def buttonText = '<i class="icon-play icon-white"></i> run'
 
         if (currentStatus != 'new'){
-            out << '<button class="btn btn-mini  btn-success disabled">' + buttonText + '</button>'
+            out << '<button class="btn btn-mini disabled">' + buttonText + '</button>'
         } else {
             out << g.link(controller:'extract', action:'extraction', params:[submit_extract: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Run", class:"btn btn-mini btn-success") { buttonText }
         }
@@ -198,7 +198,7 @@ class CommonTagLib {
         def buttonText = '<i class="icon-play icon-white"></i> run'
 
         if (currentStatus != 'new'){
-            out << '<button class="btn btn-mini  btn-success disabled">' + buttonText + '</button>'
+            out << '<button class="btn btn-mini disabled">' + buttonText + '</button>'
         } else {
             out << g.link(controller:'combine', action:'combine', params:[submit_combine: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key, combineFolderKey: combineFolder.key], alt:"Run", class:"btn btn-mini btn-success") { buttonText }
         }                
@@ -214,7 +214,7 @@ class CommonTagLib {
         if (!currentStatus || (currentStatus == 'new' || currentStatus == 'done')){
             out << g.link(controller:'extract', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this extraction?')") { buttonText }            
         } else {
-            out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'            
+            out << '<button class="btn btn-mini disabled">' + buttonText + '</button>'            
         }
     }
 
@@ -254,7 +254,7 @@ class CommonTagLib {
         if (!currentStatus || (currentStatus == 'new' || currentStatus == 'done')){
             out << g.link(controller:'combine', action:'delete', params:[submit_delete: 'true', dataFolderKey: dataFolder.key, extractFolderKey: extractFolder.key, alignFolderKey: alignFolder?.key ?: null, combineFolderKey: combineFolder.key], alt:"Delete", class:"btn btn-mini btn-danger", onclick:"return confirm('Are you sure you want to delete this combine?')") { buttonText }
         } else {
-            out << '<button class="btn btn-mini  btn-danger disabled">' + buttonText + '</button>'            
+            out << '<button class="btn btn-mini disabled">' + buttonText + '</button>'            
         }                
     }
 
