@@ -62,11 +62,10 @@
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
 	          </button>
-	          <g:link controller="do" action="home" class="brand"><em>mz</em><strong>Extract</strong></g:link>
+	          <g:link controller="home" class="brand"><em>mz</em><strong>Extract</strong></g:link>
 	          <div class="nav-collapse collapse">
 	            <ul class="nav">
 	              <li class="active"><g:link controller="data" action="index">Data</g:link></li>
-	              <li><g:link controller="do" action="help">Help</g:link></li>
 	            </ul>
 	          </div><!--/.nav-collapse -->
 	        </div>

@@ -1,5 +1,6 @@
 package nl.nmc.mzextract
 
+import javax.servlet.http.*
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class DataController {
@@ -37,9 +38,10 @@ class DataController {
                 response.outputStream << download.bytes
             } else {
                 log.error "Unable to download the file: ${pathToFile}"
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
             }
         } else {
-            response.sendError(404, "File not found");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");            
         }
     }
 }
