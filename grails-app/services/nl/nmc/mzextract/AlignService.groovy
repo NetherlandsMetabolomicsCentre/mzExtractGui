@@ -8,6 +8,7 @@ class AlignService {
     def extractService
     def queueService
     def executionService
+    def sharedService
 
     // include configuration of mzExtract
     def config = ConfigurationHolder.config.mzextract
@@ -166,7 +167,7 @@ class AlignService {
       */
     def initAlignment(String dataFolderKey, String extractFolderKey, ArrayList matFiles){
 
-        def newalignFolder = new File(alignmentsFolder(dataFolderKey, extractFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newalignFolder = new File(alignmentsFolder(dataFolderKey, extractFolderKey).path + '/' + sharedService.dateFolderName())
 
         // make sure it is created
         newalignFolder.mkdirs()

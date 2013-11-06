@@ -7,6 +7,7 @@ class ExtractService {
     def dataService
     def queueService
     def executionService
+    def sharedService
 
     // include configuration of mzExtract
     def config = ConfigurationHolder.config.mzextract
@@ -248,7 +249,7 @@ class ExtractService {
       */
     def initExtraction(String dataFolderKey, ArrayList mzxmlFiles){
 
-        def newextractFolder = new File(extractionsFolder(dataFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newextractFolder = new File(extractionsFolder(dataFolderKey).path + '/' + sharedService.dateFolderName())
 
         // make sure it is created
         newextractFolder.mkdirs()

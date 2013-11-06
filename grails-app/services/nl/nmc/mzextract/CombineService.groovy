@@ -9,6 +9,7 @@ class CombineService {
     def alignService
     def queueService
     def executionService
+    def sharedService
 
     // include configuration of mzExtract
     def config = ConfigurationHolder.config.mzextract
@@ -292,7 +293,7 @@ class CombineService {
       */
     def initCombine(String dataFolderKey, String extractFolderKey, String alignFolderKey, ArrayList matFiles){
 
-        def newCombineFolder = new File(combinesFolder(dataFolderKey, extractFolderKey, alignFolderKey).path + '/' + new Date().format('yyyy-MM-dd_HH-mm-ss'))
+        def newCombineFolder = new File(combinesFolder(dataFolderKey, extractFolderKey, alignFolderKey).path + '/' + sharedService.dateFolderName())
 
         // make sure it is created
         newCombineFolder.mkdirs()
