@@ -25,6 +25,9 @@ class ExecutionService {
         arguments.each { argument -> command += "\"${argument}\" " }
 
         try {
+            
+            println command
+            
             // start the execution
             def proc = command.execute()
             proc.waitFor()

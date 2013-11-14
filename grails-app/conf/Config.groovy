@@ -101,13 +101,12 @@ mzextract.exepted.extensions = ['xml', 'mzxml', 'mat', 'txt', 'tsv']
 
 mzextract.os = 'win' // win/lin/osx
 
-mzextract.combine.outputfile = 'combined.tsv'
+mzextract.combine.outputfile = 'result'
 
 // mzExtract config
 //mzextract.matlab.home = '/Applications/MATLAB/MATLAB_Compiler_Runtime/v80' //OSX
 //mzextract.matlab.home = '/usr/local/MATLAB/MATLAB_Compiler_Runtime/v80' //LINUX
-//mzextract.matlab.home = 'C:\\Program Files\\MATLAB/MATLAB Compiler Runtime\\v81' //WINDOWS
-mzextract.matlab.home = 'C:\\Program Files\\MATLAB/MATLAB Compiler Runtime\\v80' //WINDOWS
+mzextract.matlab.home = 'C:\\Program Files\\MATLAB/MATLAB Compiler Runtime\\v82' //WINDOWS
 
 //mzextract.path.commandline = '/Users/miv/Desktop/temp/mzextract/osx' //OSX
 //mzextract.path.commandline = '/home/miv/Documents/workspace-preprocess/linux' //LINUX

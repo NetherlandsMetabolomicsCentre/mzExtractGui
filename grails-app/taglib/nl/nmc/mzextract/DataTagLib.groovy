@@ -33,7 +33,7 @@ class DataTagLib {
     def combineReportData = { attrs, body ->
         
         def combineFolder = attrs.combineFolder
-        def combineFolderDataFile = new File(combineFolder.path + "/" + config.combine.outputfile)
+        def combineFolderDataFile = new File(combineFolder.path)
         if (combineFolderDataFile.exists()){
             
             Random random = new Random()

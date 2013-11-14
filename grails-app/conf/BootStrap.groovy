@@ -107,33 +107,19 @@ class BootStrap {
 
         sgfilt.save()
 
-        // DUMMY
-        def dummy = new Setting()
-        dummy.category = 'align'
-        dummy.name = 'dummy'
-        dummy.label = 'dummy Filter'
-        dummy.type = 'select'
-        dummy.value = '1'
-        dummy.help = 'dummy dummy dummy'
-
-        dummy.addToOptions(new Option(label:"no", value:"0"))
-        dummy.addToOptions(new Option(label:"yes", value:"1"))
-
-        dummy.save()
-
-        // USE MZFILE
-        def usemz = new Setting()
-        usemz.category = 'combine'
-        usemz.name = 'usemz'
-        usemz.label = 'Use the mz file'
-        usemz.type = 'select'
-        usemz.value = '0'
-        usemz.help = 'Use the mz file to ...'
-
-        usemz.addToOptions(new Option(label:"no, ignore the mzfile", value:"0"))
-        usemz.addToOptions(new Option(label:"yes, use it when available", value:"1"))
-
-        usemz.save()
+//        // USE MZFILE
+//        def usemz = new Setting()
+//        usemz.category = 'combine'
+//        usemz.name = 'usemz'
+//        usemz.label = 'Use the mz file'
+//        usemz.type = 'select'
+//        usemz.value = '0'
+//        usemz.help = 'Use the mz file to ...'
+//
+//        usemz.addToOptions(new Option(label:"no, ignore the mzfile", value:"0"))
+//        usemz.addToOptions(new Option(label:"yes, use it when available", value:"1"))
+//
+//        usemz.save()
 
         // RT WINDOW
         def rtwindow = new Setting()
@@ -141,23 +127,23 @@ class BootStrap {
         rtwindow.name = 'rtwindow'
         rtwindow.label = 'Retention time window'
         rtwindow.type = 'number'
-        rtwindow.value = '10'
+        rtwindow.value = '15'
         rtwindow.help = 'Retention time window (in seconds)'
         rtwindow.save()
 
-        // REVERT SEARCH TO SINGLE FEATURES
-        def rs2sf = new Setting()
-        rs2sf.category = 'combine'
-        rs2sf.name = 'rs2sf'
-        rs2sf.label = 'Revert search to single features'
-        rs2sf.type = 'select'
-        rs2sf.value = '1'
-        rs2sf.help = 'Revert search to single features'
-
-        rs2sf.addToOptions(new Option(label:"no", value:"0"))
-        rs2sf.addToOptions(new Option(label:"yes", value:"1"))
-
-        rs2sf.save()
+//        // REVERT SEARCH TO SINGLE FEATURES
+//        def rs2sf = new Setting()
+//        rs2sf.category = 'combine'
+//        rs2sf.name = 'rs2sf'
+//        rs2sf.label = 'Revert search to single features'
+//        rs2sf.type = 'select'
+//        rs2sf.value = '0'
+//        rs2sf.help = 'Revert search to single features'
+//
+//        rs2sf.addToOptions(new Option(label:"no", value:"0"))
+//        rs2sf.addToOptions(new Option(label:"yes", value:"1"))
+//
+//        rs2sf.save()
 
         // MATCH SINGLE FEATURES ONLY
         def msfonly = new Setting()
@@ -165,13 +151,29 @@ class BootStrap {
         msfonly.name = 'msfonly'
         msfonly.label = 'Match single features only'
         msfonly.type = 'select'
-        msfonly.value = '1'
+        msfonly.value = '0'
         msfonly.help = 'Match single features only'
 
         msfonly.addToOptions(new Option(label:"no", value:"0"))
         msfonly.addToOptions(new Option(label:"yes", value:"1"))
 
         msfonly.save()
+        
+        // MATCH SINGLE FEATURES ONLY
+        def usealigned = new Setting()
+        usealigned.category = 'combine'
+        usealigned.name = 'usealigned'
+        usealigned.label = 'Use aligned'
+        usealigned.type = 'select'
+        usealigned.value = '0'
+        usealigned.help = 'Match single features only'
+
+        usealigned.addToOptions(new Option(label:"no", value:"0"))
+        usealigned.addToOptions(new Option(label:"yes", value:"1"))
+
+        usealigned.save()
+        
+        
 
     }
     def destroy = {
