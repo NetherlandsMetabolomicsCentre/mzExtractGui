@@ -29,13 +29,19 @@ class DataTagLib {
         }
         out << '</ul>'
     }
-    
+
     def combineReportData = { attrs, body ->
-        
+
         def combineFolder = attrs.combineFolder
         def combineFolderDataFile = new File(combineFolder.path)
-        if (combineFolderDataFile.exists()){
-            
+
+
+            // build some html
+            def html = ''
+            html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
+            html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>'
+
+            // dummy graph
             Random random = new Random()
             def features = ["L(-)-Nicotine pestanal", "Quindoxin", "Phenylalanyl-Isoleucine"]
             def jsonData = '['
@@ -44,32 +50,81 @@ class DataTagLib {
                     def intensity = random.nextInt(999) * ("0.3${random.nextInt(1000)}" as Double) * ("1.7${random.nextInt(1000)}" as Double)
                     if (intensity < 550) { intensity = 0 }
                     jsonData += '{ "RT (min)":"'+((rt+1)*1.43514)+'", "Feature":"'+feature+'", "Intensity":'+intensity+'},'
-                }            
+                }
             }
             jsonData += ']'
             //println jsonData
-                   
-            def html = ''
-            html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
-            html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>'            
+
             html += """ <div id="exampleSVG">
                         <script type="text/javascript">
                           var svg = dimple.newSvg("#exampleSVG", 750, 400);
                           var data = ${jsonData};
-                          var chart = new dimple.chart(svg, data);\n\
+                          var chart = new dimple.chart(svg, data);
                           chart.setBounds(60, 30, 585, 305)
-                          var xAxis = chart.addCategoryAxis("x", "RT (min)");\n\
+                          var xAxis = chart.addCategoryAxis("x", "RT (min)");
                           xAxis.addOrderRule("RT (min)");
                           var yAxis = chart.addMeasureAxis("y", "Intensity");
-                          chart.addSeries("Feature", dimple.plot.line);\n\
+                          chart.addSeries("Feature", dimple.plot.line);
                           chart.addLegend(80, 10, 600, 20, "left");
                           chart.draw();
                         </script>
                         </div>
-                    """            
-            
+                    """
+
+            //rsdqcr graph
+            def rsdqcrFile = new File(combineFolder.path, "${config.combine.outputfile}_summary_rsdqcrtar.txt")
+            if (rsdqcrFile.exists()){
+
+                def rsdqcrEntries = []
+                def rsdqcrEntriesHeader = []
+                rsdqcrFile.eachLine { rsdqcrLine ->
+                    def rsdqcrParts = rsdqcrLine.split("\t")
+                    if (rsdqcrEntriesHeader == []){
+                        rsdqcrEntriesHeader = rsdqcrParts
+                    } else {
+                        def entryHash = [:]
+                        rsdqcrEntriesHeader.eachWithIndex { headerLabel, headerIdx ->
+                            entryHash[headerLabel] = rsdqcrParts[headerIdx]
+                        }
+                        rsdqcrEntries << entryHash
+                    }
+                }
+
+                jsonData = '['
+                rsdqcrEntries.each { rsdqcrEntry ->
+                    jsonData += '{ '
+                    rsdqcrEntry.each { l, v ->
+                        jsonData += '"' + l + '":"'+ v +'", '
+                    }
+                    jsonData += '"EOL":"TRUE"'
+                    jsonData += '}, '
+                }
+                jsonData += ']'
+
+                html += """ <div id="rsdqcrSVG">
+                                        <script type="text/javascript">
+                                        var svg = dimple.newSvg("#rsdqcrSVG", 750, ${15 * rsdqcrEntries.size() + 200});
+                                        var data = ${jsonData};
+                                        var chart = new dimple.chart(svg, data);
+
+                                        chart.setBounds(100, 50, 700, ${15 * rsdqcrEntries.size()})
+                                        var yAxis = chart.addCategoryAxis("y", "COMPOUND");
+                                        yAxis.addOrderRule("COMPOUND");
+                                        var xAxis = chart.addMeasureAxis("x", "RSDQC (QC)");
+                                        chart.addSeries(null, dimple.plot.bar);
+                                        chart.draw();
+                                        </script>
+                                    </div>
+                """
+
+                // dump data to HTML
+                html += "<div style='width:1000px;'><pre><small>${rsdqcrFile.text}</small></pre></div>"
+            }
+
+
+
             out << html
-        }
+
     }
 
     // display a single datafolder
@@ -240,7 +295,7 @@ class DataTagLib {
         out << '<div style="float:right;">'
         out << common.extractButton(dataFolder:dataFolder)
         out << '</div>'
-        out << '<h3>extractions</h3>'        
+        out << '<h3>extractions</h3>'
         out << '<ul>'
         extractFolders.each { extractFolder ->
                 out << '<li>'
@@ -286,18 +341,18 @@ class DataTagLib {
         out << '<div style="float:right;">'
         out << common.combineButton(dataFolder:dataFolder, extractFolder:extractFolder, alignFolder:alignFolder)
         out << '</div>'
-        out << '<h3>combines</h3>'        
+        out << '<h3>combines</h3>'
         out << '<ul>'
         combineFolders.each { combineFolder ->
                 out << '<li>'
                 out << '     <table style="padding:13px;"><tr>'
                 out << '        <td><i class="icon-th-list"></i></td>'
-                out << '        <td>' + common.viewCombineButton(dataFolder:dataFolder, extractFolder:extractFolder, alignFolder:alignFolder, combineFolder:combineFolder) + '</td>'                
-                out << '        <td>' + combineFolder.name + '</td>'                
+                out << '        <td>' + common.viewCombineButton(dataFolder:dataFolder, extractFolder:extractFolder, alignFolder:alignFolder, combineFolder:combineFolder) + '</td>'
+                out << '        <td>' + combineFolder.name + '</td>'
                 out << '        </td>'
 
                 out << '     </tr></table>'
-                out << '</li>'            
+                out << '</li>'
         }
         out << '</ul>'
 
