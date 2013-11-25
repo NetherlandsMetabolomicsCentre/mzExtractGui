@@ -36,40 +36,12 @@ class DataTagLib {
         def combineFolderDataFile = new File(combineFolder.path)
 
 
+            def jsonData
+
             // build some html
             def html = ''
             html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
-            html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.1.min.js"></script>'
-
-            // dummy graph
-            Random random = new Random()
-            def features = ["L(-)-Nicotine pestanal", "Quindoxin", "Phenylalanyl-Isoleucine"]
-            def jsonData = '['
-            40.times { rt ->
-                features.each { feature ->
-                    def intensity = random.nextInt(999) * ("0.3${random.nextInt(1000)}" as Double) * ("1.7${random.nextInt(1000)}" as Double)
-                    if (intensity < 550) { intensity = 0 }
-                    jsonData += '{ "RT (min)":"'+((rt+1)*1.43514)+'", "Feature":"'+feature+'", "Intensity":'+intensity+'},'
-                }
-            }
-            jsonData += ']'
-            //println jsonData
-
-            html += """ <div id="exampleSVG">
-                        <script type="text/javascript">
-                          var svg = dimple.newSvg("#exampleSVG", 750, 400);
-                          var data = ${jsonData};
-                          var chart = new dimple.chart(svg, data);
-                          chart.setBounds(60, 30, 585, 305)
-                          var xAxis = chart.addCategoryAxis("x", "RT (min)");
-                          xAxis.addOrderRule("RT (min)");
-                          var yAxis = chart.addMeasureAxis("y", "Intensity");
-                          chart.addSeries("Feature", dimple.plot.line);
-                          chart.addLegend(80, 10, 600, 20, "left");
-                          chart.draw();
-                        </script>
-                        </div>
-                    """
+            html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.2.min.js"></script>'
 
             //rsdqcr graph
             def rsdqcrFile = new File(combineFolder.path, "${config.combine.outputfile}_summary_rsdqcrtar.txt")
@@ -78,16 +50,20 @@ class DataTagLib {
                 def rsdqcrEntries = []
                 def rsdqcrEntriesHeader = []
                 rsdqcrFile.eachLine { rsdqcrLine ->
-                    def rsdqcrParts = rsdqcrLine.split("\t")
-                    if (rsdqcrEntriesHeader == []){
-                        rsdqcrEntriesHeader = rsdqcrParts
-                    } else {
-                        def entryHash = [:]
-                        rsdqcrEntriesHeader.eachWithIndex { headerLabel, headerIdx ->
-                            entryHash[headerLabel] = rsdqcrParts[headerIdx]
+
+                    //if (rsdqcrEntries.size() <= 50){
+
+                        def rsdqcrParts = rsdqcrLine.split("\t")
+                        if (rsdqcrEntriesHeader == []){
+                            rsdqcrEntriesHeader = rsdqcrParts
+                        } else {
+                            def entryHash = [:]
+                            rsdqcrEntriesHeader.eachWithIndex { headerLabel, headerIdx ->
+                                entryHash[headerLabel] = rsdqcrParts[headerIdx]
+                            }
+                            rsdqcrEntries << entryHash
                         }
-                        rsdqcrEntries << entryHash
-                    }
+                    //}
                 }
 
                 jsonData = '['
@@ -103,22 +79,97 @@ class DataTagLib {
 
                 html += """ <div id="rsdqcrSVG">
                                         <script type="text/javascript">
-                                        var svg = dimple.newSvg("#rsdqcrSVG", 750, ${15 * rsdqcrEntries.size() + 200});
+                                        var svg = dimple.newSvg("#rsdqcrSVG", 700, ${20 * rsdqcrEntries.size() + 200});
+
                                         var data = ${jsonData};
                                         var chart = new dimple.chart(svg, data);
 
-                                        chart.setBounds(100, 50, 700, ${15 * rsdqcrEntries.size()})
+                                        chart.setBounds(100, 50, 540, ${20 * rsdqcrEntries.size()})
+
+                                        var x1Axis = chart.addMeasureAxis("x", "RSDQC (QC)");
+                                        var x2Axis = chart.addMeasureAxis("x", "RSDRT (QC)");
                                         var yAxis = chart.addCategoryAxis("y", "COMPOUND");
                                         yAxis.addOrderRule("COMPOUND");
-                                        var xAxis = chart.addMeasureAxis("x", "RSDQC (QC)");
-                                        chart.addSeries(null, dimple.plot.bar);
+                                        var bars1 = chart.addSeries(null, dimple.plot.bar, [x1Axis,yAxis]);
+                                        var bars2 = chart.addSeries(null, dimple.plot.bar, [x2Axis,yAxis]);
                                         chart.draw();
+                                        </script>
+                                    </div>
+                """
+
+                // reformat the data to a per compound list of RSDQC (QC), RSDRT (QC) and MEANRT(QC)
+                jsonData = '['
+                rsdqcrEntries.each { rsdqcrEntry ->
+                    jsonData += """
+                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"RSDRT (QC)","Value":"${(rsdqcrEntry['RSDRT (QC)'] as Float)}"},
+                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"RSDQC (QC)","Value":"${(rsdqcrEntry['RSDQC (QC)'] as Float)}"},
+                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"MEANRT(QC)","Value":"${(rsdqcrEntry['MEANRT(QC)'] as Float)}"},
+                    """
+                }
+                jsonData += ']'
+
+                html += """ <div id="combiSVG">
+                                        <script type="text/javascript">
+                                        var svg = dimple.newSvg("#combiSVG", 700, ${20 * rsdqcrEntries.size() + 200});
+
+                                        var data = ${jsonData};
+                                        var chart = new dimple.chart(svg, data);
+
+                                        chart.setBounds(120, 50, 520, ${20 * rsdqcrEntries.size()})
+                                        var xAxis = chart.addMeasureAxis("x", "Value");
+                                        //var xAxis = chart.addLogAxis("x", "Value");
+
+                                        var yAxis = chart.addCategoryAxis("y", ["COMPOUND", "Property"]);
+                                        yAxis.addOrderRule("COMPOUND");
+                                        var bars = chart.addSeries("Property", dimple.plot.bar);
+                                        bars.barGap = 0.5;
+                                        var myLegend = chart.addLegend(10, 5, 540, 10, "right", bars);
+                                        chart.draw();
+
+                                        xAxis.titleShape.remove()
+
+                                        chart.legends = [];
+
+                                        // Get a unique list of Owner values to use when filtering
+                                        var filterValues = dimple.getUniqueValues(data, "Property");
+                                        // Get all the rectangles from our now orphaned legend
+                                        myLegend.shapes.selectAll("rect")
+                                          // Add a click event to each rectangle
+                                          .on("click", function (e) {
+                                            // This indicates whether the item is already visible or not
+                                            var hide = false;
+                                            var newFilters = [];
+                                            // If the filters contain the clicked shape hide it
+                                            filterValues.forEach(function (f) {
+                                              if (f === e.aggField.slice(-1)[0]) {
+                                                hide = true;
+                                              } else {
+                                                newFilters.push(f);
+                                              }
+                                            });
+                                            // Hide the shape or show it
+                                            if (hide) {
+                                              d3.select(this).style("opacity", 0.2);
+                                            } else {
+                                              newFilters.push(e.aggField.slice(-1)[0]);
+                                              d3.select(this).style("opacity", 0.8);
+                                            }
+                                            // Update the filters
+                                            filterValues = newFilters;
+                                            // Filter the data
+                                            chart.data = dimple.filterData(data, "Property", filterValues);
+                                            // Passing a duration parameter makes the chart animate. Without
+                                            // it there is no transition
+                                            chart.draw(800);
+                                          });
                                         </script>
                                     </div>
                 """
 
                 // dump data to HTML
                 html += "<div style='width:1000px;'><pre><small>${rsdqcrFile.text}</small></pre></div>"
+
+
             }
 
 

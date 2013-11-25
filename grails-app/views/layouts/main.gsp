@@ -14,10 +14,10 @@
                 <g:javascript library="jquery" />
 		<style>
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
-			body { 
+			body {
                             margin: 0px auto;
-                            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */ 
-                        }                           
+                            padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+                        }
 			ul { list-style: none; }
                         .page-table {
                           margin: 5px 0;
@@ -42,6 +42,18 @@
                         .btn {
                           margin-right: 3px;
                           margin-top: 1px;
+                        }
+
+                        g text.axis.title {
+                           font-size: 15px !important;
+                        }
+
+                        g text.legendText {
+                           font-size: 13px !important;
+                        }
+
+                        g.tick text {
+                            font-size: 12px !important;
                         }
 
 		</style>

@@ -8,9 +8,9 @@
             <g:link controller="data" action="folder" params="[dataFolderKey:dataFolder.key]">${dataFolder.name}</g:link>
             <small> / ${extractFolder.name}</small>
         </h2>
-      
-        <common:combineButtons dataFolderKey="${dataFolder.key}" extractFolderKey="${extractFolder.key}" alignFolderKey="${alignFolder.key}" combineFolderKey="${combineFolder.key}" />      
-      
+
+        <common:combineButtons dataFolderKey="${dataFolder.key}" extractFolderKey="${extractFolder.key}" alignFolderKey="${alignFolder.key}" combineFolderKey="${combineFolder.key}" />
+
         <h3>${combineFolder.name}</h3>
         <table class="page-table">
           <tr class="page-tr">
@@ -21,6 +21,6 @@
                 <data:combineReportData combineFolder="${combineFolder}" />
             </td>
           </tr>
-        </table>        
+        </table>
     </body>
 </html>
