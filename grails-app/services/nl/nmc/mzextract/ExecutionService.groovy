@@ -16,7 +16,7 @@ class ExecutionService {
         def command = ""
 
         // add executable
-        command += "${executable} "
+        command += "\"${executable}\" "
 
         // calling MATLAB executables on Linux requires an additional argument, the path of MATLAB home
         if (config.os == 'lin') { command += "\"${config.matlab.home}\" " }
