@@ -28,7 +28,7 @@ class AlignService {
         // load the alignment folder
         def alignFolder = alignFolder(dataFolderKey, extractFolderKey, alignFolderKey)
 
-        return new File(alignFolder.path + '/align.xml')
+        return new File(alignFolder.path, 'align.xml')
     }
 
     /*
@@ -133,7 +133,7 @@ class AlignService {
       */
     def alignmentsFolder(String dataFolderKey, String extractFolderKey){
         def extractFolder = extractService.extractFolder(dataFolderKey, extractFolderKey)
-        return dataService.getFolder(new File(extractFolder.path + '/.alignments/'))
+        return dataService.getFolder(new File(extractFolder.path, '.alignments/'))
     }
 
     /*
@@ -181,7 +181,7 @@ class AlignService {
             mats += "${matFile}\n"
         }
 
-        new File(alignFolder.path + '/mat.txt') << mats
+        new File(alignFolder.path, 'mat.txt') << mats
 
         // return alignFolder key
         return alignFolder.key

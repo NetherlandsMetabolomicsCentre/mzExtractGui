@@ -3,7 +3,7 @@ package nl.nmc.mzextract
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class QueueService {
-    
+
     def sharedService
 
     // include configuration of mzExtract
@@ -47,7 +47,7 @@ class QueueService {
       */
     def queueExtraction(String dataFolderKey, String extractFolderKey) {
 
-        def queueFile = new File(extractionsQueueFolder() + '/' + dataFolderKey + '_' + extractFolderKey + '.job')
+        def queueFile = new File(extractionsQueueFolder(), "${dataFolderKey}_${extractFolderKey}.job")
         queueFile << "Start Extraction log ${sharedService.dateFolderName()}"
 
         return true
@@ -61,7 +61,7 @@ class QueueService {
       */
     def queueAlignment(String dataFolderKey, String extractFolderKey, String alignFolderKey) {
 
-        def queueFile = new File(alignmentsQueueFolder() + '/' + dataFolderKey + '_' + extractFolderKey + '_' + alignFolderKey + '.job')
+        def queueFile = new File(alignmentsQueueFolder(),  "${dataFolderKey}_${extractFolderKey}_${alignFolderKey}.job")
         queueFile << "Start Alignment log ${sharedService.dateFolderName()}"
 
         return true
@@ -76,7 +76,7 @@ class QueueService {
       */
     def queueCombine(String dataFolderKey, String extractFolderKey, String alignFolderKey, String combineFolderKey) {
 
-        def queueFile = new File(combinesQueueFolder() + '/' + (dataFolderKey ?: 'null') + '_' + (extractFolderKey ?: 'null') + '_' + (alignFolderKey ?: 'null') + '_' + (combineFolderKey ?: 'null') + '.job')
+        def queueFile = new File(combinesQueueFolder(), "${dataFolderKey ?: 'null'}_${extractFolderKey ?: 'null'}_${alignFolderKey ?: 'null'}_${combineFolderKey ?: 'null'}.job")
         queueFile << "Start Combine log ${sharedService.dateFolderName()}"
 
         return true

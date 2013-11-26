@@ -27,9 +27,9 @@ class ExtractService {
         // load the extraction folder
         def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
 
-        return new File(extractFolder.path + '/status.xml')
-    } 
-    
+        return new File(extractFolder.path, 'status.xml')
+    }
+
     /*
       * read status from the status.xml file in the extraction folder
       * @param dataFolderKey String
@@ -47,14 +47,14 @@ class ExtractService {
       def xmlStatus = [:]
       if (statusFile.size() > 0){
         xmlStatus = new XmlSlurper().parseText(statusFile?.text)
-        xmlStatus.children().each { 
-            status[it.name()] = it.text() 
-        }            
-      }     
-      
+        xmlStatus.children().each {
+            status[it.name()] = it.text()
+        }
+      }
+
       return status
-    } 
-    
+    }
+
     /*
       * (over)write status to the status.xml file in the extraction folder
       * @param dataFolderKey String
@@ -64,14 +64,14 @@ class ExtractService {
     def writeStatus(String dataFolderKey, String extractFolderKey, HashMap parameters){
 
         def status = [:]
-        
+
         // load existing status
         def existingStatus = readStatus(dataFolderKey, extractFolderKey)
 
         // merge existing status with new status
         existingStatus.each { label, value ->
-            if (label != 'config'){            
-                status["${label}"] = value as String                
+            if (label != 'config'){
+                status["${label}"] = value as String
             }
         }
         parameters.each { label, value ->
@@ -103,8 +103,8 @@ class ExtractService {
 
         return readStatus(dataFolderKey, extractFolderKey)
 
-    }    
-    
+    }
+
     /*
       * returns the extraction config file
       */
@@ -113,7 +113,7 @@ class ExtractService {
         // load the extraction folder
         def extractFolder = extractFolder(dataFolderKey, extractFolderKey)
 
-        return new File(extractFolder.path + '/extract.xml')
+        return new File(extractFolder.path, 'extract.xml')
     }
 
     /*
@@ -208,10 +208,10 @@ class ExtractService {
       * @param extractFolderKey String
       */
     def queue(String dataFolderKey, String extractFolderKey){
-        
+
         // reset any previous status info
         statusFile(dataFolderKey, extractFolderKey)?.delete()
-        
+
         queueService.queueExtraction(dataFolderKey, extractFolderKey)
     }
 
@@ -222,7 +222,7 @@ class ExtractService {
       */
     def extractionsFolder(String dataFolderKey){
         def dataFolder = dataService.dataFolder(dataFolderKey)
-        return dataService.getFolder(new File(dataFolder.path + '/.extractions/'))
+        return dataService.getFolder(new File(dataFolder.path, '.extractions'))
     }
 
     /*
@@ -249,7 +249,7 @@ class ExtractService {
       */
     def initExtraction(String dataFolderKey, ArrayList mzxmlFiles){
 
-        def newextractFolder = new File(extractionsFolder(dataFolderKey).path + '/' + sharedService.dateFolderName())
+        def newextractFolder = new File(extractionsFolder(dataFolderKey).path, sharedService.dateFolderName())
 
         // make sure it is created
         newextractFolder.mkdirs()
@@ -263,8 +263,8 @@ class ExtractService {
             mzxmls += "${mzxmlFile}\n"
         }
 
-        new File(extractFolder.path + '/mzxml.txt') << mzxmls
-        
+        new File(extractFolder.path, 'mzxml.txt') << mzxmls
+
         // set status to new
         writeStatus(dataFolderKey, extractFolder.key, ['status':'new', 'created': new Date()])
 
