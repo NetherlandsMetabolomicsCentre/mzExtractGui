@@ -44,7 +44,7 @@ class AlignmentJob {
 
             // retrieve a list of the selected mat files to process
             def selectedMatFiles = []
-            new File(alignFolder.path + '/mat.txt').eachLine { line ->
+            new File(alignFolder.path, 'mat.txt').eachLine { line ->
                 selectedMatFiles << line
             }
 

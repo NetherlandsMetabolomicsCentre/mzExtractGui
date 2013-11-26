@@ -46,13 +46,13 @@ class ExtractionJob {
             def configFileHash = configFile.text.encodeAsBase64().toString()
 
             // update status
-            extractService.writeStatus(dataFolderKey, extractFolderKey, ['status':'running', 'updated': new Date(), 'logging':logging])            
-            
+            extractService.writeStatus(dataFolderKey, extractFolderKey, ['status':'running', 'updated': new Date(), 'logging':logging])
+
             logging += "\n\n"
 
             // retrieve a list of the selected mzxml files to process
             def selectedMzxmlFiles = []
-            new File(extractFolder.path + '/mzxml.txt').eachLine { line ->
+            new File(extractFolder.path, 'mzxml.txt').eachLine { line ->
                 selectedMzxmlFiles << line
             }
 
