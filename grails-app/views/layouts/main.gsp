@@ -10,8 +10,10 @@
 		<title><g:layoutTitle default="mzExtract"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="${resource(dir: 'css', file: 'bootstrap.min.css')}" type="text/css">
-                <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">
-                <g:javascript library="jquery" />
+             <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">
+             <g:javascript library="jquery" />
+            <script src="${resource(dir: 'js', file: 'd3.v3.min.js')}"></script>
+            <script src="${resource(dir: 'js', file: 'dimple.v1.1.2.min.js')}"></script>
 		<style>
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
 			body {

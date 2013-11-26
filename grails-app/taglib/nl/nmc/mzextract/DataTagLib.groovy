@@ -40,8 +40,6 @@ class DataTagLib {
 
             // build some html
             def html = ''
-            html += '    <script src="http://d3js.org/d3.v3.min.js"></script>'
-            html += '    <script src="http://dimplejs.org/dist/dimple.v1.1.2.min.js"></script>'
 
             //rsdqcr graph
             def rsdqcrFile = new File(combineFolder.path, "${config.combine.outputfile}_summary_rsdqcrtar.txt")
