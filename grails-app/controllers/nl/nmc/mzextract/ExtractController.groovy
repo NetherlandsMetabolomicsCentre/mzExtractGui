@@ -26,14 +26,7 @@ class ExtractController {
             if (params.mzxmlfiles?.size() >= 1){
 
                 // extract all unique keys
-                def uniqueFiles = []
-
-                // if one file is selected it returns a string, so we have to check what we are dealing with
-                if (params.mzxmlfiles instanceof String){
-                    uniqueFiles.add(params.mzxmlfiles)
-                } else {
-                    uniqueFiles = params.mzxmlfiles.findAll{ it }.unique()
-                }
+                def uniqueFiles = dataService.uniqueMatlabFilesFromParams(params)
 
                 // generate a extraction folder and return the key to pass with the redirect
                 def extractFolderKey = extractService.initExtraction(dataFolder.key, uniqueFiles)
@@ -47,12 +40,12 @@ class ExtractController {
     }
 
     def settings(){
-        
+
         def extractFolder = extractService.extractFolder(params.dataFolderKey, params.extractFolderKey)
-        
+
         if (params['submit_back']){
             // redirect to extraction page to view the status
-            redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: params.extractFolderKey])            
+            redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: params.extractFolderKey])
         }
 
         // (over-)write settings and return the updated values
@@ -96,18 +89,18 @@ class ExtractController {
             redirect(controller:'data', action:'folder', params:[dataFolderKey: params.dataFolderKey])
         }
     }
-    
+
     def stop(){
 
         // delete it
         if (params.submit_stop){
-            
+
             // change timestamp to change the config hash resulting in the job to skip new files
             extractService.writeSettings(params.dataFolderKey, params.extractFolderKey, [:])
             extractService.writeStatus(params.dataFolderKey, params.extractFolderKey, ['status':'stopping', 'updated': new Date(), 'logging':'Stopping job!'])
-            
+
             // redirect back to extract folder page
             redirect(action:'extraction', params:[dataFolderKey: params.dataFolderKey, extractFolderKey: params.extractFolderKey])
         }
-    }    
+    }
 }

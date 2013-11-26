@@ -38,14 +38,7 @@ class CombineController {
             if (params.matfiles?.size() >= 1){
 
                 // extract all unique keys
-                def uniqueFiles = []
-
-                // if one file is selected it returns a string, so we have to check what we are dealing with
-                if (params.matfiles instanceof String){
-                    uniqueFiles.add(params.matfiles)
-                } else {
-                    uniqueFiles = params.matfiles.findAll{ it }.unique()
-                }
+                def uniqueFiles = dataService.uniqueMatlabFilesFromParams(params)
 
                 // generate a combine folder and return the key to pass with the redirect
                 def combineFolderKey = combineService.initCombine(params.dataFolderKey, params.extractFolderKey, params.alignFolderKey, uniqueFiles)
@@ -108,11 +101,11 @@ class CombineController {
             }
         }
     }
-    
+
     def test = {
-        
+
         def html = """
-        
+
             <html><head><title>Test</title></head><body>
             <h1>Test visual</h1>
             <div id="chartContainer" style="border: thin solid grey;">
@@ -135,9 +128,9 @@ class CombineController {
             </body>
             </html>
         """
-        
+
         render html
-        
+
     }
 
 }

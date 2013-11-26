@@ -99,4 +99,21 @@ class DataService {
 
         return folder
     }
+
+    def uniqueMatlabFilesFromParams(HashMap params){
+
+                // extract all unique keys
+                def uniqueFiles = []
+
+                // if one file is selected it returns a string, so we have to check what we are dealing with
+                if (params.mzxmlfiles) {
+                    if (params.mzxmlfiles instanceof String){
+                        uniqueFiles.add(params.mzxmlfiles)
+                    } else {
+                        uniqueFiles = params.mzxmlfiles.findAll{ it }.unique()
+                    }
+                }
+
+                return uniqueFiles
+    }
 }
