@@ -1,7 +1,5 @@
 package nl.nmc.mzextract
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 class AlignService {
 
     def dataService
@@ -9,9 +7,7 @@ class AlignService {
     def queueService
     def executionService
     def sharedService
-
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
+    def grailsApplication
 
     /*
       * returns the default alignment settings
@@ -37,7 +33,7 @@ class AlignService {
       * @param configFile String
       */
     def align(String configFile) {
-        executionService.execCommand("${config.path.commandline}/${config.path.command.align}", [configFile])
+        executionService.execCommand("${grailsApplication.config.mzextract.path.commandline}/${grailsApplication.config.mzextract.path.command.align}", [configFile])
     }
 
     /*

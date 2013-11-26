@@ -1,11 +1,8 @@
 package nl.nmc.mzextract
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 class DataService {
 
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
+    def grailsApplication
 
     /*
       * Data access methods
@@ -17,7 +14,7 @@ class DataService {
         fileHash['key'] = file.canonicalPath.encodeAsSHA1()
         fileHash['name'] = file.name
         fileHash['path'] = file.canonicalPath
-        fileHash['relpath'] = fileHash['path'] - "${config.path.project}"
+        fileHash['relpath'] = fileHash['path'] - "${ grailsApplication.config.mzextract.path.project}"
         fileHash['relpathencoded'] = fileHash['relpath'].encodeAsBase64().toString()
         fileHash['updated'] = new Date(file.lastModified()).format('yyyy-MM-dd')
         return fileHash
@@ -72,7 +69,7 @@ class DataService {
         def folders = [:]
         def folderIdx = 0
 
-        new File("${config.path.project}")?.eachFile{ entry ->
+        new File("${grailsApplication.config.mzextract.path.project}")?.eachFile{ entry ->
             if (entry.isDirectory() && entry.name[0] != '.'){
 
                 // add to HashMap with folders
@@ -91,7 +88,7 @@ class DataService {
 
         def folder
 
-        new File("${config.path.project}")?.eachFile{ entry ->
+        new File("${ grailsApplication.config.mzextract.path.project}")?.eachFile{ entry ->
             if (entry.isDirectory() && entry.canonicalPath.encodeAsSHA1() == dataFolderKey){
                 folder = getFolder(entry)
             }

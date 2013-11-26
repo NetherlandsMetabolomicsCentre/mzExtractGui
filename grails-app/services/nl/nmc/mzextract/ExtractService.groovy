@@ -1,16 +1,12 @@
 package nl.nmc.mzextract
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 class ExtractService {
 
     def dataService
     def queueService
     def executionService
     def sharedService
-
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
+    def grailsApplication
 
     /*
       * returns the default extraction settings
@@ -123,7 +119,7 @@ class ExtractService {
       * @param configFile String
       */
     def extract(String mzXMLFile, String configFile) {
-        executionService.execCommand("${config.path.commandline}/${config.path.command.extract}", [mzXMLFile, configFile])
+        executionService.execCommand("${ grailsApplication.config.mzextract.path.commandline}/${ grailsApplication.config.mzextract.path.command.extract}", [mzXMLFile, configFile])
     }
 
     /*

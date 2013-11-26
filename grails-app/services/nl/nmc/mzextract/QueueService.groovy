@@ -1,20 +1,15 @@
 package nl.nmc.mzextract
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 class QueueService {
 
+    def grailsApplication
     def sharedService
-
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
-
 
     /*
       * folder with queued extractions
       */
     def extractionsQueueFolder(){
-        def queuePath = "${config.path.project}/.queue/extractions"
+        def queuePath = "${  grailsApplication.config.mzextract.path.project}/.queue/extractions"
         // make sure it exists
         new File(queuePath).mkdirs()
         return queuePath
@@ -24,7 +19,7 @@ class QueueService {
       * folder with queued alignments
       */
     def alignmentsQueueFolder(){
-        def queuePath = "${config.path.project}/.queue/alignments"
+        def queuePath = "${  grailsApplication.config.mzextract.path.project}/.queue/alignments"
         // make sure it exists
         new File(queuePath).mkdirs()
         return queuePath
@@ -34,7 +29,7 @@ class QueueService {
       * folder with queued combines
       */
     def combinesQueueFolder(){
-        def queuePath = "${config.path.project}/.queue/combines"
+        def queuePath = "${  grailsApplication.config.mzextract.path.project}/.queue/combines"
         // make sure it exists
         new File(queuePath).mkdirs()
         return queuePath

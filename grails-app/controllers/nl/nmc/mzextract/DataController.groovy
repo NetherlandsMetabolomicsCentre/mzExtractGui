@@ -1,12 +1,10 @@
 package nl.nmc.mzextract
 
 import javax.servlet.http.*
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class DataController {
 
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
+    def grailsApplication
 
     def dataService
 
@@ -23,14 +21,14 @@ class DataController {
     def folder() {
         [ dataFolder: dataService.dataFolder(params.dataFolderKey) ]
     }
-    
+
     /*
       * Download a file
       */
     def download(){
 
         if (params.id){
-            def pathToFile = "${config.path.project}" + new String(params.id.decodeBase64())
+            def pathToFile = "${grailsApplication.config.mzextract.path.project}" + new String(params.id.decodeBase64())
             def download = new File(pathToFile)
             if (download.isFile()){
                 response.setContentType("application/octet-stream")
@@ -41,7 +39,7 @@ class DataController {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "File not found");
             }
         } else {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");            
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
         }
     }
 }

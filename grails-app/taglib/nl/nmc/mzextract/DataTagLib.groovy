@@ -1,7 +1,5 @@
 package nl.nmc.mzextract
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 class DataTagLib {
 
     static namespace = "data"
@@ -10,10 +8,7 @@ class DataTagLib {
     def extractService
     def alignService
     def combineService
-
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
-
+    def grailsApplication
 
     // list all top-level data folders
     def dataFolders = { attrs, body ->
@@ -42,7 +37,7 @@ class DataTagLib {
             def html = ''
 
             //rsdqcr graph
-            def rsdqcrFile = new File(combineFolder.path, "${config.combine.outputfile}_summary_rsdqcrtar.txt")
+            def rsdqcrFile = new File(combineFolder.path, "${ grailsApplication.config.mzextract.combine.outputfile}_summary_rsdqcrtar.txt")
             if (rsdqcrFile.exists()){
 
                 def rsdqcrEntries = []
@@ -218,7 +213,7 @@ class DataTagLib {
 
         folder?.files?.keySet().each { ext ->
 
-            if (ext in config.exepted.extensions){
+            if (ext in   grailsApplication.config.mzextract.exepted.extensions){
                 out << "<h3>${ext}</h3>"
                 out << "<ul>"
                 folder.files[ext].each { f ->

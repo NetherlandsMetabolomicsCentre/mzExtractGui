@@ -1,11 +1,8 @@
 package nl.nmc.mzextract
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
 class ExecutionService {
 
-    // include configuration of mzExtract
-    def config = ConfigurationHolder.config.mzextract
+    def grailsApplication
 
     def execCommand(String executable, ArrayList arguments) {
 
@@ -19,7 +16,7 @@ class ExecutionService {
         command += "\"${executable}\" "
 
         // calling MATLAB executables on Linux requires an additional argument, the path of MATLAB home
-        if (config.os == 'lin') { command += "\"${config.matlab.home}\" " }
+        if (grailsApplication.mzextract.os == 'lin') { command += "\"${grailsApplication.config.mzextract.matlab.home}\" " }
 
         // add arguments
         arguments.each { argument -> command += "\"${argument}\" " }
