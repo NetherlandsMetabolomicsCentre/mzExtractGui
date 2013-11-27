@@ -51,7 +51,10 @@ class MzxmlService {
             meta['processingOperation'] = xml?.msRun?.dataProcessing?.processingOperation?.@name?.text() ?: ''
 
         } catch (e) {
-            // ignore this when it fails
+            /**
+              * this parsing is build with the current setup/format of the mzXML files available.
+              * this may fail due to file size or wrong format. Then this should be ignored as it is nice to have info.
+              **/
         }
 
         return meta
