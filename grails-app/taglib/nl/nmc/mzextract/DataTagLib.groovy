@@ -80,7 +80,9 @@ class DataTagLib {
                                         chart.setBounds(100, 50, 540, ${20 * rsdqcrEntries.size()})
 
                                         var x1Axis = chart.addMeasureAxis("x", "RSDQC (QC)");
+                                        x1Axis.tickFormat = ",g";
                                         var x2Axis = chart.addMeasureAxis("x", "RSDRT (QC)");
+                                        x2Axis.tickFormat = ",g";
                                         var yAxis = chart.addCategoryAxis("y", "COMPOUND");
                                         yAxis.addOrderRule("COMPOUND");
                                         var bars1 = chart.addSeries(null, dimple.plot.bar, [x1Axis,yAxis]);
@@ -110,6 +112,7 @@ class DataTagLib {
 
                                         chart.setBounds(120, 50, 520, ${20 * rsdqcrEntries.size()})
                                         var xAxis = chart.addMeasureAxis("x", "Value");
+                                        xAxis.tickFormat = ",g";
                                         //var xAxis = chart.addLogAxis("x", "Value");
 
                                         var yAxis = chart.addCategoryAxis("y", ["COMPOUND", "Property"]);
