@@ -79,9 +79,9 @@ class DataTagLib {
 
                                         chart.setBounds(100, 50, 540, ${20 * rsdqcrEntries.size()})
 
-                                        var x1Axis = chart.addMeasureAxis("x", "RSDQC (QC)");
+                                        var x1Axis = chart.addMeasureAxis("x", "AREA");
                                         x1Axis.tickFormat = ",g";
-                                        var x2Axis = chart.addMeasureAxis("x", "RSDRT (QC)");
+                                        var x2Axis = chart.addMeasureAxis("x", "RT (min)");
                                         x2Axis.tickFormat = ",g";
                                         var yAxis = chart.addCategoryAxis("y", "COMPOUND");
                                         yAxis.addOrderRule("COMPOUND");
@@ -92,37 +92,39 @@ class DataTagLib {
                                     </div>
                 """
 
-                // reformat the data to a per compound list of RSDQC (QC), RSDRT (QC) and MEANRT(QC)
+                html = ""
+
+                // reformat the data to a per compound list of AREA, RT (min) and MEANRT(QC)
                 jsonData = '['
                 rsdqcrEntries.each { rsdqcrEntry ->
                     jsonData += """
-                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"RSDRT (QC)","Value":"${(rsdqcrEntry['RSDRT (QC)'] as Float)}"},
-                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"RSDQC (QC)","Value":"${(rsdqcrEntry['RSDQC (QC)'] as Float)}"},
-                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"MEANRT(QC)","Value":"${(rsdqcrEntry['MEANRT(QC)'] as Float)}"},
-                    """
+                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"RT (min)","Value":"${(rsdqcrEntry['RSDRT (QC)'] as Float)*100}"},
+                        {"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"AREA","Value":"${(rsdqcrEntry['RSDQC (QC)'] as Float)*100}"},
+                        """//{"COMPOUND":"${rsdqcrEntry['COMPOUND']}","Property":"MEANRT(QC)","Value":"${(rsdqcrEntry['MEANRT(QC)'] as Float)}"},
+                    //"""
                 }
                 jsonData += ']'
 
                 html += """ <div id="combiSVG">
                                         <script type="text/javascript">
-                                        var svg = dimple.newSvg("#combiSVG", 700, ${20 * rsdqcrEntries.size() + 200});
+                                        var svg = dimple.newSvg("#combiSVG", 700, 600);
 
                                         var data = ${jsonData};
                                         var chart = new dimple.chart(svg, data);
 
-                                        chart.setBounds(120, 50, 520, ${20 * rsdqcrEntries.size()})
-                                        var xAxis = chart.addMeasureAxis("x", "Value");
-                                        xAxis.tickFormat = ",g";
-                                        //var xAxis = chart.addLogAxis("x", "Value");
+                                        chart.setBounds(120, 50, 600, 450)
+                                        var yAxis = chart.addMeasureAxis("y", "Value");
+                                        yAxis.tickFormat = ",g";
+                                        //var xAxis = chart.addLogAxis("y", "Value");
 
-                                        var yAxis = chart.addCategoryAxis("y", ["COMPOUND", "Property"]);
-                                        yAxis.addOrderRule("COMPOUND");
+                                        var xAxis = chart.addCategoryAxis("x", ["COMPOUND", "Property"]);
+                                        xAxis.addOrderRule("COMPOUND");
                                         var bars = chart.addSeries("Property", dimple.plot.bar);
-                                        bars.barGap = 0.5;
+                                        //bars.barGap = 0.5;
                                         var myLegend = chart.addLegend(10, 5, 540, 10, "right", bars);
                                         chart.draw();
 
-                                        xAxis.titleShape.remove()
+                                        yAxis.titleShape.remove()
 
                                         chart.legends = [];
 
