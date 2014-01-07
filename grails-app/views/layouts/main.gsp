@@ -30,7 +30,6 @@
                         .page-left {
                           padding: 15px;
                           margin: 3px;
-                          border-left: thin solid #dcdcdc;
                           vertical-align: top;
                           min-width: 250px;
                         }
