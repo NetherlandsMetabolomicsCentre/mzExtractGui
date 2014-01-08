@@ -44,8 +44,6 @@ class DataTagLib {
                 def rsdqcrEntriesHeader = []
                 rsdqcrFile.eachLine { rsdqcrLine ->
 
-                    //if (rsdqcrEntries.size() <= 50){
-
                         def rsdqcrParts = rsdqcrLine.split("\t")
                         if (rsdqcrEntriesHeader == []){
                             rsdqcrEntriesHeader = rsdqcrParts
@@ -56,49 +54,13 @@ class DataTagLib {
                             }
                             rsdqcrEntries << entryHash
                         }
-                    //}
                 }
-
-                jsonData = '['
-                rsdqcrEntries.each { rsdqcrEntry ->
-                    jsonData += '{ '
-                    rsdqcrEntry.each { l, v ->
-                        jsonData += '"' + l + '":"'+ v +'", '
-                    }
-                    jsonData += '"EOL":"TRUE"'
-                    jsonData += '}, '
-                }
-                jsonData += ']'
-
-                html += """ <div id="rsdqcrSVG">
-                                        <script type="text/javascript">
-                                        var svg = dimple.newSvg("#rsdqcrSVG", 700, ${20 * rsdqcrEntries.size() + 200});
-
-                                        var data = ${jsonData};
-                                        var chart = new dimple.chart(svg, data);
-
-                                        chart.setBounds(100, 50, 540, ${20 * rsdqcrEntries.size()})
-
-                                        var x1Axis = chart.addMeasureAxis("x", "AREA");
-                                        x1Axis.tickFormat = ",g";
-                                        var x2Axis = chart.addMeasureAxis("x", "RT (min)");
-                                        x2Axis.tickFormat = ",g";
-                                        var yAxis = chart.addCategoryAxis("y", "COMPOUND");
-                                        yAxis.addOrderRule("COMPOUND");
-                                        var bars1 = chart.addSeries(null, dimple.plot.bar, [x1Axis,yAxis]);
-                                        var bars2 = chart.addSeries(null, dimple.plot.bar, [x2Axis,yAxis]);
-                                        chart.draw();
-                                        </script>
-                                    </div>
-                """
-
-                html = ""
 
                 // reformat the data to a per compound list of AREA, RT (min) and MEANRT(QC)
                 jsonData = '['
                 rsdqcrEntries.each { rsdqcrEntry ->
 
-                    def rsdRT = (rsdqcrEntry['RSDRT (QC)'] as Float)*1000
+                    def rsdRT = (rsdqcrEntry['RSDRT (QC)'] as Float) * 1000
                     def rsdRTGroup = "00-05"
                     if (rsdRT > 5 && rsdRT <= 10) { rsdRTGroup = "05-10" }
                     if (rsdRT > 10 && rsdRT <= 15) { rsdRTGroup = "10-15" }
@@ -106,7 +68,7 @@ class DataTagLib {
                     if (rsdRT > 20 && rsdRT <= 25) { rsdRTGroup = "20-25" }
                     if (rsdRT > 25) { rsdRTGroup = "25 >" }
 
-                    def rsdQC = (rsdqcrEntry['RSDQC (QC)'] as Float)*100
+                    def rsdQC = (rsdqcrEntry['RSDQC (QC)'] as Float) * 100
                     def rsdQCGroup = "00-10"
                     if (rsdQC > 10 && rsdQC <= 20) { rsdQCGroup = "10-20" }
                     if (rsdQC > 20 && rsdQC <= 30) { rsdQCGroup = "20-30" }
@@ -114,129 +76,205 @@ class DataTagLib {
                     if (rsdQC > 40 && rsdQC <= 50) { rsdQCGroup = "40-50" }
                     if (rsdQC > 50) { rsdQCGroup = "50 >" }
 
+                    def meanRT = (rsdqcrEntry['MEANRT(QC)'] as Float) * 10
+                    def meanRTGroup = "00-20"
+                    if (meanRT > 20 && meanRT <= 40) { meanRTGroup = "20-40" }
+                    if (meanRT > 40 && meanRT <= 60) { meanRTGroup = "40-60" }
+                    if (meanRT > 60 && meanRT <= 80) { meanRTGroup = "60-80" }
+                    if (meanRT > 80 && meanRT <= 99) { meanRTGroup = "80-99" }
+                    if (meanRT > 99) { meanRTGroup = "99 >" }
+
                     jsonData += """
                         {
                             "COMPOUND":"${rsdqcrEntry['COMPOUND']}",
                             "RT (min)":"${rsdRT}",
                             "AREA":"${rsdQC}",
+                            "MEANRT":"${meanRT}",
                             "rsdRTGroup":"${rsdRTGroup}",
-                            "rsdQCGroup":"${rsdQCGroup}"
+                            "rsdQCGroup":"${rsdQCGroup}",
+                            "meanRTGroup":"${meanRTGroup}"
                         },
                     """
                 }
                 jsonData += ']'
 
-                html += """ <div id="areaSVG">
-                                        <script type="text/javascript">
-                                        var svg = dimple.newSvg("#areaSVG", document.documentElement.clientWidth-380, 270);
+                [
+                    'RT (min)':'rsdRTGroup',
+                    'AREA':'rsdQCGroup',
+                    'MEANRT':'meanRTGroup'
+                ].each { chartData, chartType ->
 
-                                        var data = ${jsonData};
-                                        var chart = new dimple.chart(svg, data);
+                    html += """ <div id="${chartType}_SVG">
+                                            <script type="text/javascript">
+                                            var ${chartType}_svg = dimple.newSvg("#${chartType}_SVG", document.documentElement.clientWidth-330, 250);
 
-                                        chart.setBounds(120, 20, document.documentElement.clientWidth-500, 130)
-                                        var yAxis = chart.addMeasureAxis("y", "AREA");
-                                        yAxis.tickFormat = ",g";
+                                            var ${chartType}_data = ${jsonData};
+                                            var ${chartType}_chart = new dimple.chart(${chartType}_svg, ${chartType}_data);
 
-                                        var xAxis = chart.addCategoryAxis("x", ["COMPOUND", "rsdQCGroup"]);
-                                        xAxis.addOrderRule("COMPOUND");
-                                        var bars = chart.addSeries("rsdQCGroup", dimple.plot.bar);
-                                        bars.addOrderRule("rsdQCGroup", true);
-                                        //bars.barGap = 0.1;
-                                        var myLegend = chart.addLegend(10, 5, 540, 10, "Right", bars);
-                                        chart.draw();
-                                        chart.legends = [];
+                                            ${chartType}_chart.setBounds(60, 60, document.documentElement.clientWidth-400, 110)
+                                            var ${chartType}_yAxis = ${chartType}_chart.addMeasureAxis("y", "${chartData}");
+                                            ${chartType}_yAxis.tickFormat = ",g";
 
-                                        // Get a unique list of Owner values to use when filtering
-                                        var filterValues = dimple.getUniqueValues(data, "rsdQCGroup");
-                                        // Get all the rectangles from our now orphaned legend
-                                        myLegend.shapes.selectAll("rect")
-                                          // Add a click event to each rectangle
-                                          .on("click", function (e) {
-                                            // This indicates whether the item is already visible or not
-                                            var hide = false;
-                                            var newFilters = [];
-                                            // If the filters contain the clicked shape hide it
-                                            filterValues.forEach(function (f) {
-                                              if (f === e.aggField.slice(-1)[0]) {
-                                                hide = true;
-                                              } else {
-                                                newFilters.push(f);
-                                              }
-                                            });
-                                            // Hide the shape or show it
-                                            if (hide) {
-                                              d3.select(this).style("opacity", 0.2);
-                                            } else {
-                                              newFilters.push(e.aggField.slice(-1)[0]);
-                                              d3.select(this).style("opacity", 0.8);
-                                            }
-                                            // Update the filters
-                                            filterValues = newFilters;
-                                            // Filter the data
-                                            chart.data = dimple.filterData(data, "rsdQCGroup", filterValues);
-                                            // Passing a duration parameter makes the chart animate. Without
-                                            // it there is no transition
-                                            chart.draw(800);
-                                          });
-                                        </script>
-                                    </div>
-                """
+                                            var ${chartType}_xAxis = ${chartType}_chart.addCategoryAxis("x", ["COMPOUND", "${chartType}"]);
+                                            ${chartType}_xAxis.addOrderRule("COMPOUND");
+                                            var ${chartType}_bars = ${chartType}_chart.addSeries("${chartType}", dimple.plot.bar);
+                                            ${chartType}_bars.addOrderRule("${chartType}", true);
 
-                html += """ <div id="rtSVG">
-                                        <script type="text/javascript">
-                                        var rtsvg = dimple.newSvg("#rtSVG", document.documentElement.clientWidth-380, 270);
+                                            var ${chartType}_myLegend = ${chartType}_chart.addLegend(1, 1, 440, 1, "Right", ${chartType}_bars);
+                                            ${chartType}_chart.draw();
+                                            ${chartType}_chart.legends = [];
 
-                                        var rtdata = ${jsonData};
-                                        var rtchart = new dimple.chart(rtsvg, rtdata);
+                                            // Get a unique list of Owner values to use when filtering
+                                            var ${chartType}_filterValues = dimple.getUniqueValues(${chartType}_data, "${chartType}");
+                                            // Get all the rectangles from our now orphaned legend
+                                            ${chartType}_myLegend.shapes.selectAll("rect")
+                                              // Add a click event to each rectangle
+                                              .on("click", function (e) {
+                                                // This indicates whether the item is already visible or not
+                                                var ${chartType}_hide = false;
+                                                var ${chartType}_newFilters = [];
+                                                // If the filters contain the clicked shape hide it
+                                                ${chartType}_filterValues.forEach(function (f) {
+                                                  if (f === e.aggField.slice(-1)[0]) {
+                                                    ${chartType}_hide = true;
+                                                  } else {
+                                                    ${chartType}_newFilters.push(f);
+                                                  }
+                                                });
+                                                // Hide the shape or show it
+                                                if (${chartType}_hide) {
+                                                  d3.select(this).style("opacity", 0.2);
+                                                } else {
+                                                  ${chartType}_newFilters.push(e.aggField.slice(-1)[0]);
+                                                  d3.select(this).style("opacity", 0.8);
+                                                }
+                                                // Update the filters
+                                                ${chartType}_filterValues = ${chartType}_newFilters;
+                                                // Filter the data
+                                                ${chartType}_chart.data = dimple.filterData(${chartType}_data, "${chartType}", ${chartType}_filterValues);
+                                                // Passing a duration parameter makes the ${chartType}_chart animate. Without
+                                                // it there is no transition
+                                                ${chartType}_chart.draw();
+                                              });
+                                            </script>
+                                        </div>
+                    """
 
-                                        rtchart.setBounds(120, 50, document.documentElement.clientWidth-500, 130)
-                                        var rtyAxis = rtchart.addMeasureAxis("y", "RT (min)");
-                                        rtyAxis.tickFormat = ",g";
+                }
 
-                                        var rtxAxis = rtchart.addCategoryAxis("x", ["COMPOUND", "rsdRTGroup"]);
-                                        rtxAxis.addOrderRule("COMPOUND");
-                                        var rtbars = rtchart.addSeries("rsdRTGroup", dimple.plot.bar);
-                                        rtbars.addOrderRule("rsdRTGroup", true);
-                                        //rtbars.barGap = 0.1;
-                                        var rtmyLegend = rtchart.addLegend(10, 5, 540, 10, "Right", rtbars);
-                                        rtchart.draw();
-                                        rtchart.legends = [];
+                println html
 
-                                        // Get a unique list of Owner values to use when filtering
-                                        var rtfilterValues = dimple.getUniqueValues(rtdata, "rsdRTGroup");
-                                        // Get all the rectangles from our now orphaned legend
-                                        rtmyLegend.shapes.selectAll("rect")
-                                          // Add a click event to each rectangle
-                                          .on("click", function (e) {
-                                            // This indicates whether the item is already visible or not
-                                            var rthide = false;
-                                            var rtnewFilters = [];
-                                            // If the filters contain the clicked shape hide it
-                                            rtfilterValues.forEach(function (f) {
-                                              if (f === e.aggField.slice(-1)[0]) {
-                                                rthide = true;
-                                              } else {
-                                                rtnewFilters.push(f);
-                                              }
-                                            });
-                                            // Hide the shape or show it
-                                            if (rthide) {
-                                              d3.select(this).style("opacity", 0.2);
-                                            } else {
-                                              rtnewFilters.push(e.aggField.slice(-1)[0]);
-                                              d3.select(this).style("opacity", 0.8);
-                                            }
-                                            // Update the filters
-                                            rtfilterValues = rtnewFilters;
-                                            // Filter the data
-                                            rtchart.data = dimple.filterData(rtdata, "rsdRTGroup", rtfilterValues);
-                                            // Passing a duration parameter makes the rtchart animate. Without
-                                            // it there is no transition
-                                            rtchart.draw(800);
-                                          });
-                                        </script>
-                                    </div>
-                """
+                // html += """ <div id="areaSVG">
+                //                         <script type="text/javascript">
+                //                         var svg = dimple.newSvg("#areaSVG", document.documentElement.clientWidth-380, 270);
+
+                //                         var data = ${jsonData};
+                //                         var chart = new dimple.chart(svg, data);
+
+                //                         chart.setBounds(120, 20, document.documentElement.clientWidth-500, 130)
+                //                         var yAxis = chart.addMeasureAxis("y", "AREA");
+                //                         yAxis.tickFormat = ",g";
+
+                //                         var xAxis = chart.addCategoryAxis("x", ["COMPOUND", "rsdQCGroup"]);
+                //                         xAxis.addOrderRule("COMPOUND");
+                //                         var bars = chart.addSeries("rsdQCGroup", dimple.plot.bar);
+                //                         bars.addOrderRule("rsdQCGroup", true);
+                //                         //bars.barGap = 0.1;
+                //                         var myLegend = chart.addLegend(10, 5, 540, 10, "Right", bars);
+                //                         chart.draw();
+                //                         chart.legends = [];
+
+                //                         // Get a unique list of Owner values to use when filtering
+                //                         var filterValues = dimple.getUniqueValues(data, "rsdQCGroup");
+                //                         // Get all the rectangles from our now orphaned legend
+                //                         myLegend.shapes.selectAll("rect")
+                //                           // Add a click event to each rectangle
+                //                           .on("click", function (e) {
+                //                             // This indicates whether the item is already visible or not
+                //                             var hide = false;
+                //                             var newFilters = [];
+                //                             // If the filters contain the clicked shape hide it
+                //                             filterValues.forEach(function (f) {
+                //                               if (f === e.aggField.slice(-1)[0]) {
+                //                                 hide = true;
+                //                               } else {
+                //                                 newFilters.push(f);
+                //                               }
+                //                             });
+                //                             // Hide the shape or show it
+                //                             if (hide) {
+                //                               d3.select(this).style("opacity", 0.2);
+                //                             } else {
+                //                               newFilters.push(e.aggField.slice(-1)[0]);
+                //                               d3.select(this).style("opacity", 0.8);
+                //                             }
+                //                             // Update the filters
+                //                             filterValues = newFilters;
+                //                             // Filter the data
+                //                             chart.data = dimple.filterData(data, "rsdQCGroup", filterValues);
+                //                             // Passing a duration parameter makes the chart animate. Without
+                //                             // it there is no transition
+                //                             chart.draw(800);
+                //                           });
+                //                         </script>
+                //                     </div>
+                // """
+
+                // html += """ <div id="rtSVG">
+                //                         <script type="text/javascript">
+                //                         var rtsvg = dimple.newSvg("#rtSVG", document.documentElement.clientWidth-380, 270);
+
+                //                         var rtdata = ${jsonData};
+                //                         var rtchart = new dimple.chart(rtsvg, rtdata);
+
+                //                         rtchart.setBounds(120, 50, document.documentElement.clientWidth-500, 130)
+                //                         var rtyAxis = rtchart.addMeasureAxis("y", "RT (min)");
+                //                         rtyAxis.tickFormat = ",g";
+
+                //                         var rtxAxis = rtchart.addCategoryAxis("x", ["COMPOUND", "rsdRTGroup"]);
+                //                         rtxAxis.addOrderRule("COMPOUND");
+                //                         var rtbars = rtchart.addSeries("rsdRTGroup", dimple.plot.bar);
+                //                         rtbars.addOrderRule("rsdRTGroup", true);
+                //                         //rtbars.barGap = 0.1;
+                //                         var rtmyLegend = rtchart.addLegend(10, 5, 540, 10, "Right", rtbars);
+                //                         rtchart.draw();
+                //                         rtchart.legends = [];
+
+                //                         // Get a unique list of Owner values to use when filtering
+                //                         var rtfilterValues = dimple.getUniqueValues(rtdata, "rsdRTGroup");
+                //                         // Get all the rectangles from our now orphaned legend
+                //                         rtmyLegend.shapes.selectAll("rect")
+                //                           // Add a click event to each rectangle
+                //                           .on("click", function (e) {
+                //                             // This indicates whether the item is already visible or not
+                //                             var rthide = false;
+                //                             var rtnewFilters = [];
+                //                             // If the filters contain the clicked shape hide it
+                //                             rtfilterValues.forEach(function (f) {
+                //                               if (f === e.aggField.slice(-1)[0]) {
+                //                                 rthide = true;
+                //                               } else {
+                //                                 rtnewFilters.push(f);
+                //                               }
+                //                             });
+                //                             // Hide the shape or show it
+                //                             if (rthide) {
+                //                               d3.select(this).style("opacity", 0.2);
+                //                             } else {
+                //                               rtnewFilters.push(e.aggField.slice(-1)[0]);
+                //                               d3.select(this).style("opacity", 0.8);
+                //                             }
+                //                             // Update the filters
+                //                             rtfilterValues = rtnewFilters;
+                //                             // Filter the data
+                //                             rtchart.data = dimple.filterData(rtdata, "rsdRTGroup", rtfilterValues);
+                //                             // Passing a duration parameter makes the rtchart animate. Without
+                //                             // it there is no transition
+                //                             rtchart.draw(800);
+                //                           });
+                //                         </script>
+                //                     </div>
+                // """
 
                 // dump data to HTML
                 //html += "<div style='width:1000px;'><pre><small>${rsdqcrFile.text}</small></pre></div>"

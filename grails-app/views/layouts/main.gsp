@@ -46,15 +46,15 @@
                         }
 
                         g text.axis.title {
-                           font-size: 15px !important;
+                           font-size: 12px !important;
                         }
 
                         g text.legendText {
-                           font-size: 13px !important;
+                           font-size: 11px !important;
                         }
 
                         g.tick text {
-                            font-size: 12px !important;
+                            font-size: 10px !important;
                         }
 
 		</style>

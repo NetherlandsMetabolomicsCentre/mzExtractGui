@@ -11,10 +11,10 @@
 
         <common:combineButtons dataFolderKey="${dataFolder.key}" extractFolderKey="${extractFolder.key}" alignFolderKey="${alignFolder.key}" combineFolderKey="${combineFolder.key}" />
 
-        <h3>${combineFolder.name}</h3>
         <table class="page-table">
           <tr class="page-tr">
             <td class="page-left">
+              <h3>${combineFolder.name}</h3>
               <data:dataFolder dataFolder="${dataFolder}" extractFolder="${extractFolder}" alignFolder="${alignFolder}" combineFolder="${combineFolder}" />
             </td>
             <td class="page-right">
