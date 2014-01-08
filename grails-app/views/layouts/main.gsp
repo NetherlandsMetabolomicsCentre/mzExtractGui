@@ -13,7 +13,7 @@
              <link rel="stylesheet" href="${resource(dir: 'css', file: 'hint.min.css')}" type="text/css">
              <g:javascript library="jquery" />
             <script src="${resource(dir: 'js', file: 'd3.v3.min.js')}"></script>
-            <script src="${resource(dir: 'js', file: 'dimple.v1.1.2.min.js')}"></script>
+            <script src="${resource(dir: 'js', file: 'dimple.v1.1.3.js')}"></script>
 		<style>
 			html { overflow: -moz-scrollbars-vertical; overflow-y: scroll; }
 			body {

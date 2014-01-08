@@ -120,7 +120,7 @@ class DataTagLib {
                                             var ${chartType}_bars = ${chartType}_chart.addSeries("${chartType}", dimple.plot.bar);
                                             ${chartType}_bars.addOrderRule("${chartType}", true);
 
-                                            var ${chartType}_myLegend = ${chartType}_chart.addLegend(1, 1, 440, 1, "Right", ${chartType}_bars);
+                                            var ${chartType}_myLegend = ${chartType}_chart.addLegend(1, 1, 440, 1, "right", ${chartType}_bars);
                                             ${chartType}_chart.draw();
                                             ${chartType}_chart.legends = [];
 
@@ -161,8 +161,6 @@ class DataTagLib {
                     """
 
                 }
-
-                println html
 
                 // html += """ <div id="areaSVG">
                 //                         <script type="text/javascript">
