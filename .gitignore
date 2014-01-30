@@ -44,3 +44,4 @@
 *.iws
 
 /target/
+*.sublime-*
