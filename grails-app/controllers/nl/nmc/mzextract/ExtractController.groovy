@@ -26,7 +26,7 @@ class ExtractController {
             if (params.mzxmlfiles?.size() >= 1){
 
                 // extract all unique keys
-                def uniqueFiles = dataService.uniqueMatlabFilesFromParams(params)
+                def uniqueFiles = dataService.uniqueFilesFromParams(params.mzxmlfiles)
 
                 // generate a extraction folder and return the key to pass with the redirect
                 def extractFolderKey = extractService.initExtraction(dataFolder.key, uniqueFiles)

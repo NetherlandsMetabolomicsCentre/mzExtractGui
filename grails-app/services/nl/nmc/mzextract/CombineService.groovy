@@ -181,7 +181,8 @@ class CombineService {
           def configXML = ""
           configXML += "<config>"
           configXML += "\n\t<created>" + new Date().time + "</created>"
-          configXML += "\n\t<exportfile>${combineFolder.path}/${config.combine.outputfile}</exportfile>"
+          //configXML += "\n\t<exportfile>${combineFolder.path}/${config.combine.outputfile}</exportfile>"
+          configXML += "\n\t<exportfile>${combineFolder.path}/out</exportfile>"
 
           // add settings from parameters or use the default value
           existingSettings.each { label, value ->
@@ -298,6 +299,7 @@ class CombineService {
         def combineFolder = dataService.getFile(newCombineFolder)
 
         // create list of mat files included in this extraction folder
+        println "Initi with:" + matFiles
         def mats = ""
         matFiles.each { matFile ->
             mats += "${matFile}\n"

@@ -16,7 +16,7 @@ class ExecutionService {
         command += "\"${executable}\" "
 
         // calling MATLAB executables on Linux requires an additional argument, the path of MATLAB home
-        if (grailsApplication.mzextract.os == 'lin') { command += "\"${grailsApplication.config.mzextract.matlab.home}\" " }
+        //if (grailsApplication.mzextract.os == 'lin') { command += "\"${grailsApplication.config.mzextract.matlab.home}\" " }
 
         // add arguments
         arguments.each { argument -> command += "\"${argument}\" " }
@@ -24,6 +24,7 @@ class ExecutionService {
         try {
 
             // start the execution
+            println command
             def proc = command.execute()
             proc.waitFor()
 
@@ -34,6 +35,7 @@ class ExecutionService {
             log.error "stderr: ${proc.err.text}"
             log.error " due to: ${e}"
             response += "\n  --- stderr: ${proc.err.text}"
+            println proc.err.text
         }
 
         return response

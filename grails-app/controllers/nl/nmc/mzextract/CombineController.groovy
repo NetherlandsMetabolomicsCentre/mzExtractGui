@@ -38,7 +38,7 @@ class CombineController {
             if (params.matfiles?.size() >= 1){
 
                 // extract all unique keys
-                def uniqueFiles = dataService.uniqueMatlabFilesFromParams(params)
+                def uniqueFiles = dataService.uniqueFilesFromParams(params.matfiles)
 
                 // generate a combine folder and return the key to pass with the redirect
                 def combineFolderKey = combineService.initCombine(params.dataFolderKey, params.extractFolderKey, params.alignFolderKey, uniqueFiles)

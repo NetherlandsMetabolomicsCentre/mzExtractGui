@@ -110,7 +110,7 @@ mzextract.matlab.home = 'C:\\Program Files\\MATLAB/MATLAB Compiler Runtime\\v82'
 
 //mzextract.path.commandline = '/Users/miv/Desktop/temp/mzextract/osx' //OSX
 //mzextract.path.commandline = '/home/miv/Documents/workspace-preprocess/linux' //LINUX
-mzextract.path.commandline = 'C:\\Users\\Michael\\Desktop\\mzExtract\\executables' //WINDOWS
+mzextract.path.commandline = 'C:\\Users\\Michael van Vliet\\Desktop\\mzextract' //WINDOWS
 
 //mzextract.path.command.extract = 'extract.sh' //OSX
 //mzextract.path.command.extract = 'extract.sh' //LINUX
@@ -126,4 +126,4 @@ mzextract.path.command.combine = 'combine.exe' //WINDOWS
 
 //mzextract.path.project = '/Users/miv/Desktop/temp/mzextract/data/project/' //OSX
 //mzextract.path.project = '/home/miv/Documents/workspace-preprocess/data/project' //LINUX
-mzextract.path.project = 'C:\\Users\\Michael\\Desktop\\mzExtract\\data' //WINDOWS
+mzextract.path.project = 'G:\\MSDATA\\DATA_FROM_AMY' //WINDOWS
